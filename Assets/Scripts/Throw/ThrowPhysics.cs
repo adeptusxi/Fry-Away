@@ -64,46 +64,19 @@ public abstract class ThrowPhysics : MonoBehaviour
         }
     }
 
-    // begins simulation after a successful throw
+    // begins simulation once the object has been thrown
     public void Initialize(ThrowData data)
     {
         Data = data;
         CurrentVelocity = data.heldObject.velocity;
         Begin();
-        BeginSimulating();
-    }
 
-    // a release that happened before the throw timer completed 
-    public void InitializeFailed(ThrowData data)
-    {
-        Data = data;
-        CurrentVelocity = data.heldObject.velocity;
-
-        if (OnThrowFailed())
-        {
-            BeginSimulating();
-            return;
-        }
-
-        StopSimulating();
-    }
-
-    // optional hook for a subclass to derive its own starting state from Data (before simulation begins) 
-    protected virtual void Begin() { }
-
-    // override to handle a failed throw.
-    // return true and set CurrentVelocity to continue moving. 
-    // return false to route to Stop() 
-    protected virtual bool OnThrowFailed()
-    {
-        return false;
-    }
-
-    private void BeginSimulating()
-    {
         startTime = Time.time;
         IsSimulating = true;
     }
+
+    // optional hook for a subclass to derive its own starting state from Data (before simulation begins)
+    protected virtual void Begin() { }
 
     // moves the object one frame. call TryMove() to actually apply the movement 
     protected abstract void Step();

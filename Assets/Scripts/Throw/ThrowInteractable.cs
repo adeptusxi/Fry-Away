@@ -1,20 +1,16 @@
+using System;
 using Oculus.Interaction;
 using Oculus.Interaction.Input;
 using UnityEngine;
 
-public enum ThrowReleaseStyle
-{
-    Duration, // detaches when the timer completes, while grip is still held
-    Release, // detaches when the player lets go of grip, provided the timer had completed by then
-}
-
-// a grabbable object that is thrown by sustaining a fast hand motion for a specified duration 
+// a grabbable object that is thrown by sustaining a fast hand motion for a specified duration,
+// then letting go of grip. letting go without a windup just leaves it where it is (can regrab) 
 public class ThrowInteractable : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Grabbable grabbable;
 
-    [Tooltip("The GrabInteractable / HandGrabInteractable components on this object")]
+    [Tooltip("All the GrabInteractable / HandGrabInteractable components on this object")]
     [SerializeField] private Behaviour[] interactables;
 
     [SerializeField] private Rigidbody body;
@@ -24,14 +20,14 @@ public class ThrowInteractable : MonoBehaviour
     [SerializeField] private ThrowPhysics physicsProvider;
 
     [Header("Throw")]
-    [Tooltip("Duration = release as soon as the timer completes. Release = wait for the player to let go of grip")]
-    [SerializeField] private ThrowReleaseStyle releaseStyle = ThrowReleaseStyle.Duration;
-
     [Tooltip("Hand speed in m/s at which a throw starts being tracked")]
     [SerializeField] private float throwVelocityThreshold = 2f;
 
     [Tooltip("How long in seconds the hand must stay at/above the threshold for the throw to fire")]
     [SerializeField] private float throwDuration = 0.25f;
+    
+    [Tooltip("How many recent poses to average velocity over")]
+    [SerializeField, Min(2)] private int sampleCount = 15;
 
     [Header("Haptics")]
     [SerializeField, Range(0f, 1f)] private float hapticFrequency = 0.5f;
@@ -42,12 +38,11 @@ public class ThrowInteractable : MonoBehaviour
     [SerializeField] private bool fallbackToRightHand = true;
 
     [SerializeField] private bool verbose;
-
-    // how many recent poses to average velocity over, to prevent one frame of noisy input from dropping the object 
-    private const int sampleCount = 5;
-
-    private readonly PoseBuffer handPoses = new PoseBuffer(sampleCount);
-    private readonly PoseBuffer heldPoses = new PoseBuffer(sampleCount);
+    
+    private PoseBuffer handPoses;
+    private PoseBuffer heldPoses;
+    
+    public event Action OnThrown; // fired when the object is handed off to physics
 
     private bool isHeld;
     private int selectorId;
@@ -58,16 +53,47 @@ public class ThrowInteractable : MonoBehaviour
     private ThrowKinematics peakHand;
     private ThrowKinematics peakHeld;
     private bool hasPeak;
+
+    // running sums over the throw window 
+    private Vector3 handVelocitySum;
+    private Vector3 heldVelocitySum;
+    private int windowSamples;
+    
+    private Transform heldTransform; // the transform the Grabbable actually moves 
     private bool isVibrating;
     private OVRInput.Controller hapticController = OVRInput.Controller.None;
     private bool subscribedToPhysics;
 
+    private void Awake()
+    {
+        if (grabbable == null || gripTransformer == null || body == null || physicsProvider == null)
+        {
+            Debug.LogError("[ThrowInteractable] Missing required grabbable, gripTransformer, body or physicsProvider", this);
+            enabled = false;
+            return;
+        }
+
+        handPoses = new PoseBuffer(sampleCount);
+        heldPoses = new PoseBuffer(sampleCount);
+
+        grabbable.InjectOptionalOneGrabTransformer(gripTransformer);
+        grabbable.InjectOptionalThrowWhenUnselected(false);
+        grabbable.InjectOptionalKinematicWhileSelected(true);
+        grabbable.MaxGrabPoints = 1;
+
+        EnsureInert();
+    }
+
+    // don't let it move by itself 
+    private void EnsureInert()
+    {
+        body.isKinematic = true;
+        body.useGravity = false;
+    }
+
     private void OnEnable()
     {
-        if (grabbable != null)
-        {
-            grabbable.WhenPointerEventRaised += HandlePointerEvent;
-        }
+        grabbable.WhenPointerEventRaised += HandlePointerEvent;
     }
 
     private void OnDisable()
@@ -78,6 +104,15 @@ public class ThrowInteractable : MonoBehaviour
         }
 
         StopHaptics();
+    }
+
+    private void OnDestroy()
+    {
+        if (subscribedToPhysics && physicsProvider != null)
+        {
+            physicsProvider.OnStopped -= HandlePhysicsStopped;
+            subscribedToPhysics = false;
+        }
     }
 
     private void HandlePointerEvent(PointerEvent evt)
@@ -110,9 +145,14 @@ public class ThrowInteractable : MonoBehaviour
         throwTimer = 0f;
         handSpeed = 0f;
         hasPeak = false;
+        ClearWindow();
         handPoses.Clear();
         heldPoses.Clear();
         hapticController = ResolveController(evt);
+
+        gripTransformer.Suspended = false;
+        
+        heldTransform = grabbable.Transform != null ? grabbable.Transform : transform;
 
         if (verbose)
         {
@@ -128,7 +168,7 @@ public class ThrowInteractable : MonoBehaviour
         }
 
         handPoses.Add(evt.Pose, Time.time);
-        heldPoses.Add(new Pose(transform.position, transform.rotation), Time.time);
+        heldPoses.Add(new Pose(heldTransform.position, heldTransform.rotation), Time.time);
 
         if (!handPoses.TryGetKinematics(out ThrowKinematics hand))
         {
@@ -137,9 +177,16 @@ public class ThrowInteractable : MonoBehaviour
 
         handSpeed = hand.velocity.magnitude;
 
-        if (handSpeed >= throwVelocityThreshold
-            && (!hasPeak || handSpeed > peakHand.velocity.magnitude)
-            && heldPoses.TryGetKinematics(out ThrowKinematics held))
+        if (handSpeed < throwVelocityThreshold || !heldPoses.TryGetKinematics(out ThrowKinematics held))
+        {
+            return;
+        }
+
+        handVelocitySum += hand.velocity;
+        heldVelocitySum += held.velocity;
+        windowSamples++;
+
+        if (!hasPeak || handSpeed > peakHand.velocity.magnitude)
         {
             peakHand = hand;
             peakHeld = held;
@@ -157,34 +204,23 @@ public class ThrowInteractable : MonoBehaviour
         isHeld = false;
         StopHaptics();
 
-        bool wasArmed = isArmed;
+        bool throwing = isArmed;
 
         isArmed = false;
         throwTimer = 0f;
         handSpeed = 0f;
+        
+        EnsureInert();
 
-        // isThrowing means a Duration throw already fired and caused this unselect
-        if (!isThrowing)
+        if (throwing)
         {
-            if (wasArmed && releaseStyle == ThrowReleaseStyle.Release)
-            {
-                FireThrow();
-            }
-            else
-            {
-                FireFailedThrow();
-            }
-        }
-
-        if (body != null)
-        {
-            body.isKinematic = isThrowing;
+            FireThrow();
         }
     }
 
     private void Update()
     {
-        if (!isHeld || isThrowing)
+        if (!isHeld)
         {
             return;
         }
@@ -201,11 +237,6 @@ public class ThrowInteractable : MonoBehaviour
             if (throwTimer >= throwDuration)
             {
                 isArmed = true;
-
-                if (releaseStyle == ThrowReleaseStyle.Duration)
-                {
-                    FireThrow();
-                }
             }
         }
         else
@@ -217,22 +248,14 @@ public class ThrowInteractable : MonoBehaviour
             {
                 throwTimer = 0f;
                 hasPeak = false;
+                ClearWindow();
             }
         }
     }
 
     private void FireThrow()
     {
-        if (physicsProvider == null)
-        {
-            Debug.LogWarning("[ThrowInteractable] no physicsProvider assigned, cannot throw", this);
-            return;
-        }
-
-        if (!TryBuildThrowData(out ThrowData data))
-        {
-            return;
-        }
+        ThrowData data = BuildThrowData();
 
         StopHaptics();
         BeginHandOff();
@@ -245,46 +268,28 @@ public class ThrowInteractable : MonoBehaviour
         physicsProvider.Initialize(data);
     }
 
-    // released before the timer completed. the provider may decline 
-    private void FireFailedThrow()
+    private ThrowData BuildThrowData()
     {
-        if (!TryBuildThrowData(out ThrowData data))
-        {
-            return;
-        }
+        ThrowData data = default;
         
-        BeginHandOff();
-
-        if (verbose)
-        {
-            Debug.Log("[ThrowInteractable] failed throw");
-        }
-
-        physicsProvider.InitializeFailed(data);
-    }
-
-    private bool TryBuildThrowData(out ThrowData data)
-    {
-        data = default;
-
-        if (physicsProvider == null)
-        {
-            return false;
-        }
-
-        if (!handPoses.TryGetKinematics(out ThrowKinematics hand)
-            || !heldPoses.TryGetKinematics(out ThrowKinematics heldObject))
-        {
-            return false;
-        }
+        handPoses.TryGetKinematics(out ThrowKinematics hand);
+        heldPoses.TryGetKinematics(out ThrowKinematics heldObject);
 
         data.hand = hand;
         data.heldObject = heldObject;
 
-        // a release that never crossed the threshold has no distinct peak
+        // a throw too brief to build a window has no distinct peak or average
         data.peakHand = hasPeak ? peakHand : hand;
         data.peakHeld = hasPeak ? peakHeld : heldObject;
-        return true;
+
+        return data;
+    }
+
+    private void ClearWindow()
+    {
+        handVelocitySum = Vector3.zero;
+        heldVelocitySum = Vector3.zero;
+        windowSamples = 0;
     }
 
     private void BeginHandOff()
@@ -292,39 +297,24 @@ public class ThrowInteractable : MonoBehaviour
         isThrowing = true;
         throwTimer = 0f;
 
-        if (gripTransformer != null)
-        {
-            gripTransformer.Suspended = true;
-        }
-
-        SetInteractablesEnabled(false);
-
-        if (body != null)
-        {
-            body.isKinematic = true;
-        }
+        gripTransformer.Suspended = true;
 
         if (!subscribedToPhysics)
         {
             physicsProvider.OnStopped += HandlePhysicsStopped;
             subscribedToPhysics = true;
         }
+        
+        OnThrown?.Invoke();
+
+        SetInteractablesEnabled(false);
     }
 
     private void HandlePhysicsStopped()
     {
         isThrowing = false;
-
-        if (gripTransformer != null)
-        {
-            gripTransformer.Suspended = false;
-        }
-
-        if (body != null)
-        {
-            body.isKinematic = false;
-        }
-
+        gripTransformer.Suspended = false;
+        EnsureInert();
         SetInteractablesEnabled(true);
     }
 
@@ -427,16 +417,26 @@ public class ThrowInteractable : MonoBehaviour
             count = Mathf.Min(count + 1, poses.Length);
         }
 
+        // returns false when there aren't enough samples to measure velocity
+        // (the pose is still filled in from the newest sample)
         public bool TryGetKinematics(out ThrowKinematics kinematics)
         {
             kinematics = default;
+
+            if (count < 1)
+            {
+                return false;
+            }
+
+            int newest = (head - 1 + poses.Length) % poses.Length;
+            kinematics.position = poses[newest].position;
+            kinematics.rotation = poses[newest].rotation;
 
             if (count < 2)
             {
                 return false;
             }
 
-            int newest = (head - 1 + poses.Length) % poses.Length;
             int oldest = (head - count + poses.Length) % poses.Length;
 
             float dt = times[newest] - times[oldest];
@@ -445,8 +445,6 @@ public class ThrowInteractable : MonoBehaviour
                 return false;
             }
 
-            kinematics.position = poses[newest].position;
-            kinematics.rotation = poses[newest].rotation;
             kinematics.velocity = (poses[newest].position - poses[oldest].position) / dt;
             kinematics.angularVelocity = AngularVelocity(poses[oldest].rotation, poses[newest].rotation, dt);
             return true;
