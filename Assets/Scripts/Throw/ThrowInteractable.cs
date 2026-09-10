@@ -29,6 +29,9 @@ public class ThrowInteractable : MonoBehaviour
     [Tooltip("How many recent poses to average velocity over")]
     [SerializeField, Min(2)] private int sampleCount = 15;
 
+    [Tooltip("Rotates the sampled controller pose so its forward axis is the throw aim direction")]
+    [SerializeField] private Vector3 aimRotationOffset;
+
     [Header("Haptics")]
     [SerializeField, Range(0f, 1f)] private float hapticFrequency = 0.5f;
     [SerializeField, Range(0f, 1f)] private float hapticAmplitude = 0.5f;
@@ -62,6 +65,9 @@ public class ThrowInteractable : MonoBehaviour
     private Transform heldTransform; // the transform the Grabbable actually moves 
     private bool isVibrating;
     private OVRInput.Controller hapticController = OVRInput.Controller.None;
+    private IController grabController; // the controller holding the object, to sample pose from
+    private Transform grabAnchor; // scene anchor for the grabbing hand. see TryGetHandPose
+    private bool warnedNoController;
     private bool subscribedToPhysics;
 
     private void Awake()
@@ -148,7 +154,11 @@ public class ThrowInteractable : MonoBehaviour
         ClearWindow();
         handPoses.Clear();
         heldPoses.Clear();
-        hapticController = ResolveController(evt);
+        warnedNoController = false;
+
+        bool resolved = TryResolveGrab(evt, out Handedness handedness, out grabController);
+        grabAnchor = resolved ? ControllerAnchor.Get(handedness) : null;
+        hapticController = ToController(handedness, resolved);
 
         gripTransformer.Suspended = false;
         
@@ -167,7 +177,12 @@ public class ThrowInteractable : MonoBehaviour
             return;
         }
 
-        handPoses.Add(evt.Pose, Time.time);
+        if (!TryGetHandPose(out Pose handPose))
+        {
+            return;
+        }
+
+        handPoses.Add(handPose, Time.time);
         heldPoses.Add(new Pose(heldTransform.position, heldTransform.rotation), Time.time);
 
         if (!handPoses.TryGetKinematics(out ThrowKinematics hand))
@@ -209,13 +224,17 @@ public class ThrowInteractable : MonoBehaviour
         isArmed = false;
         throwTimer = 0f;
         handSpeed = 0f;
-        
+
         EnsureInert();
 
         if (throwing)
         {
             FireThrow();
         }
+
+        // after the buffers have been read, so we don't hold a reference to the hand rig
+        grabController = null;
+        grabAnchor = null;
     }
 
     private void Update()
@@ -359,33 +378,66 @@ public class ThrowInteractable : MonoBehaviour
         }
     }
     
-    private OVRInput.Controller ResolveController(PointerEvent evt)
+    private bool TryResolveGrab(PointerEvent evt, out Handedness handedness, out IController controller)
     {
+        handedness = default;
+        controller = null;
+
         if (evt.Data is Component source)
         {
-            IController controller = source.GetComponentInParent<IController>();
+            controller = source.GetComponentInParent<IController>();
             if (controller != null)
             {
-                return ToController(controller.Handedness);
+                handedness = controller.Handedness;
+                return true;
             }
 
             IHand hand = source.GetComponentInParent<IHand>();
             if (hand != null)
             {
-                return ToController(hand.Handedness);
+                handedness = hand.Handedness;
+                return true;
             }
         }
 
-        if (verbose)
-        {
-            Debug.Log("[ThrowInteractable] could not resolve grabbing hand, using fallback");
-        }
-
-        return fallbackToRightHand ? OVRInput.Controller.RTouch : OVRInput.Controller.LTouch;
+        return false;
     }
 
-    private OVRInput.Controller ToController(Handedness handedness)
+    // PLACEHOLDER: reads pose from scene anchors 
+    // TODO: Xiao - figure out why SDK lookup isn't working 
+    private bool TryGetHandPose(out Pose pose)
     {
+        if (grabAnchor != null)
+        {
+            pose = new Pose(grabAnchor.position, grabAnchor.rotation * Quaternion.Euler(aimRotationOffset));
+            return true;
+        }
+
+        if (grabController != null && grabController.TryGetPose(out Pose controllerPose))
+        {
+            pose = new Pose(controllerPose.position, controllerPose.rotation * Quaternion.Euler(aimRotationOffset));
+            return true;
+        }
+
+        if (!warnedNoController)
+        {
+            warnedNoController = true;
+            Debug.LogWarning(
+                "[ThrowInteractable] no hand pose source: assign a DebugHandAnchor to each controller. the throw can't arm without one",
+                this);
+        }
+
+        pose = default;
+        return false;
+    }
+
+    private OVRInput.Controller ToController(Handedness handedness, bool resolved)
+    {
+        if (!resolved)
+        {
+            return fallbackToRightHand ? OVRInput.Controller.RTouch : OVRInput.Controller.LTouch;
+        }
+
         return handedness == Handedness.Left ? OVRInput.Controller.LTouch : OVRInput.Controller.RTouch;
     }
 
