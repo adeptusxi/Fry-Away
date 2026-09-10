@@ -21,7 +21,7 @@ public class DebugGripPose : DebugDisplay
     private void LateUpdate()
     {
         Transform target = grabbable.Transform;
-        Transform hand = DebugHandAnchor.GetNearest(target.position);
+        Transform hand = ControllerAnchor.GetNearest(target.position);
 
         if (hand == null)
         {

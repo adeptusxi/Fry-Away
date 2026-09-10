@@ -132,13 +132,12 @@ MonoBehaviour:
   body: {fileID: 4847551345403790988}
   gripTransformer: {fileID: 1028909722648472315}
   physicsProvider: {fileID: 6842169433539258502}
-  releaseStyle: 1
-  throwVelocityThreshold: 0.5
+  throwVelocityThreshold: 0.3
   throwDuration: 0.25
   sampleCount: 15
+  aimRotationOffset: {x: 0, y: 0, z: 0}
   hapticFrequency: 0.5
   hapticAmplitude: 0.5
-  allowRepickup: 0
   fallbackToRightHand: 1
   verbose: 1
 --- !u!1 &1147151611814916429

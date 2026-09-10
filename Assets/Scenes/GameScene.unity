@@ -166,6 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00d93e427da9144cb89fe318e070ecec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DebugHandAnchor
+  handedness: 1
 --- !u!114 &23210303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1286,6 +1287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00d93e427da9144cb89fe318e070ecec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DebugHandAnchor
+  handedness: 0
 --- !u!114 &242349461
 MonoBehaviour:
   m_ObjectHideFlags: 0

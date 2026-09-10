@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1373745599f834b82885485053c3be97, type: 3}
   m_Name: DebugDisplaySettings
   m_EditorClassIdentifier: Assembly-CSharp::DebugDisplaySettings
-  showDebugDisplays: 1
+  showDebugDisplays: 0
