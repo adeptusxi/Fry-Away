@@ -284,7 +284,7 @@ public class ThrowInteractable : MonoBehaviour
             Debug.Log($"[ThrowInteractable] throw fired at {data.hand.velocity.magnitude:F2} m/s (peak {data.peakHand.velocity.magnitude:F2})");
         }
 
-        physicsProvider.Initialize(data);
+        physicsProvider.Initialize(data, this);
     }
 
     private ThrowData BuildThrowData()

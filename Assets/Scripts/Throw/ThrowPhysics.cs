@@ -23,6 +23,8 @@ public struct ThrowData
 // defaults to moving the GameObject it is attached to, but can drive a separate one if specified 
 public abstract class ThrowPhysics : MonoBehaviour
 {
+    private ThrowInteractable parentInteractable; // the ThrowInteractable that this ThrowPhysics is providing physics for 
+    
     [Tooltip("What to move")]
     [SerializeField] private Transform targetTransform;
 
@@ -65,8 +67,10 @@ public abstract class ThrowPhysics : MonoBehaviour
     }
 
     // begins simulation once the object has been thrown
-    public void Initialize(ThrowData data)
+    public void Initialize(ThrowData data, ThrowInteractable _parentInteractable)
     {
+        parentInteractable = _parentInteractable;
+        
         Data = data;
         CurrentVelocity = data.heldObject.velocity;
         Begin();
@@ -117,6 +121,13 @@ public abstract class ThrowPhysics : MonoBehaviour
             // stop at the surface hit point 
             targetTransform.SetPositionAndRotation(targetTransform.position + delta.normalized * hit.distance, newRotation);
             StopSimulating();
+            
+            // notify the object that it was hit by me 
+            if (hit.collider.gameObject.TryGetComponent(out HittableTarget hittableTarget))
+            {
+                hittableTarget.OnObjectHit(parentInteractable, hit);
+            }
+            
             return false;
         }
 
