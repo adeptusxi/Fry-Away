@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 
-// snapshot of how something was moving at the moment of release
-public struct ThrowKinematics
+// snapshot of how something was moving at a single moment
+public struct Kinematics
 {
     public Vector3 position;
     public Quaternion rotation;
@@ -13,10 +13,10 @@ public struct ThrowKinematics
 // everything known about the moment a throw was released 
 public struct ThrowData
 {
-    public ThrowKinematics hand;
-    public ThrowKinematics heldObject;
-    public ThrowKinematics peakHand;
-    public ThrowKinematics peakHeld;
+    public Kinematics hand;
+    public Kinematics heldObject;
+    public Kinematics peakHand;
+    public Kinematics peakHeld;
 }
 
 // "interface" for anything that moves a thrown object after it leaves the player's hand.

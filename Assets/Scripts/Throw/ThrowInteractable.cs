@@ -53,8 +53,8 @@ public class ThrowInteractable : MonoBehaviour
     private bool isArmed;
     private float throwTimer;
     private float handSpeed;
-    private ThrowKinematics peakHand;
-    private ThrowKinematics peakHeld;
+    private Kinematics peakHand;
+    private Kinematics peakHeld;
     private bool hasPeak;
 
     // running sums over the throw window 
@@ -185,14 +185,14 @@ public class ThrowInteractable : MonoBehaviour
         handPoses.Add(handPose, Time.time);
         heldPoses.Add(new Pose(heldTransform.position, heldTransform.rotation), Time.time);
 
-        if (!handPoses.TryGetKinematics(out ThrowKinematics hand))
+        if (!handPoses.TryGetKinematics(out Kinematics hand))
         {
             return;
         }
 
         handSpeed = hand.velocity.magnitude;
 
-        if (handSpeed < throwVelocityThreshold || !heldPoses.TryGetKinematics(out ThrowKinematics held))
+        if (handSpeed < throwVelocityThreshold || !heldPoses.TryGetKinematics(out Kinematics held))
         {
             return;
         }
@@ -291,8 +291,8 @@ public class ThrowInteractable : MonoBehaviour
     {
         ThrowData data = default;
         
-        handPoses.TryGetKinematics(out ThrowKinematics hand);
-        heldPoses.TryGetKinematics(out ThrowKinematics heldObject);
+        handPoses.TryGetKinematics(out Kinematics hand);
+        heldPoses.TryGetKinematics(out Kinematics heldObject);
 
         data.hand = hand;
         data.heldObject = heldObject;
@@ -471,7 +471,7 @@ public class ThrowInteractable : MonoBehaviour
 
         // returns false when there aren't enough samples to measure velocity
         // (the pose is still filled in from the newest sample)
-        public bool TryGetKinematics(out ThrowKinematics kinematics)
+        public bool TryGetKinematics(out Kinematics kinematics)
         {
             kinematics = default;
 
