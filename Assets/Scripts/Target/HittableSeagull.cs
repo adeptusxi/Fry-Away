@@ -14,23 +14,49 @@ public class HittableSeagull : HittableTarget
     
     [Tooltip("0 is a perfect sine wave, 1 is an uneven non-repeating \"wander\"")]
     [SerializeField, Range(0f, 1f)] private float irregularity = 0.5f;
+    
+    [Header("On Hit")]
+    [SerializeField] private AnimationCurve onHitScaleAnimation;
+    [SerializeField, Tooltip("scalar of the original size which this seagull will inflate to before shrinking")]
+        private float onHitScalePeak = 2;
+
+    [SerializeField, Min(0f), Tooltip("in seconds")] private float onHitAnimationDuration = 0.4f;
 
     private float speed;
     private float phaseOffset;
     private float noiseSeed;
     private Vector3 fallbackHeading;
 
+    private bool dying;
+    private float dyingElapsed;
+    private Vector3 originalScale;
+
     private void Awake()
     {
         speed = Random.Range(minSpeed, maxSpeed);
         phaseOffset = Random.Range(0f, 100f);
         noiseSeed = Random.Range(0f, 100f);
-        fallbackHeading = transform.forward; 
+        fallbackHeading = transform.forward;
+        originalScale = transform.localScale;
     }
 
     public override void OnObjectHit(ThrowInteractable hitBy, RaycastHit hit)
     {
-        // TODO: Shiyu - sound effects placeholder code 
+        if (dying)
+            return;
+
+        if (onHitScaleAnimation == null || onHitScaleAnimation.length == 0)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        dying = true;
+
+        if (TryGetComponent(out Collider hitbox))
+            hitbox.enabled = false;
+        
+        // TODO: Shiyu - sound effects placeholder code
     }
 
     protected override void OnMoveToRegistered()
@@ -40,6 +66,12 @@ public class HittableSeagull : HittableTarget
 
     protected override void Move()
     {
+        if (dying)
+        {
+            AnimateDeath();
+            return;
+        }
+
         float t = (Time.time + phaseOffset) * weaveFrequency;
         float sine = Mathf.Sin(t * 2f * Mathf.PI); 
         float noise = Mathf.PerlinNoise(t, noiseSeed) * 2f - 1f; 
@@ -52,8 +84,22 @@ public class HittableSeagull : HittableTarget
 
     protected override void OnTooClose()
     {
-        // TODO: how do we want to handle this 
+        if (dying)
+            return;
+
+        // TODO: how do we want to handle this
         Destroy(gameObject);
+    }
+    
+    private void AnimateDeath()
+    {
+        dyingElapsed += Time.deltaTime;
+        float progress = onHitAnimationDuration > 0f ? dyingElapsed / onHitAnimationDuration : 1f;
+
+        transform.localScale = originalScale * (onHitScalePeak * onHitScaleAnimation.Evaluate(progress));
+
+        if (progress >= 1f)
+            Destroy(gameObject);
     }
 
     private Vector3 BaseHeading()

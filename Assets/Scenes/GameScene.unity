@@ -150,6 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   frisbeeSpawner: {fileID: 1880818961}
   seagullSpawner: {fileID: 1885502843}
+  showDebugDisplays: 1
 --- !u!4 &49955672
 Transform:
   m_ObjectHideFlags: 0
@@ -730,12 +731,12 @@ MonoBehaviour:
   initialSpawnDelay: 3
   minSpawnInterval: 1.5
   maxSpawnInterval: 3.5
-  minDistance: 15
-  maxDistance: 20
-  coneAngle: 45
-  floor: {fileID: 0}
-  floorClearance: 1
-  maxTargets: 15
+  minDistance: 50
+  maxDistance: 60
+  coneAngle: 30
+  floor: {fileID: 1712595705}
+  floorClearance: 0.15
+  maxTargets: 10
   verbose: 0
 --- !u!114 &1885502844
 MonoBehaviour:
@@ -753,9 +754,9 @@ MonoBehaviour:
   ringSegments: 24
   coneColor: {r: 0, g: 1, b: 1, a: 1}
   floorColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  markerColor: {r: 1, g: 0, b: 1, a: 1}
-  markerSize: 0.3
-  markerDuration: 1
+  spawnPointColor: {r: 0, g: 1, b: 1, a: 1}
+  spawnPointSize: 0.3
+  spawnPointDuration: 1
 --- !u!1 &2062685997
 GameObject:
   m_ObjectHideFlags: 0
@@ -780,8 +781,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2062685997}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

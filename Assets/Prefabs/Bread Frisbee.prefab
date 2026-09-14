@@ -56,7 +56,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4198216458341941979}
   - component: {fileID: 1028909722648472315}
-  - component: {fileID: 6842169433539258502}
+  - component: {fileID: 6065844527232452624}
   - component: {fileID: 895884084208087586}
   m_Layer: 0
   m_Name: Interaction
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FixedGripTransformer
   heldPositionOffset: {x: 0, y: 0, z: 0}
   heldRotationOffset: {x: 315, y: 260, z: 90}
---- !u!114 &6842169433539258502
+--- !u!114 &6065844527232452624
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -103,19 +103,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 735965405129031054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b95a20ff196842eeab738c474c172d1, type: 3}
+  m_Script: {fileID: 11500000, guid: 35e2c7b73a6be42d08f0eacbb2900a15, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ThrowPhysicsLinear
+  m_EditorClassIdentifier: Assembly-CSharp::ThrowPhysicsFrisbee
   targetTransform: {fileID: 3826693422732689469}
   targetCollider: {fileID: 5681566738335238396}
   collisionLayerMask:
     serializedVersion: 2
     m_Bits: 3072
   timeout: 10
-  aimAssist: 1
+  aimAssist: 0.3
   maxAssistAngle: 30
   maxAssistRange: 30
   velocityScalar: 1
+  rho: 1.2
+  cli: 0.13
+  cdi: 0.085
+  r: 0.3
+  m: 0.15
 --- !u!114 &895884084208087586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,7 +139,7 @@ MonoBehaviour:
   - {fileID: 786355375916585735}
   body: {fileID: 4847551345403790988}
   gripTransformer: {fileID: 1028909722648472315}
-  physicsProvider: {fileID: 6842169433539258502}
+  physicsProvider: {fileID: 6065844527232452624}
   throwVelocityThreshold: 0.3
   throwDuration: 0.25
   sampleCount: 15
