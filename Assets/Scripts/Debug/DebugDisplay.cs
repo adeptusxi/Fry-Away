@@ -1,37 +1,30 @@
 using UnityEngine;
 
-// base for the visual debugging components. all debug visuals can be toggled centrally from a DebugDisplaySettings SO 
+// base for the visual debugging components. all debug visuals can be toggled centrally from the GameManager
 public abstract class DebugDisplay : MonoBehaviour
 {
-    private const string settingsPath = "DebugDisplaySettings";
-    private static bool resolved;
-    private static bool displaysEnabled;
+    private static bool warned;
 
     public static bool DisplaysEnabled
     {
         get
         {
-            if (resolved)
+            if (GameManager.Instance != null)
             {
-                return displaysEnabled;
+                return GameManager.Instance.ShowDebugDisplays;
             }
 
-            resolved = true;
-
-            DebugDisplaySettings settings = Resources.Load<DebugDisplaySettings>(settingsPath);
-            if (settings == null)
+            if (!warned)
             {
-                Debug.LogWarning($"[DebugDisplay] no {settingsPath} found in a Resources folder, debug displays are off");
-                displaysEnabled = false;
-                return displaysEnabled;
+                warned = true;
+                Debug.LogWarning("[DebugDisplay] no GameManager in the scene, debug displays are off by default");
             }
 
-            displaysEnabled = settings.ShowDebugDisplays;
-            return displaysEnabled;
+            return false;
         }
     }
 
-    private void Awake()
+    private void Start()
     {
         if (!DisplaysEnabled)
         {
@@ -45,6 +38,6 @@ public abstract class DebugDisplay : MonoBehaviour
     }
 
     protected virtual void Initialize() { }
-    
+
     protected virtual void Cleanup() { }
 }

@@ -36,15 +36,23 @@ public abstract class ThrowPhysics : MonoBehaviour
 
     [Tooltip("Max seconds to simulate before stopping automatically. <0 means no limit")]
     [SerializeField] private float timeout = 60f;
-    
+
+    [Header("Aim Assist")]
+    [Tooltip("0 is pure physics, 1 flies straight at the nearest HittableTarget, 0.5 mixes both")]
+    [SerializeField, Range(0f, 1f)] private float aimAssist;
+    [SerializeField, Range(0f, 180f), Tooltip("in degrees")] private float maxAssistAngle = 30f;
+    [SerializeField, Min(0f), Tooltip("in meters")] private float maxAssistRange = 30f;
+    private HittableTarget assistTarget; 
+
     private const float velocityEpsilon = 0.01f; // below this speed, the object counts as no longer moving
     private float startTime;
     
     protected ThrowData Data { get; private set; } // everything about the release that produced this throw. see ThrowData and ThrowKinematics at the top of this file 
     protected Vector3 CurrentVelocity { get; set; }
     protected Transform Target => targetTransform; // the object being moved 
-    protected Collider TargetCollider => targetCollider; // ^ its collider 
-    
+    protected Collider TargetCollider => targetCollider; // ^ its collider
+    protected HittableTarget AssistTarget => assistTarget; // what aim assist is steering toward, if anything
+
     public event Action OnStopped; 
     public bool IsSimulating { get; private set; }
 
@@ -74,6 +82,8 @@ public abstract class ThrowPhysics : MonoBehaviour
         Data = data;
         CurrentVelocity = data.heldObject.velocity;
         Begin();
+
+        FindAssistTarget();
 
         startTime = Time.time;
         IsSimulating = true;
@@ -110,9 +120,38 @@ public abstract class ThrowPhysics : MonoBehaviour
         Step();
     }
     
-    // returns whether the move succeeded (i.e. was not blocked by a hittable object) 
+    // once per throw (no rehoming mid-flight). checks the nearest target within the cone around the throw direction 
+    private void FindAssistTarget()
+    {
+        assistTarget = null;
+
+        if (aimAssist <= 0f 
+            || TargetSpawner.Instance == null 
+            || CurrentVelocity.sqrMagnitude < velocityEpsilon * velocityEpsilon)
+            return;
+
+        assistTarget = TargetSpawner.Instance.FindAssistTarget(
+            targetTransform.position, CurrentVelocity.normalized, maxAssistAngle, maxAssistRange);
+    }
+    
+    private Vector3 ApplyAimAssist(Vector3 delta)
+    {
+        if (aimAssist <= 0f || assistTarget == null)
+            return delta;
+
+        float distance = delta.magnitude;
+        Vector3 toTarget = assistTarget.transform.position - targetTransform.position;
+
+        if (distance < Mathf.Epsilon || toTarget.sqrMagnitude < Mathf.Epsilon)
+            return delta;
+
+        return Vector3.Slerp(delta / distance, toTarget.normalized, aimAssist) * distance;
+    }
+
+    // returns whether the move succeeded (i.e. was not blocked by a hittable object)
     protected bool TryMove(Vector3 delta, Quaternion newRotation)
     {
+        delta = ApplyAimAssist(delta);
         float distance = delta.magnitude;
 
         // check if it hit something 

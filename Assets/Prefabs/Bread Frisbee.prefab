@@ -112,6 +112,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 3072
   timeout: 10
+  aimAssist: 1
+  maxAssistAngle: 30
+  maxAssistRange: 30
   velocityScalar: 1
 --- !u!114 &895884084208087586
 MonoBehaviour:

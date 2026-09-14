@@ -7,9 +7,10 @@ public class ThrowInteractableSpawner : MonoBehaviour
     [SerializeField] private bool verbose;
 
     private ThrowInteractable current;
+    private bool active = false;
     private bool needsSpawn = true; // to defer spawn to the next Update
                                     // (avoid messing up interactor's iteration list as it's still iterating) 
-
+    
     private void Awake()
     {
         if (prefab == null)
@@ -27,6 +28,11 @@ public class ThrowInteractableSpawner : MonoBehaviour
 
     private void Update()
     {
+        if (!active)
+        {
+            return;
+        }
+
         if (current == null)
         {
             needsSpawn = true;
@@ -37,7 +43,17 @@ public class ThrowInteractableSpawner : MonoBehaviour
             Spawn();
         }
     }
-
+    
+    private void OnDestroy()
+    {
+        Release();
+    }
+    
+    public void Activate(bool activate)
+    {
+        active = activate;
+    }
+    
     private void Spawn()
     {
         needsSpawn = false;
@@ -78,10 +94,5 @@ public class ThrowInteractableSpawner : MonoBehaviour
     private void HandleThrown()
     {
         needsSpawn = true;
-    }
-
-    private void OnDestroy()
-    {
-        Release();
     }
 }
