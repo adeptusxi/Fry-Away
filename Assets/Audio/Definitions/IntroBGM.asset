@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: IntroBGM
   m_EditorClassIdentifier: Assembly-CSharp::SoundDefinition
   id: 1
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: a06324493a55644da98554a4f58047cb, type: 3}
   volume: 1
   variantSelection: 0
