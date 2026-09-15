@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: ObjectWhoosh
   m_EditorClassIdentifier: Assembly-CSharp::SoundDefinition
   id: 7
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: e947616f909de405aa6e0fb6f76b2fda, type: 3}
+  - {fileID: 8300000, guid: d885121e836a54aabb48b5cef540ca55, type: 3}
   volume: 1
   variantSelection: 2
