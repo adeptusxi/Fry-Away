@@ -45,6 +45,14 @@ public class HittableSeagull : HittableTarget
         if (dying)
             return;
 
+        if (HitSoundId != SoundId.None)
+        {
+            AudioManager.Instance?.PlayOneShotAtPosition(
+                HitSoundId,
+                hit.point
+            );
+        }
+
         if (onHitScaleAnimation == null || onHitScaleAnimation.length == 0)
         {
             Destroy(gameObject);
@@ -55,8 +63,6 @@ public class HittableSeagull : HittableTarget
 
         if (TryGetComponent(out Collider hitbox))
             hitbox.enabled = false;
-        
-        // TODO: Shiyu - sound effects placeholder code
     }
 
     protected override void OnMoveToRegistered()

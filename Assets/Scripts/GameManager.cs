@@ -28,6 +28,19 @@ public class GameManager : MonoBehaviour
         seagullSpawner.Activate(true);
     }
 
+    private void Start()
+    {
+    AudioManager.Instance?.PlayLoop(
+        SoundId.CombatBGM,
+        AudioManager.LoopTrack.BGM
+    );
+
+    AudioManager.Instance?.PlayLoop(
+        SoundId.AmbientOcean,
+        AudioManager.LoopTrack.Ambient
+    );
+    }
+
     private void OnDestroy()
     {
         if (Instance == this)

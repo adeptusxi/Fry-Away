@@ -46,6 +46,7 @@ public abstract class ThrowPhysics : MonoBehaviour
 
     private const float velocityEpsilon = 0.01f; // below this speed, the object counts as no longer moving
     private float startTime;
+    private AudioSource pathLoopSource;
     
     protected ThrowData Data { get; private set; } // everything about the release that produced this throw. see ThrowData and ThrowKinematics at the top of this file 
     protected Vector3 CurrentVelocity { get; set; }
@@ -87,6 +88,11 @@ public abstract class ThrowPhysics : MonoBehaviour
 
         startTime = Time.time;
         IsSimulating = true;
+
+        pathLoopSource = AudioManager.Instance?.StartAttachedLoop(
+            SoundId.ObjectPathLoop,
+            targetTransform
+        );
     }
 
     // optional hook for a subclass to derive its own starting state from Data (before simulation begins)
@@ -208,6 +214,13 @@ public abstract class ThrowPhysics : MonoBehaviour
     {
         IsSimulating = false;
         CurrentVelocity = Vector3.zero;
+
+        if (pathLoopSource != null)
+        {
+            AudioManager.Instance?.StopAttachedLoop(pathLoopSource);
+            pathLoopSource = null;
+        }
+
         Stop();
         OnStopped?.Invoke();
     }

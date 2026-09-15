@@ -9,6 +9,11 @@ public abstract class HittableTarget : MonoBehaviour
     [Tooltip("how close (in meters) this target can get to `moveTo` before OnTooClose() fires")]
     [SerializeField, Min(0f)] private float tooCloseDistance = 1.5f;
 
+    [Header("Audio")]
+    [SerializeField] private SoundId hitSoundId = SoundId.None;
+
+    protected SoundId HitSoundId => hitSoundId;
+
     private bool reachedTarget;
 
     protected Transform MoveTo => moveTo;
@@ -54,4 +59,5 @@ public abstract class HittableTarget : MonoBehaviour
     protected virtual void OnTooClose() { }
     
     #endregion 
+
 }

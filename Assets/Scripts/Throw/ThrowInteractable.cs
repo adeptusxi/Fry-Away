@@ -23,6 +23,12 @@ public class ThrowInteractable : MonoBehaviour
     [Tooltip("Hand speed in m/s at which a throw starts being tracked")]
     [SerializeField] private float throwVelocityThreshold = 2f;
 
+    [Header("Audio")]
+    [SerializeField, Min(0f)] private float minWhooshSpeed = 2f;
+    [SerializeField, Min(0f)] private float maxWhooshSpeed = 8f;
+
+    private AudioSource chargeLoopSource;
+
     [Tooltip("How long in seconds the hand must stay at/above the threshold for the throw to fire")]
     [SerializeField] private float throwDuration = 0.25f;
     
@@ -276,6 +282,18 @@ public class ThrowInteractable : MonoBehaviour
     {
         ThrowData data = BuildThrowData();
 
+        float whooshIntensity = Mathf.InverseLerp(
+            minWhooshSpeed,
+            maxWhooshSpeed,
+        data.hand.velocity.magnitude
+        );
+
+        AudioManager.Instance?.PlayOneShotAtPosition(
+            SoundId.ObjectWhoosh,
+            transform.position,
+            whooshIntensity
+        );
+
         StopHaptics();
         BeginHandOff();
 
@@ -359,7 +377,23 @@ public class ThrowInteractable : MonoBehaviour
 
         if (hapticController != OVRInput.Controller.None)
         {
-            OVRInput.SetControllerVibration(hapticFrequency, hapticAmplitude, hapticController);
+            OVRInput.SetControllerVibration(
+                hapticFrequency,
+                hapticAmplitude,
+                hapticController
+            );
+        }
+
+        if (chargeLoopSource == null)
+        {
+            Transform soundTarget = heldTransform != null
+                ? heldTransform
+                : transform;
+
+            chargeLoopSource = AudioManager.Instance?.StartAttachedLoop(
+                SoundId.ObjectChargeLoop,
+                soundTarget
+            );
         }
     }
 
@@ -376,8 +410,14 @@ public class ThrowInteractable : MonoBehaviour
         {
             OVRInput.SetControllerVibration(0f, 0f, hapticController);
         }
+
+        if (chargeLoopSource != null)
+        {
+            AudioManager.Instance?.StopAttachedLoop(chargeLoopSource);
+            chargeLoopSource = null;
+        }
     }
-    
+        
     private bool TryResolveGrab(PointerEvent evt, out Handedness handedness, out IController controller)
     {
         handedness = default;
