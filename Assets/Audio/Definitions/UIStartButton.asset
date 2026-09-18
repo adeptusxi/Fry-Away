@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: UIStartButton
   m_EditorClassIdentifier: Assembly-CSharp::SoundDefinition
   id: 5
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: f65cbd86171a44cf4b86ac6aa50fb6f0, type: 3}
   volume: 1
   variantSelection: 0
