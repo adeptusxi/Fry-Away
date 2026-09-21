@@ -612,6 +612,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 487653903476520873, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
+      propertyPath: m_Height
+      value: 2.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 487653903476520873, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
+      propertyPath: m_Radius
+      value: 0.41
+      objectReference: {fileID: 0}
+    - target: {fileID: 487653903476520873, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
+      propertyPath: m_Center.y
+      value: -0.27
+      objectReference: {fileID: 0}
+    - target: {fileID: 487653903476520873, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
+      propertyPath: m_Center.z
+      value: -0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 487653903476520873, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
+      propertyPath: m_Direction
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7768305294588918595, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
       propertyPath: m_Name
       value: Seagull
@@ -657,7 +677,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3982683569768916551, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
