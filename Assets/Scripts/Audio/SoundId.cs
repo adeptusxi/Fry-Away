@@ -15,5 +15,8 @@ public enum SoundId
     ObjectHitSeagull,
     ObjectWhoosh,
     ObjectPathLoop,
-    ObjectChargeLoop
+    ObjectChargeLoop,
+
+    // Game flow 
+    Countdown
 }

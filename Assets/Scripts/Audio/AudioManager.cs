@@ -6,7 +6,8 @@ public class AudioManager : MonoBehaviour
     public enum LoopTrack
     {
         BGM,
-        Ambient
+        Ambient,
+        Loading
     }
 
     public static AudioManager Instance { get; private set; }
@@ -17,6 +18,8 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Sources")]
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource ambientSource;
+    [SerializeField] private AudioSource loadingSource;
+    [SerializeField] private AudioSource sfx2DSource;
 
     private readonly HashSet<SoundId> missingClipWarnings = new HashSet<SoundId>();
 
@@ -39,6 +42,17 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    private AudioSource GetLoopSource(LoopTrack track)
+    {
+        return track switch
+        {
+            LoopTrack.BGM => bgmSource,
+            LoopTrack.Ambient => ambientSource,
+            LoopTrack.Loading => loadingSource,
+            _ => null
+        };
+    }
+
     public void PlayLoop(SoundId id, LoopTrack track)
     {
         if (!TryGetClip(id, out AudioClip clip, out float volume))
@@ -46,8 +60,7 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        AudioSource source =
-            track == LoopTrack.BGM ? bgmSource : ambientSource;
+        AudioSource source = GetLoopSource(track);
 
         if (source == null)
         {
@@ -66,8 +79,7 @@ public class AudioManager : MonoBehaviour
 
     public void StopLoop(LoopTrack track)
     {
-        AudioSource source =
-            track == LoopTrack.BGM ? bgmSource : ambientSource;
+        AudioSource source = GetLoopSource(track);
 
         if (source != null)
         {
@@ -88,6 +100,27 @@ public class AudioManager : MonoBehaviour
         }
 
         AudioSource.PlayClipAtPoint(clip, position, volume);
+    }
+
+    public void PlayOneShot2D(
+        SoundId id,
+        float intensity01 = 0f
+    )
+    {
+        if (!TryGetClip(id, out AudioClip clip, out float volume, intensity01))
+        {
+            return;
+        }
+
+        if (sfx2DSource == null)
+        {
+            Debug.LogWarning(
+                "[AudioManager] No AudioSource assigned for 2D one-shots."
+            );
+            return;
+        }
+
+        sfx2DSource.PlayOneShot(clip, volume);
     }
 
     public AudioSource StartAttachedLoop(
