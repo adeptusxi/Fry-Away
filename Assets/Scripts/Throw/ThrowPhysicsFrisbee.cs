@@ -15,7 +15,7 @@ public class ThrowPhysicsFrisbee : ThrowPhysics
     [Tooltip("Frisbee mass (kg)")]
     [SerializeField] private float m;
 
-    private float liftdragConstant; // rho * a/2 --> |L| = cl * V^2 * liftdragConstant
+    private float liftdragConstant; // rho * a/2 --> |L| = cl * v^2 * liftdragConstant, |D| = cd * v^2 * liftdragConstant
     private float aoa; // angle of attack (rad)
     // TODO: Clytie - implement changing aoa affecting lift & drag
     //private float liftMagnitude;
@@ -27,9 +27,9 @@ public class ThrowPhysicsFrisbee : ThrowPhysics
     protected override void Begin()
     {
         liftdragConstant = rho * Mathf.PI * Mathf.Pow(r, 2f) / 2f;
-        aoa = -Data.hand.rotation.eulerAngles.x; // neg sign from LHR
-        lift = cli * Mathf.Pow(CurrentVelocity.magnitude, 2f) * liftdragConstant * Vector3.up;
-        drag = - lift * cdi / cli;
+        aoa = -Data.hand.rotation.eulerAngles.x * Mathf.Deg2Rad; // neg sign from LHR
+        lift = cli * Mathf.Pow(CurrentVelocity.magnitude, 2f) * liftdragConstant * transform.up;
+        drag = cdi * Mathf.Pow(CurrentVelocity.magnitude, 2f) * liftdragConstant * (- CurrentVelocity.normalized);
         fg = m * 9.81f * Vector3.down;
     }
 
@@ -41,6 +41,7 @@ public class ThrowPhysicsFrisbee : ThrowPhysics
          * a dummy example is in ThrowPhysicsLinear.cs 
          */
         Vector3 dv = (lift + drag + fg) * Time.deltaTime / m;
+        CurrentVelocity += dv;
         TryMove(CurrentVelocity * Time.deltaTime, Target.rotation);
     }
 
