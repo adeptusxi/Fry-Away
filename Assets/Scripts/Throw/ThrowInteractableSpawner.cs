@@ -1,16 +1,19 @@
 using UnityEngine;
 
+// basic spawner: spawns at a fixed worldspace position 
 public class ThrowInteractableSpawner : MonoBehaviour
 {
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private GameObject prefab;
-    [SerializeField] private bool verbose;
+    [SerializeField] protected bool verbose;
 
     private ThrowInteractable current;
     private bool active = false;
     private bool needsSpawn = true; // to defer spawn to the next Update
-                                    // (avoid messing up interactor's iteration list as it's still iterating) 
-    
+                                    // (avoid messing up interactor's iteration list as it's still iterating)
+
+    protected Transform SpawnPoint => spawnPoint;
+
     private void Awake()
     {
         if (prefab == null)
@@ -79,17 +82,25 @@ public class ThrowInteractableSpawner : MonoBehaviour
         {
             Debug.Log($"[ThrowInteractableSpawner] spawned {instance.name}");
         }
+
+        OnSpawned(instance, current);
     }
-    
+
     private void Release()
     {
         if (current != null)
         {
             current.OnThrown -= HandleThrown;
+            OnReleased(current);
         }
 
         current = null;
     }
+
+    // instance is the instantiated prefab root
+    protected virtual void OnSpawned(GameObject instance, ThrowInteractable spawned) { } 
+
+    protected virtual void OnReleased(ThrowInteractable released) { }
 
     private void HandleThrown()
     {
