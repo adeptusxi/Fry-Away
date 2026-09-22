@@ -52,6 +52,7 @@ public class ThrowInteractable : MonoBehaviour
     private PoseBuffer heldPoses;
     
     public event Action OnThrown; // fired when the object is handed off to physics
+    public event Action OnGrabbed; // fired when a hand picks the object up
 
     private bool isHeld;
     private int selectorId;
@@ -174,6 +175,8 @@ public class ThrowInteractable : MonoBehaviour
         {
             Debug.Log($"[ThrowInteractable] grabbed by selector {selectorId} ({hapticController})");
         }
+
+        OnGrabbed?.Invoke();
     }
 
     private void HandleMove(PointerEvent evt)
