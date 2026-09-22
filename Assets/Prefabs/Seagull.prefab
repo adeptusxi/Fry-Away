@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HittableSeagull
   moveTo: {fileID: 0}
-  tooCloseDistance: 2
+  tooCloseDistance: 3
   hitSoundId: 6
   minSpeed: 4
   maxSpeed: 6
