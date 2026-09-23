@@ -1,4 +1,4 @@
-using NUnit.Framework;
+// using NUnit.Framework;
 using UnityEngine;
 
 public class ThrowPhysicsFrisbee : ThrowPhysics
@@ -28,7 +28,12 @@ public class ThrowPhysicsFrisbee : ThrowPhysics
 
     protected override void Begin()
     {
-        Assert.IsTrue(mFrisbee > 0);
+        // Assert.IsTrue(mFrisbee > 0);
+        if (mFrisbee <= 0f)
+        {
+            Debug.LogError("[ThrowPhysicsFrisbee] Frisbee mass must be greater than 0.", this);
+            return;
+        }
         CurrentVelocity += Data.hand.dv * mHand / mFrisbee;
         liftdragConstant = rho * Mathf.PI * Mathf.Pow(r, 2f) / 2f;
         aoa = -Data.hand.rotation.eulerAngles.x * Mathf.Deg2Rad; // neg sign from LHR
