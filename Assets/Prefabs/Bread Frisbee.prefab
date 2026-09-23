@@ -93,9 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FixedGripTransformer
   h: 0.08
-  heldPositionOffsetTransform: {fileID: 8286063178565640297}
-  heldPositionOffset: {x: 0, y: 0, z: 0}
-  heldRotationOffset: {x: 315, y: 260, z: 90, w: 0}
+  heldOffsetTransform: {fileID: 8286063178565640297}
 --- !u!114 &6065844527232452624
 MonoBehaviour:
   m_ObjectHideFlags: 0
