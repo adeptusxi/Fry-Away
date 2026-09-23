@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Countdown
   m_EditorClassIdentifier: Assembly-CSharp::SoundDefinition
   id: 10
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 593ac665ec76848a2a45aad7143b7928, type: 3}
   volume: 1
   variantSelection: 0

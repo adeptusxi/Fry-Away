@@ -26,7 +26,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioMixer mixer;
     [SerializeField] private AudioMixerGroup sfxMixerGroup;
 
-    private readonly HashSet<SoundId> missingClipWarnings = new HashSet<SoundId>();
+    private readonly HashSet<SoundId> missingClipWarnings =
+        new HashSet<SoundId>();
 
     private void Awake()
     {
@@ -46,6 +47,8 @@ public class AudioManager : MonoBehaviour
             Instance = null;
         }
     }
+
+    // ---------- Loop Sources ----------
 
     private AudioSource GetLoopSource(LoopTrack track)
     {
@@ -176,6 +179,37 @@ public class AudioManager : MonoBehaviour
         sfx2DSource.PlayOneShot(clip, volume);
     }
 
+    // Get the length of a sound clip.
+    public float GetClipLength(
+        SoundId id,
+        float intensity01 = 0f
+    )
+    {
+        if (library == null ||
+            !library.TryGet(id, out SoundDefinition definition))
+        {
+            return 0f;
+        }
+
+        AudioClip clip = definition.GetClip(intensity01);
+
+        if (clip == null)
+        {
+            return 0f;
+        }
+
+        return clip.length;
+    }
+
+    // Stop the current 2D one-shot sound.
+    public void StopOneShot2D()
+    {
+        if (sfx2DSource != null)
+        {
+            sfx2DSource.Stop();
+        }
+    }
+
     // ---------- Attached / Moving SFX ----------
 
     public AudioSource StartAttachedLoop(
@@ -220,6 +254,8 @@ public class AudioManager : MonoBehaviour
         source.Stop();
         Destroy(source);
     }
+
+    // ---------- Sound Lookup ----------
 
     private bool TryGetClip(
         SoundId id,

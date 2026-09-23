@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         AudioManager.Instance?.PlayLoop(
-            SoundId.CombatBGM,
+            spawnImmediately ? SoundId.CombatBGM : SoundId.IntroBGM,
             AudioManager.LoopTrack.BGM
         );
 
@@ -47,6 +47,11 @@ public class GameManager : MonoBehaviour
 
     public void StartRound()
     {
+        AudioManager.Instance?.PlayLoop(
+            SoundId.CombatBGM,
+            AudioManager.LoopTrack.BGM
+        );
+
         frisbeeSpawner.Activate(true);
         seagullSpawner.Activate(true);
     }

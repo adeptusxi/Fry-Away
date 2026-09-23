@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -7,35 +9,133 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject guidePanel;
     [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private GameObject endScreenPanel;
 
     private void Awake()
     {
         Instance = this;
     }
 
+    // ---------- Main Menu ----------
+
     public void OnStartPressed()
     {
-        mainMenuPanel.SetActive(false);
-        guidePanel.SetActive(true);
+        // Start the sustained loading/start sound
+        AudioManager.Instance?.PlayLoop(
+            SoundId.UIStartButton,
+            AudioManager.LoopTrack.Loading
+        );
+
+        // Hide main menu
+        if (mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(false);
+        }
+
+        // Show guide
+        if (guidePanel != null)
+        {
+            guidePanel.SetActive(true);
+        }
     }
 
     public void OnSettingsPressed()
     {
-        mainMenuPanel.SetActive(false);
-        settingsPanel.SetActive(true);
+        if (mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(false);
+        }
+
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(true);
+        }
     }
+
+    // ---------- Settings ----------
 
     public void OnSettingsBackPressed()
     {
-        settingsPanel.SetActive(false);
-        mainMenuPanel.SetActive(true);
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(false);
+        }
+
+        if (mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(true);
+        }
     }
+
+    // ---------- Guide / Start Game ----------
 
     public void OnGuideDismissed()
     {
-        guidePanel.SetActive(false);
+        StartCoroutine(StartGameSequence());
+    }
+
+    private IEnumerator StartGameSequence()
+    {
+        // Hide guide
+        if (guidePanel != null)
+        {
+            guidePanel.SetActive(false);
+        }
+
+        // Stop loading/start sound if it is currently playing
+        AudioManager.Instance?.StopLoop(
+            AudioManager.LoopTrack.Loading
+        );
+
+        // Play countdown
+        AudioManager.Instance?.PlayOneShot2D(
+            SoundId.Countdown
+        );
+
+        // Find countdown length
+        float countdownLength = 0f;
+
+        if (AudioManager.Instance != null)
+        {
+            countdownLength =
+                AudioManager.Instance.GetClipLength(
+                    SoundId.Countdown
+                );
+        }
+
+        // Wait until countdown finishes
+        if (countdownLength > 0f)
+        {
+            yield return new WaitForSeconds(
+                countdownLength
+            );
+        }
+
+        // Make sure countdown sound has stopped
+        AudioManager.Instance?.StopOneShot2D();
+
+        // Start actual gameplay
         GameManager.Instance?.StartRound();
     }
+
+    // ---------- End Screen ----------
+
+    public void ShowEndScreen()
+    {
+        if (endScreenPanel != null)
+        {
+            endScreenPanel.SetActive(true);
+        }
+    }
+
+    public void OnTryAgainPressed()
+    {
+        SceneManager.LoadScene(
+            SceneManager.GetActiveScene().buildIndex
+        );
+    }
+
+    // ---------- Exit ----------
 
     public void OnExitPressed()
     {
