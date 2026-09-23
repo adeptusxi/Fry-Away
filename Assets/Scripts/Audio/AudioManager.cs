@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
@@ -20,6 +21,10 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource ambientSource;
     [SerializeField] private AudioSource loadingSource;
     [SerializeField] private AudioSource sfx2DSource;
+
+    [Header("Audio Mixer")]
+    [SerializeField] private AudioMixer mixer;
+    [SerializeField] private AudioMixerGroup sfxMixerGroup;
 
     private readonly HashSet<SoundId> missingClipWarnings = new HashSet<SoundId>();
 
@@ -88,6 +93,40 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // ---------- Volume Controls ----------
+
+    public void SetMasterVolume(float value)
+    {
+        SetMixerVolume("MasterVol", value);
+    }
+
+    public void SetMusicVolume(float value)
+    {
+        SetMixerVolume("MusicVol", value);
+    }
+
+    public void SetSfxVolume(float value)
+    {
+        SetMixerVolume("SfxVol", value);
+    }
+
+    private void SetMixerVolume(string parameter, float value)
+    {
+        if (mixer == null)
+        {
+            return;
+        }
+
+        float dB =
+            value > 0.0001f
+                ? Mathf.Log10(value) * 20f
+                : -80f;
+
+        mixer.SetFloat(parameter, dB);
+    }
+
+    // ---------- 3D One-Shot SFX ----------
+
     public void PlayOneShotAtPosition(
         SoundId id,
         Vector3 position,
@@ -99,8 +138,22 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        AudioSource.PlayClipAtPoint(clip, position, volume);
+        GameObject temp = new GameObject($"OneShot_{id}");
+        temp.transform.position = position;
+
+        AudioSource source = temp.AddComponent<AudioSource>();
+
+        source.clip = clip;
+        source.volume = volume;
+        source.spatialBlend = 1f;
+        source.outputAudioMixerGroup = sfxMixerGroup;
+
+        source.Play();
+
+        Destroy(temp, clip.length);
     }
+
+    // ---------- 2D One-Shot SFX ----------
 
     public void PlayOneShot2D(
         SoundId id,
@@ -122,6 +175,8 @@ public class AudioManager : MonoBehaviour
 
         sfx2DSource.PlayOneShot(clip, volume);
     }
+
+    // ---------- Attached / Moving SFX ----------
 
     public AudioSource StartAttachedLoop(
         SoundId id,
@@ -145,9 +200,10 @@ public class AudioManager : MonoBehaviour
         source.volume = volume;
         source.loop = true;
         source.playOnAwake = false;
-
-        // This sound comes from the moving object in 3D space.
         source.spatialBlend = 1f;
+
+        // Route moving-object sounds through SFX volume.
+        source.outputAudioMixerGroup = sfxMixerGroup;
 
         source.Play();
 
@@ -166,16 +222,17 @@ public class AudioManager : MonoBehaviour
     }
 
     private bool TryGetClip(
-    SoundId id,
-    out AudioClip clip,
-    out float volume,
-    float intensity01 = 0f
+        SoundId id,
+        out AudioClip clip,
+        out float volume,
+        float intensity01 = 0f
     )
     {
         clip = null;
         volume = 1f;
 
-        if (library == null || !library.TryGet(id, out SoundDefinition definition))
+        if (library == null ||
+            !library.TryGet(id, out SoundDefinition definition))
         {
             LogMissingOnce(id);
             return false;

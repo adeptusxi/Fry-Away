@@ -21,24 +21,31 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        
+
         Instance = this;
 
-        frisbeeSpawner.Activate(true);
-        seagullSpawner.Activate(true);
+        // Do not start gameplay while the player is in the menu.
+        frisbeeSpawner.Activate(false);
+        seagullSpawner.Activate(false);
     }
 
     private void Start()
     {
-    AudioManager.Instance?.PlayLoop(
-        SoundId.CombatBGM,
-        AudioManager.LoopTrack.BGM
-    );
+        AudioManager.Instance?.PlayLoop(
+            SoundId.CombatBGM,
+            AudioManager.LoopTrack.BGM
+        );
 
-    AudioManager.Instance?.PlayLoop(
-        SoundId.AmbientOcean,
-        AudioManager.LoopTrack.Ambient
-    );
+        AudioManager.Instance?.PlayLoop(
+            SoundId.AmbientOcean,
+            AudioManager.LoopTrack.Ambient
+        );
+    }
+
+    public void StartRound()
+    {
+        frisbeeSpawner.Activate(true);
+        seagullSpawner.Activate(true);
     }
 
     private void OnDestroy()
@@ -49,5 +56,5 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // TODO: intro UI, score tracking (+ leaderboard?), game over, etc.
+    // TODO: score tracking (+ leaderboard?), game over, etc.
 }

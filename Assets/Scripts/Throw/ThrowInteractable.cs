@@ -153,6 +153,29 @@ public class ThrowInteractable : MonoBehaviour
             return;
         }
 
+        // Resolve which hand/controller is trying to grab.
+        bool resolved = TryResolveGrab(
+            evt,
+            out Handedness handedness,
+            out grabController
+        );
+
+        // Only allow the hand selected in Settings.
+        if (resolved && SettingsManager.Instance != null)
+        {
+            bool isPreferredHand =
+                (SettingsManager.Instance.CurrentHand == SettingsManager.PreferredHand.Left
+                    && handedness == Handedness.Left)
+                ||
+                (SettingsManager.Instance.CurrentHand == SettingsManager.PreferredHand.Right
+                    && handedness == Handedness.Right);
+
+            if (!isPreferredHand)
+            {
+                return;
+            }
+        }
+
         isHeld = true;
         selectorId = evt.Identifier;
         isArmed = false;
@@ -164,17 +187,20 @@ public class ThrowInteractable : MonoBehaviour
         heldPoses.Clear();
         warnedNoController = false;
 
-        bool resolved = TryResolveGrab(evt, out Handedness handedness, out grabController);
         grabAnchor = resolved ? ControllerAnchor.Get(handedness) : null;
         hapticController = ToController(handedness, resolved);
 
         gripTransformer.Suspended = false;
-        
-        heldTransform = grabbable.Transform != null ? grabbable.Transform : transform;
+
+        heldTransform = grabbable.Transform != null
+            ? grabbable.Transform
+            : transform;
 
         if (verbose)
         {
-            Debug.Log($"[ThrowInteractable] grabbed by selector {selectorId} ({hapticController})");
+            Debug.Log(
+                $"[ThrowInteractable] grabbed by selector {selectorId} ({hapticController})"
+            );
         }
 
         OnGrabbed?.Invoke();
