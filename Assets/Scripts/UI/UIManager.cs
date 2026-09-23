@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     [SerializeField] private GameObject mainMenuPanel;
+    [SerializeField] private GameObject handPreferencePanel;
     [SerializeField] private GameObject guidePanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject endScreenPanel;
@@ -32,10 +33,10 @@ public class UIManager : MonoBehaviour
             mainMenuPanel.SetActive(false);
         }
 
-        // Show guide
-        if (guidePanel != null)
+        // Show hand preference
+        if (handPreferencePanel != null)
         {
-            guidePanel.SetActive(true);
+            handPreferencePanel.SetActive(true);
         }
     }
 
@@ -50,6 +51,33 @@ public class UIManager : MonoBehaviour
         {
             settingsPanel.SetActive(true);
         }
+    }
+
+    // ---------- Hand Preference ----------
+
+    public void OnHandPreferenceSelected(bool right)
+    {
+        if (right)
+        {
+            SettingsManager.Instance?.SelectRightHand();
+        }
+        else
+        {
+            SettingsManager.Instance?.SelectLeftHand();
+        }
+
+        // Hide hand preference panel
+        if (handPreferencePanel != null)
+        {
+            handPreferencePanel.SetActive(false);
+        }
+
+        // Show guide
+        if (guidePanel != null)
+        {
+            guidePanel.SetActive(true);
+        }
+
     }
 
     // ---------- Settings ----------
