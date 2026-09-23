@@ -8,6 +8,7 @@ public struct Kinematics
     public Quaternion rotation;
     public Vector3 velocity;
     public Vector3 angularVelocity;
+    public Vector3 dv;
 }
 
 // everything known about the moment a throw was released 

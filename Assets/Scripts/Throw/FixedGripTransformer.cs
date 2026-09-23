@@ -6,7 +6,8 @@ using UnityEngine;
 public class FixedGripTransformer : MonoBehaviour, ITransformer
 {
     [Tooltip("Where the object sits relative to the grabbing hand, in the hand's local space.")]
-    [SerializeField] private Vector3 heldPositionOffset;
+    [SerializeField] private Transform heldPositionOffsetTransform;
+    private Vector3 heldPositionOffset;
 
     [Tooltip("How the object is oriented relative to the grabbing hand, in degrees.")]
     [SerializeField] private Vector3 heldRotationOffset;
@@ -20,6 +21,7 @@ public class FixedGripTransformer : MonoBehaviour, ITransformer
     public void Initialize(IGrabbable grabbable)
     {
         this.grabbable = grabbable;
+        heldPositionOffset = -heldPositionOffsetTransform.localPosition;
     }
 
     public void BeginTransform()

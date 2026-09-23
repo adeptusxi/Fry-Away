@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53f8100dfbf5842f0bcb0b9e56081340, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FixedGripTransformer
-  heldPositionOffset: {x: 0, y: 0, z: 0}
+  heldPositionOffsetTransform: {fileID: 0}
   heldRotationOffset: {x: 315, y: 260, z: 90}
 --- !u!114 &6065844527232452624
 MonoBehaviour:
@@ -115,12 +115,12 @@ MonoBehaviour:
   aimAssist: 0.3
   maxAssistAngle: 30
   maxAssistRange: 30
-  velocityScalar: 1
+  mHand: 1
   rho: 1.2
   cli: 0.13
   cdi: 0.085
   r: 0.3
-  m: 0.15
+  mFrisbee: 0.175
 --- !u!114 &895884084208087586
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -67,6 +67,7 @@ public class ThrowInteractable : MonoBehaviour
     // running sums over the throw window 
     private Vector3 handVelocitySum;
     private Vector3 heldVelocitySum;
+    private Vector3 dvSum;
     private int windowSamples;
     
     private Transform heldTransform; // the transform the Grabbable actually moves 
@@ -208,6 +209,7 @@ public class ThrowInteractable : MonoBehaviour
 
         handVelocitySum += hand.velocity;
         heldVelocitySum += held.velocity;
+        dvSum += hand.dv; 
         windowSamples++;
 
         if (!hasPeak || handSpeed > peakHand.velocity.magnitude)
@@ -302,7 +304,7 @@ public class ThrowInteractable : MonoBehaviour
 
         if (verbose)
         {
-            Debug.Log($"[ThrowInteractable] throw fired at {data.hand.velocity.magnitude:F2} m/s (peak {data.peakHand.velocity.magnitude:F2})");
+            Debug.Log($"[ThrowInteractable] throw fired at {data.hand.velocity.magnitude:F2} m/s (peak {data.peakHand.velocity.magnitude:F2}) with dv = {data.hand.dv.magnitude:F2}");
         }
 
         physicsProvider.Initialize(data, this);
@@ -329,6 +331,7 @@ public class ThrowInteractable : MonoBehaviour
     {
         handVelocitySum = Vector3.zero;
         heldVelocitySum = Vector3.zero;
+        dvSum = Vector3.zero;
         windowSamples = 0;
     }
 
@@ -539,9 +542,10 @@ public class ThrowInteractable : MonoBehaviour
             {
                 return false;
             }
-
+            Vector3 oldVelocity = kinematics.velocity;
             kinematics.velocity = (poses[newest].position - poses[oldest].position) / dt;
             kinematics.angularVelocity = AngularVelocity(poses[oldest].rotation, poses[newest].rotation, dt);
+            kinematics.dv = kinematics.velocity - oldVelocity;
             return true;
         }
 
