@@ -94,6 +94,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FixedGripTransformer
   h: 0.08
   heldOffsetTransform: {fileID: 8286063178565640297}
+  leftHand: 0
 --- !u!114 &6065844527232452624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -774,13 +775,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6718836987321870692}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.2523673, y: -0.6943263, z: 0.66053826, w: 0.13383192}
-  m_LocalPosition: {x: -0.09, y: 0, z: 0}
+  m_LocalRotation: {x: -0.21745157, y: -0.68637055, z: 0.6728409, w: 0.16998668}
+  m_LocalPosition: {x: -0.09, y: 0, z: 0.01}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 3826693422732689469}
-  m_LocalEulerAnglesHint: {x: 418.18, y: 260, z: 90}
+  m_LocalEulerAnglesHint: {x: 418.18, y: 266, z: 90}
 --- !u!1001 &4062797074278083470
 PrefabInstance:
   m_ObjectHideFlags: 0

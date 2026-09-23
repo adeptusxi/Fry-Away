@@ -1,4 +1,6 @@
 using Oculus.Interaction;
+using Oculus.Interaction.Input;
+using Unity.VisualScripting;
 using UnityEngine;
 
 // holds a grabbed object at a fixed, specified pose relative to the grabbing hand. 
@@ -6,7 +8,7 @@ using UnityEngine;
 public class FixedGripTransformer : MonoBehaviour, ITransformer
 {
     [SerializeField] private float h = 0.05f; // gizmo scale
-    [Tooltip("Where and what orientation the object sits relative to the grabbing hand, in the hand's local space.")]
+    [Tooltip("Where and what orientation the object sits relative to the grabbing hand, in the hand's local space. Right hand for reference.")]
     [SerializeField] private Transform heldOffsetTransform;
     private Vector3 heldPositionOffset;
 
@@ -18,12 +20,35 @@ public class FixedGripTransformer : MonoBehaviour, ITransformer
     public bool Suspended { get; set; }
 
     private IGrabbable grabbable;
+    private Handedness handedness = Handedness.Right;
+    [SerializeField] private bool leftHand = false; // for testing only
 
     public void Initialize(IGrabbable grabbable)
     {
         this.grabbable = grabbable;
-        heldRotationOffset = heldOffsetTransform.localRotation;
-        heldPositionOffset = heldOffsetTransform.localPosition;
+        // for testing only
+        if (leftHand) ChangeHandedness(Handedness.Left);
+        handedness = leftHand ? Handedness.Left : Handedness.Right;
+        //
+        //heldRotationOffset = heldOffsetTransformR.localRotation;
+        //heldPositionOffset = heldOffsetTransformR.localPosition;
+    }
+
+    public void ChangeHandedness(Handedness h)
+    {
+        if (handedness != h)
+        {
+            Vector3 pos = heldOffsetTransform.localPosition;
+            Vector3 mirroredPos = new Vector3(-pos.x, pos.y, pos.z);
+            Vector3 forward = heldOffsetTransform.localRotation * Vector3.forward;
+            Vector3 up = heldOffsetTransform.localRotation * Vector3.up;
+            forward.x *= -1;
+            up.x *= -1;
+            Quaternion mirroredRot = Quaternion.LookRotation(forward, up);
+            heldOffsetTransform.localPosition = mirroredPos;
+            heldOffsetTransform.localRotation = mirroredRot;
+            handedness = h;
+        }
     }
 
     public void BeginTransform()
@@ -37,6 +62,7 @@ public class FixedGripTransformer : MonoBehaviour, ITransformer
         {
             return;
         }
+
         heldRotationOffset = heldOffsetTransform.localRotation;
         heldPositionOffset = heldOffsetTransform.localPosition;
 

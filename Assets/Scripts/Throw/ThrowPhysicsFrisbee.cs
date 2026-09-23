@@ -35,16 +35,16 @@ public class ThrowPhysicsFrisbee : ThrowPhysics
             Debug.LogError("[ThrowPhysicsFrisbee] Frisbee mass must be greater than 0.", this);
             return;
         }
-        // conservation of (angular) momentum
-        CurrentVelocity += Data.hand.dv * mHand / mFrisbee;
-        angVelocity = Data.hand.angularVelocity * mHand / mFrisbee;
-        // aerodynamic forces
         liftdragConstant = rho * Mathf.PI * Mathf.Pow(r, 2f) / 2f;
-        aoa = -Data.hand.rotation.eulerAngles.x * Mathf.Deg2Rad; // neg sign from LHR
-        lift = cli * Mathf.Pow(CurrentVelocity.magnitude, 2f) * liftdragConstant * transform.up;
-        drag = cdi * Mathf.Pow(CurrentVelocity.magnitude, 2f) * liftdragConstant * (- CurrentVelocity.normalized);
+        // conservation of (angular) momentum
+        // TODO: possibly use more data pts than just the last one?
+        Vector3 dv = Data.hand.dv * mHand / mFrisbee;
+        CurrentVelocity = Data.hand.dv * mHand / mFrisbee; // (CurrentVelocity + dv).magnitude * ???(angVelocity).normalized; // quaternions use RHR
+        angVelocity = Data.hand.angularVelocity * mHand / mFrisbee;
         // gravity
         fgrav = mFrisbee * 9.81f * Vector3.down;
+
+        CalculatePhysics();
     }
 
     protected override void Step()
@@ -54,10 +54,20 @@ public class ThrowPhysicsFrisbee : ThrowPhysics
          * the Data variable from the parent ThrowPhysics.cs class holds all the information about the frisbee and the hand. 
          * a dummy example is in ThrowPhysicsLinear.cs 
          */
+        CalculatePhysics();
         float dt = Time.deltaTime;
         Vector3 dv = (lift + drag + fgrav) * dt / mFrisbee;
         CurrentVelocity += dv;
-        TryMove(CurrentVelocity * Time.deltaTime, Quaternion.AngleAxis(angVelocity.magnitude*dt*Mathf.Rad2Deg, angVelocity.normalized) * Target.rotation);
+        TryMove(CurrentVelocity * dt, Quaternion.AngleAxis(angVelocity.magnitude*dt*Mathf.Rad2Deg, angVelocity.normalized) * Target.rotation);
+    }
+
+    protected private void CalculatePhysics()
+    {
+        // aerodynamics
+        aoa = -transform.rotation.eulerAngles.x * Mathf.Deg2Rad; // neg sign from Unity using LHR
+        lift = cli * Mathf.Pow(CurrentVelocity.magnitude, 2f) * liftdragConstant * transform.up;
+        drag = cdi * Mathf.Pow(CurrentVelocity.magnitude, 2f) * liftdragConstant * (-CurrentVelocity.normalized);
+        // TODO: update angular velocity
     }
 
     protected override void Stop()
