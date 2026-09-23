@@ -229,6 +229,7 @@ MonoBehaviour:
   frisbeeSpawner: {fileID: 1880818961}
   seagullSpawner: {fileID: 1885502843}
   showDebugDisplays: 0
+  spawnImmediately: 1
 --- !u!4 &49955672
 Transform:
   m_ObjectHideFlags: 0
@@ -696,6 +697,8 @@ MonoBehaviour:
   ambientSource: {fileID: 1944109828}
   loadingSource: {fileID: 0}
   sfx2DSource: {fileID: 0}
+  mixer: {fileID: 0}
+  sfxMixerGroup: {fileID: 0}
 --- !u!4 &880739308
 Transform:
   m_ObjectHideFlags: 0
@@ -982,7 +985,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BreadSpawnerBasket
   spawnPoint: {fileID: 420366528}
   prefab: {fileID: 5427119376664213527, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
-  verbose: 0
+  verbose: 1
   attachPoint: {fileID: 191814418}
 --- !u!1 &1885502841
 GameObject:
