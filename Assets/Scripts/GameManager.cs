@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     [Tooltip("Turn every DebugDisplay in the scene on or off")]
     [SerializeField] private bool showDebugDisplays = true;
 
+    [Tooltip("Check this box for test scenes w/o UI")]
+    [SerializeField] private bool spawnImmediately = false;
+    
     public static GameManager Instance { get; private set; }
 
     public bool ShowDebugDisplays => showDebugDisplays;
@@ -24,9 +27,9 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
 
-        // Do not start gameplay while the player is in the menu.
-        frisbeeSpawner.Activate(false);
-        seagullSpawner.Activate(false);
+        // Do not start gameplay while the player is in the menu (unless toggled on for debug/testing scenes).
+        frisbeeSpawner.Activate(spawnImmediately);
+        seagullSpawner.Activate(spawnImmediately);
     }
 
     private void Start()
