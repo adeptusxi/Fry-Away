@@ -30,7 +30,7 @@ public class TargetSpawner : MonoBehaviour
     [SerializeField, Min(1)] private int maxTargets = 15;
 
     [Header("Debug")]
-    [SerializeField] private bool verbose;
+    [SerializeField] protected bool verbose;
 
     private bool active = false;
     private readonly List<HittableTarget> currTargets = new();
@@ -40,6 +40,9 @@ public class TargetSpawner : MonoBehaviour
     public event Action<Vector3> OnTargetSpawned;
 
     public Transform ConeOrigin => coneOrigin;
+
+    public IReadOnlyList<HittableTarget> CurrentTargets => currTargets; // may contain nulls between prunes. reader should check anything read from here
+
     public float MinDistance => minDistance;
     public float MaxDistance => maxDistance;
     public bool HasFloor => floor != null;
@@ -107,6 +110,19 @@ public class TargetSpawner : MonoBehaviour
             nextSpawnTime = Time.time + initialSpawnDelay;
     }
 
+    public void ClearTargets()
+    {
+        for (int i = currTargets.Count - 1; i >= 0; i--)
+        {
+            if (currTargets[i] != null)
+            {
+                Destroy(currTargets[i].gameObject);
+            }
+        }
+
+        currTargets.Clear();
+    }
+
     private void Spawn()
     {
         Vector3 dir = RandomDirectionInCone();
@@ -125,6 +141,7 @@ public class TargetSpawner : MonoBehaviour
 
         HittableTarget target = Instantiate(hittableTarget, pos, rot);
         target.RegisterMoveTo(coneOrigin);
+        ConfigureTarget(target);
         currTargets.Add(target);
 
         OnTargetSpawned?.Invoke(pos);
@@ -134,6 +151,9 @@ public class TargetSpawner : MonoBehaviour
             Debug.Log($"[TargetSpawner] spawned {target.name} at {pos}", this);
         }
     }
+
+    // called after RegisterMoveTo, before the target is tracked
+    protected virtual void ConfigureTarget(HittableTarget target) { }
 
     private Vector3 RandomDirectionInCone()
     {
@@ -206,8 +226,7 @@ public class TargetSpawner : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    // scene debug view for the spawn cone 
-    private void OnDrawGizmosSelected()
+    protected virtual void OnDrawGizmosSelected()
     {
         if (coneOrigin == null)
         {

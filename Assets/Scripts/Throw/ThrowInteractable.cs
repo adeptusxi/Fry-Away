@@ -53,6 +53,7 @@ public class ThrowInteractable : MonoBehaviour
     
     public event Action OnThrown; // fired when the object is handed off to physics
     public event Action OnGrabbed; // fired when a hand picks the object up
+    public event Action OnFlightStopped; // fired when the thrown object has come to rest (hit something, stopped, or timed out)
 
     private bool isHeld;
     private int selectorId;
@@ -189,6 +190,11 @@ public class ThrowInteractable : MonoBehaviour
 
         grabAnchor = resolved ? ControllerAnchor.Get(handedness) : null;
         hapticController = ToController(handedness, resolved);
+
+        if (resolved)
+        {
+            gripTransformer.SetHandedness(handedness);
+        }
 
         gripTransformer.Suspended = false;
 
@@ -385,6 +391,8 @@ public class ThrowInteractable : MonoBehaviour
         gripTransformer.Suspended = false;
         EnsureInert();
         SetInteractablesEnabled(true);
+
+        OnFlightStopped?.Invoke();
     }
 
     private void SetInteractablesEnabled(bool value)

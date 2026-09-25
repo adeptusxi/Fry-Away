@@ -1,6 +1,5 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
@@ -8,7 +7,6 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject handPreferencePanel;
-    [SerializeField] private GameObject guidePanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject endScreenPanel;
 
@@ -66,18 +64,17 @@ public class UIManager : MonoBehaviour
             SettingsManager.Instance?.SelectLeftHand();
         }
 
+        AudioManager.Instance?.StopLoop(
+            AudioManager.LoopTrack.Loading
+        );
+
         // Hide hand preference panel
         if (handPreferencePanel != null)
         {
             handPreferencePanel.SetActive(false);
         }
-
-        // Show guide
-        if (guidePanel != null)
-        {
-            guidePanel.SetActive(true);
-        }
-
+        
+        GameManager.Instance?.SelectHandedness(right);
     }
 
     // ---------- Settings ----------
@@ -94,7 +91,7 @@ public class UIManager : MonoBehaviour
             mainMenuPanel.SetActive(true);
         }
     }
-
+    
     // ---------- Guide / Start Game ----------
 
     public void OnGuideDismissed()
@@ -104,11 +101,12 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator StartGameSequence()
     {
-        // Hide guide
-        if (guidePanel != null)
-        {
-            guidePanel.SetActive(false);
-        }
+        //// Hide guide
+        //if (guidePanel != null)
+        //{
+        //    guidePanel.SetActive(false);
+        //}
+        //// (this is now handled from GameManager as a diagetic ui)
 
         // Stop loading/start sound if it is currently playing
         AudioManager.Instance?.StopLoop(
@@ -158,9 +156,12 @@ public class UIManager : MonoBehaviour
 
     public void OnTryAgainPressed()
     {
-        SceneManager.LoadScene(
-            SceneManager.GetActiveScene().buildIndex
-        );
+        if (endScreenPanel != null)
+        {
+            endScreenPanel.SetActive(false);
+        }
+
+        GameManager.Instance?.PlayAgain();
     }
 
     // ---------- Exit ----------

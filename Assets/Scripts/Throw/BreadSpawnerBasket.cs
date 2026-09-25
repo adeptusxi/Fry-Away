@@ -13,7 +13,9 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
     private GameObject currentBread; 
     private ThrowInteractable currentInteractable;
     
-    // TODO: xiao/shiyu: once the UI is implemented, hook up the handedness button to call SetHandedness 
+    private void Start() {
+        AttachBasket();
+    }
 
     public void SetHandedness(bool right)
     {

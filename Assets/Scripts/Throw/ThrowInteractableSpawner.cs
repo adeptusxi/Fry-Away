@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-// basic spawner: spawns at a fixed worldspace position 
+// basic spawner: spawns at a fixed worldspace position
 public class ThrowInteractableSpawner : MonoBehaviour
 {
     [SerializeField] private Transform spawnPoint;
@@ -8,11 +9,16 @@ public class ThrowInteractableSpawner : MonoBehaviour
     [SerializeField] protected bool verbose;
 
     private ThrowInteractable current;
+    private GameObject currentInstance;
     private bool active = false;
     private bool needsSpawn = true; // to defer spawn to the next Update
                                     // (avoid messing up interactor's iteration list as it's still iterating)
 
     protected Transform SpawnPoint => spawnPoint;
+
+    // fired when the spawned object is thrown, with the object that was thrown. listeners that care
+    // about where that throw ends up can subscribe to its OnFlightStopped themselves
+    public event Action<ThrowInteractable> OnThrowableThrown;
 
     private void Awake()
     {
@@ -56,7 +62,23 @@ public class ThrowInteractableSpawner : MonoBehaviour
     {
         active = activate;
     }
-    
+
+    // destroys whatever is currently waiting to be picked up, so nothing is left over across a reset.
+    // does not touch objects that have already been thrown
+    public void DespawnCurrent()
+    {
+        GameObject instance = currentInstance;
+
+        Release();
+
+        if (instance != null)
+        {
+            Destroy(instance);
+        }
+
+        needsSpawn = true;
+    }
+
     private void Spawn()
     {
         needsSpawn = false;
@@ -76,6 +98,7 @@ public class ThrowInteractableSpawner : MonoBehaviour
         }
 
         current = spawned;
+        currentInstance = instance;
         current.OnThrown += HandleThrown;
 
         if (verbose)
@@ -95,6 +118,7 @@ public class ThrowInteractableSpawner : MonoBehaviour
         }
 
         current = null;
+        currentInstance = null;
     }
 
     // instance is the instantiated prefab root
@@ -105,5 +129,8 @@ public class ThrowInteractableSpawner : MonoBehaviour
     private void HandleThrown()
     {
         needsSpawn = true;
+
+        // notify before the replacement spawns, so a listener can Activate(false) to stop the refill
+        OnThrowableThrown?.Invoke(current);
     }
 }

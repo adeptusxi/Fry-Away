@@ -226,10 +226,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e932afee1e79b4f4995dabfa8c24caa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  frisbeeSpawner: {fileID: 1880818961}
+  breadSpawner: {fileID: 1880818961}
   seagullSpawner: {fileID: 1885502843}
+  startSign: {fileID: 0}
+  endSign: {fileID: 0}
+  tutorialSeagullPrefab: {fileID: 0}
+  tutorialSpawnPoint: {fileID: 0}
+  playerTransform: {fileID: 0}
+  breadCount: 20
+  lastThrowResolveTimeout: 10
+  maxPointsAtRange: 100
+  minScoreDistance: 3
+  maxScoreDistance: 20
+  scoreCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hoveringPointsScalar: 0.25
+  longShotDistance: 15
+  longShotBonus: 50
+  maxHoveringSeagulls: 5
   showDebugDisplays: 0
   spawnImmediately: 1
+  verbose: 1
 --- !u!4 &49955672
 Transform:
   m_ObjectHideFlags: 0
@@ -238,12 +277,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 49955670}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.16199, y: 0.09637, z: -0.10535}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1386917829}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &191814417
 GameObject:
@@ -933,6 +972,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 49955672}
   - {fileID: 2062685998}
   - {fileID: 1885502842}
   - {fileID: 1880818960}
@@ -1445,7 +1485,6 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 49955672}
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 2614253693769072846}
