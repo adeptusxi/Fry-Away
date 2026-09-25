@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoundDefinition
   id: 2
   clips:
-  - {fileID: 8300000, guid: 71dd3a123bf244072912a9942bee2ccb, type: 3}
-  - {fileID: 8300000, guid: 4f0a6c22244d34acb9d5b0d2750ebf4e, type: 3}
+  - {fileID: 8300000, guid: b7652dad641e94c2492007a5c4c4ec5d, type: 3}
   volume: 1
   variantSelection: 0
