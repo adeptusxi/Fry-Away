@@ -17,6 +17,8 @@ public abstract class HittableTarget : MonoBehaviour
     private bool reachedTarget;
 
     protected Transform MoveTo => moveTo;
+    
+    public float DistanceToMoveTo => moveTo != null ? Vector3.Distance(transform.position, moveTo.position) : 0f;
 
     // callback for when this target is hit by something thrown. The thrown object will call this; the target is only responsible for implementing what happens after.
     // hitBy: the thing that hit this object 
@@ -50,8 +52,13 @@ public abstract class HittableTarget : MonoBehaviour
         }
     }
     
-    #region Subclass hooks
+    protected void ResetProximity()
+    {
+        reachedTarget = false;
+    }
     
+    #region Subclass hooks
+
     protected virtual void OnMoveToRegistered() { }
     
     protected virtual void Move() { }

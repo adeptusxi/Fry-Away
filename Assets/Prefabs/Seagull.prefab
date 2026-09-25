@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5757250079944301884
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5601694743596393290}
+  m_Layer: 11
+  m_Name: beakTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5601694743596393290
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5757250079944301884}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0.7071068, w: 0}
+  m_LocalPosition: {x: 3.61, y: 3.31, z: 3.03}
+  m_LocalScale: {x: 3.728344, y: 9.99002, z: 8.989236}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3005060216528161986}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 180}
 --- !u!1 &7768305294588918595
 GameObject:
   m_ObjectHideFlags: 0
@@ -54,12 +85,25 @@ MonoBehaviour:
   maxYawOffset: 10
   weaveFrequency: 0.35
   irregularity: 0.1
-  onHitScaleAnimation:
+  swoopSpeed: 7
+  swoopTurnRate: 4
+  leavePauseDuration: 0.5
+  leaveTurnDuration: 1.5
+  leaveSpeed: 1.5
+  leaveYawOffset: 45
+  leaveIrregularity: 0.85
+  leaveClimb: 0.2
+  leaveLifetime: 8
+  flyAwayAngle: 65
+  flyAwayTurnDuration: 0.35
+  flyAwaySpeed: 9
+  flyAwayDuration: 1.2
+  flyAwayScaleCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -67,28 +111,24 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.4
-      value: 1
-      inSlope: 0.12819935
-      outSlope: 0.12819935
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.21891876
-    - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: -4.78638
-      outSlope: -4.78638
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.07341156
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  onHitScalePeak: 1.25
-  onHitAnimationDuration: 0.25
+  longShotVfx: {fileID: 0}
+  hoverSpeed: 1.5
+  hoverBobAmplitude: 0.4
+  hoverBobFrequency: 0.5
+  hoverTurnRate: 2
+  beak: {fileID: 5601694743596393290}
+  noticeRadius: 1.2
 --- !u!136 &487653903476520873
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -108,9 +148,9 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.6
-  m_Height: 2.4
-  m_Direction: 2
+  m_Radius: 0.45
+  m_Height: 1.98
+  m_Direction: 0
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &7449337043366956283
 PrefabInstance:
@@ -122,15 +162,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 0f2fb2a3c4fad4ef999e1104c5bf504b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0f2fb2a3c4fad4ef999e1104c5bf504b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0f2fb2a3c4fad4ef999e1104c5bf504b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0f2fb2a3c4fad4ef999e1104c5bf504b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -194,12 +234,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -3542852092398272455, guid: 0f2fb2a3c4fad4ef999e1104c5bf504b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5601694743596393290}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0f2fb2a3c4fad4ef999e1104c5bf504b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6608693277366188148}
   m_SourcePrefab: {fileID: 100100000, guid: 0f2fb2a3c4fad4ef999e1104c5bf504b, type: 3}
+--- !u!4 &3005060216528161986 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -3542852092398272455, guid: 0f2fb2a3c4fad4ef999e1104c5bf504b, type: 3}
+  m_PrefabInstance: {fileID: 7449337043366956283}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6983928465665207056 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0f2fb2a3c4fad4ef999e1104c5bf504b, type: 3}
