@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: AmbientOcean
   m_EditorClassIdentifier: Assembly-CSharp::SoundDefinition
   id: 3
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 9dbddffd07826449cb7dceff9103e89e, type: 3}
   volume: 1
   variantSelection: 0
