@@ -18,5 +18,8 @@ public enum SoundId
     ObjectChargeLoop,
 
     // Game flow 
-    Countdown
+    Countdown,
+
+    // Append new IDs to preserve existing serialized sound assignments.
+    UIButtonHover
 }
