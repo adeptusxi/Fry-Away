@@ -89,6 +89,7 @@ public class AudioManager : MonoBehaviour
 
         if (track == LoopTrack.BGM)
         {
+            source.pitch = 1f;
             CancelBgmTransition();
             bgmTransition = StartCoroutine(
                 TransitionBgm(source, clip, volume)
@@ -147,6 +148,7 @@ public class AudioManager : MonoBehaviour
         bgmSource.Stop();
         bgmSource.clip = clip;
         bgmSource.volume = volume;
+        bgmSource.pitch = 1f;
         bgmSource.loop = true;
         bgmSource.Play();
     }
@@ -158,6 +160,14 @@ public class AudioManager : MonoBehaviour
         {
             bgmSource.Stop();
             bgmSource.clip = null;
+        }
+    }
+
+    public void SetBgmPitch(float pitch)
+    {
+        if (bgmSource != null)
+        {
+            bgmSource.pitch = Mathf.Max(0.01f, pitch);
         }
     }
 
