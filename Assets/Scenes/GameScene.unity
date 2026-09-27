@@ -343,6 +343,7 @@ GameObject:
   - component: {fileID: 37510264}
   - component: {fileID: 37510263}
   - component: {fileID: 37510262}
+  - component: {fileID: 37510265}
   m_Layer: 5
   m_Name: StartButton
   m_TagString: Untagged
@@ -391,8 +392,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0, g: 0, b: 0, a: 1}
-    m_PressedColor: {r: 0.9811321, g: 0, b: 0, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.8066038, b: 0.8066038, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -413,7 +414,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1842394848}
+      - m_Target: {fileID: 1067684452}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnStartPressed
         m_Mode: 1
@@ -438,15 +439,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.21960784, g: 0.21960784, b: 0.21960784, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 674c1b997a7dc4b4f92471acd54d7e99, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -463,6 +464,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 37510260}
   m_CullTransparentMesh: 1
+--- !u!114 &37510265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 37510260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
+  scaleEnabled: 1
+  scaleTarget: {fileID: 0}
+  hoverScale: 1.1
+  pressScale: 0.95
+  transitionSpeed: 15
+  soundEnabled: 1
+  hoverSound: 11
+  clickSound: 4
+  sustainClickUntilStopped: 0
 --- !u!1 &49955670
 GameObject:
   m_ObjectHideFlags: 0
@@ -548,7 +570,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1386917829}
+  m_Father: {fileID: 1894281219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &62904436
 GameObject:
@@ -699,6 +721,7 @@ GameObject:
   - component: {fileID: 74014709}
   - component: {fileID: 74014708}
   - component: {fileID: 74014707}
+  - component: {fileID: 74014710}
   m_Layer: 5
   m_Name: LeftHandButton
   m_TagString: Untagged
@@ -820,6 +843,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 74014705}
   m_CullTransparentMesh: 1
+--- !u!114 &74014710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 74014705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
+  scaleEnabled: 1
+  scaleTarget: {fileID: 0}
+  hoverScale: 1.1
+  pressScale: 0.95
+  transitionSpeed: 15
+  soundEnabled: 1
+  hoverSound: 11
+  clickSound: 4
+  sustainClickUntilStopped: 0
 --- !u!1 &96990786
 GameObject:
   m_ObjectHideFlags: 0
@@ -906,12 +950,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 96990786}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 233993065}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &103727247
 GameObject:
@@ -925,6 +969,7 @@ GameObject:
   - component: {fileID: 103727251}
   - component: {fileID: 103727250}
   - component: {fileID: 103727249}
+  - component: {fileID: 103727252}
   m_Layer: 5
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -973,7 +1018,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.6745283, g: 0.79607844, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -995,7 +1040,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1842394848}
+      - m_Target: {fileID: 1067684452}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnSettingsPressed
         m_Mode: 1
@@ -1020,15 +1065,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.21960784, g: 0.21960784, b: 0.21960784, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 955089fde8bbc47ca9dd859e14b5d221, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1045,6 +1090,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 103727247}
   m_CullTransparentMesh: 1
+--- !u!114 &103727252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103727247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
+  scaleEnabled: 1
+  scaleTarget: {fileID: 0}
+  hoverScale: 1.1
+  pressScale: 0.95
+  transitionSpeed: 15
+  soundEnabled: 1
+  hoverSound: 11
+  clickSound: 4
+  sustainClickUntilStopped: 0
 --- !u!1 &153881164
 GameObject:
   m_ObjectHideFlags: 0
@@ -1057,6 +1123,7 @@ GameObject:
   - component: {fileID: 153881168}
   - component: {fileID: 153881167}
   - component: {fileID: 153881166}
+  - component: {fileID: 153881169}
   m_Layer: 5
   m_Name: TryAgainButton
   m_TagString: Untagged
@@ -1106,7 +1173,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.80784315, b: 0.80784315, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -1128,7 +1195,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1842394848}
+      - m_Target: {fileID: 1067684452}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnTryAgainPressed
         m_Mode: 1
@@ -1153,15 +1220,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 29c4a685fdff04c3395e767370d6fad1, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1178,6 +1245,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 153881164}
   m_CullTransparentMesh: 1
+--- !u!114 &153881169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153881164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
+  scaleEnabled: 1
+  scaleTarget: {fileID: 0}
+  hoverScale: 1.1
+  pressScale: 0.95
+  transitionSpeed: 15
+  soundEnabled: 1
+  hoverSound: 11
+  clickSound: 4
+  sustainClickUntilStopped: 0
 --- !u!1 &191814417
 GameObject:
   m_ObjectHideFlags: 0
@@ -1364,6 +1452,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 310715970}
+  - {fileID: 96990789}
   - {fileID: 295480125}
   - {fileID: 24141132}
   - {fileID: 2112627650}
@@ -2439,8 +2528,8 @@ RectTransform:
   m_GameObject: {fileID: 488660285}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1621183126}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3084,6 +3173,7 @@ GameObject:
   - component: {fileID: 683235391}
   - component: {fileID: 683235390}
   - component: {fileID: 683235389}
+  - component: {fileID: 683235392}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -3133,7 +3223,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.6745098, g: 0.79607844, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -3155,7 +3245,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1842394848}
+      - m_Target: {fileID: 1067684452}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnExitPressed
         m_Mode: 1
@@ -3180,15 +3270,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 3dee857d81f2049fc8060c9df4f3788d, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3205,6 +3295,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 683235387}
   m_CullTransparentMesh: 1
+--- !u!114 &683235392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683235387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
+  scaleEnabled: 1
+  scaleTarget: {fileID: 0}
+  hoverScale: 1.1
+  pressScale: 0.95
+  transitionSpeed: 15
+  soundEnabled: 1
+  hoverSound: 11
+  clickSound: 4
+  sustainClickUntilStopped: 0
 --- !u!1 &743128481
 GameObject:
   m_ObjectHideFlags: 0
@@ -3217,6 +3328,7 @@ GameObject:
   - component: {fileID: 743128485}
   - component: {fileID: 743128484}
   - component: {fileID: 743128483}
+  - component: {fileID: 743128486}
   m_Layer: 5
   m_Name: RightHandButton
   m_TagString: Untagged
@@ -3338,6 +3450,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 743128481}
   m_CullTransparentMesh: 1
+--- !u!114 &743128486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743128481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
+  scaleEnabled: 1
+  scaleTarget: {fileID: 0}
+  hoverScale: 1.1
+  pressScale: 0.95
+  transitionSpeed: 15
+  soundEnabled: 1
+  hoverSound: 11
+  clickSound: 4
+  sustainClickUntilStopped: 0
 --- !u!114 &773190232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3666,7 +3799,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 880739306}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3674,7 +3807,7 @@ Transform:
   - {fileID: 1944109829}
   - {fileID: 483463058}
   - {fileID: 516546139}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1894281219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &880739309
 AudioSource:
@@ -4073,6 +4206,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1037833520}
   m_CullTransparentMesh: 1
+--- !u!1 &1067684451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1067684453}
+  - component: {fileID: 1067684452}
+  m_Layer: 0
+  m_Name: UI Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1067684452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067684451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4245f0007c3484cd4aaef7ba6064c3e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  menuCanvasRoot: {fileID: 1842394842}
+  mainMenuPanel: {fileID: 1344958384}
+  handPreferencePanel: {fileID: 24385264}
+  settingsPanel: {fileID: 1828803794}
+  endScreenPanel: {fileID: 324790388}
+--- !u!4 &1067684453
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1067684451}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1894281219}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1071185678
 GameObject:
   m_ObjectHideFlags: 0
@@ -4838,12 +5020,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1342800498}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1894281219}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1342800502
 MonoBehaviour:
@@ -4854,9 +5036,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1342800498}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2518c50cb3fc6a6458d4b743c2f69c7d, type: 3}
+  m_Script: {fileID: 11500000, guid: ea626a6da2d9b47928b20f171ee605b1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.PointableCanvasModule
+  m_EditorClassIdentifier: Assembly-CSharp::VRPointableCanvasModule
   m_SendPointerHoverToParent: 1
   _useInitialPressPositionForDrag: 1
   _exclusiveMode: 1
@@ -4928,7 +5110,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 49955672}
   - {fileID: 2062685998}
   - {fileID: 1885502842}
   - {fileID: 1880818960}
@@ -5341,6 +5522,7 @@ GameObject:
   - component: {fileID: 1653936635}
   - component: {fileID: 1653936634}
   - component: {fileID: 1653936633}
+  - component: {fileID: 1653936636}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -5389,7 +5571,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.6745283, g: 0.79607844, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -5410,7 +5592,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1653936634}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1067684452}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: OnExitPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1653936634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5424,15 +5618,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.21960784, g: 0.21960784, b: 0.21960784, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 3dee857d81f2049fc8060c9df4f3788d, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5449,6 +5643,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1653936631}
   m_CullTransparentMesh: 1
+--- !u!114 &1653936636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1653936631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
+  scaleEnabled: 1
+  scaleTarget: {fileID: 0}
+  hoverScale: 1.1
+  pressScale: 0.95
+  transitionSpeed: 15
+  soundEnabled: 1
+  hoverSound: 11
+  clickSound: 4
+  sustainClickUntilStopped: 0
 --- !u!1 &1755987923
 GameObject:
   m_ObjectHideFlags: 0
@@ -5851,7 +6066,6 @@ GameObject:
   - component: {fileID: 1842394844}
   - component: {fileID: 1842394843}
   - component: {fileID: 1842394847}
-  - component: {fileID: 1842394848}
   - component: {fileID: 1842394849}
   m_Layer: 5
   m_Name: MenuCanvas
@@ -5962,22 +6176,6 @@ MonoBehaviour:
   _addNewPointsToFront: 0
   _forwardElement: {fileID: 0}
   _canvas: {fileID: 1842394845}
---- !u!114 &1842394848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1842394842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4245f0007c3484cd4aaef7ba6064c3e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  mainMenuPanel: {fileID: 1344958384}
-  handPreferencePanel: {fileID: 24385264}
-  settingsPanel: {fileID: 1828803794}
-  endScreenPanel: {fileID: 324790388}
 --- !u!114 &1842394849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6380,6 +6578,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1892425473}
   m_CullTransparentMesh: 1
+--- !u!1 &1894281218
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1894281219}
+  m_Layer: 0
+  m_Name: Managers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1894281219
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894281218}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 49955672}
+  - {fileID: 1067684453}
+  - {fileID: 880739308}
+  - {fileID: 1342800501}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1900093159
 GameObject:
   m_ObjectHideFlags: 0
@@ -6467,6 +6700,7 @@ GameObject:
   - component: {fileID: 1546513620}
   - component: {fileID: 1933650206}
   - component: {fileID: 1933650205}
+  - component: {fileID: 1933650207}
   m_Layer: 5
   m_Name: RightHandButton
   m_TagString: Untagged
@@ -6516,7 +6750,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.6745283, g: 0.79776466, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -6538,7 +6772,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1842394848}
+      - m_Target: {fileID: 1067684452}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnHandPreferenceSelected
         m_Mode: 6
@@ -6563,15 +6797,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 8fdc0c82756cf48f1a66fa7ec15e7d76, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -6580,6 +6814,27 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1933650207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933650203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
+  scaleEnabled: 1
+  scaleTarget: {fileID: 0}
+  hoverScale: 1.1
+  pressScale: 0.95
+  transitionSpeed: 15
+  soundEnabled: 1
+  hoverSound: 11
+  clickSound: 4
+  sustainClickUntilStopped: 0
 --- !u!1 &1938911374
 GameObject:
   m_ObjectHideFlags: 0
@@ -7317,6 +7572,7 @@ GameObject:
   - component: {fileID: 487324550}
   - component: {fileID: 2021930911}
   - component: {fileID: 2021930910}
+  - component: {fileID: 2021930912}
   m_Layer: 5
   m_Name: LeftHandButton
   m_TagString: Untagged
@@ -7366,7 +7622,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0.6745283, g: 0.79776466, b: 1, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
@@ -7388,7 +7644,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1842394848}
+      - m_Target: {fileID: 1067684452}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnHandPreferenceSelected
         m_Mode: 6
@@ -7413,15 +7669,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 2406183f41efb42938b2fb1369268aee, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -7430,6 +7686,27 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2021930912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021930908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
+  scaleEnabled: 1
+  scaleTarget: {fileID: 0}
+  hoverScale: 1.1
+  pressScale: 0.95
+  transitionSpeed: 15
+  soundEnabled: 1
+  hoverSound: 11
+  clickSound: 4
+  sustainClickUntilStopped: 0
 --- !u!1 &2062685997
 GameObject:
   m_ObjectHideFlags: 0
@@ -7473,6 +7750,7 @@ GameObject:
   - component: {fileID: 773190233}
   - component: {fileID: 773190232}
   - component: {fileID: 2063070677}
+  - component: {fileID: 2063070678}
   m_Layer: 5
   m_Name: SettingsBackButton
   m_TagString: Untagged
@@ -7544,7 +7822,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1842394848}
+      - m_Target: {fileID: 1067684452}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
         m_MethodName: OnSettingsBackPressed
         m_Mode: 1
@@ -7556,6 +7834,27 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2063070678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2063070675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
+  scaleEnabled: 1
+  scaleTarget: {fileID: 0}
+  hoverScale: 1.1
+  pressScale: 0.95
+  transitionSpeed: 15
+  soundEnabled: 1
+  hoverSound: 11
+  clickSound: 4
+  sustainClickUntilStopped: 0
 --- !u!1 &2072588825
 GameObject:
   m_ObjectHideFlags: 0
@@ -8018,8 +8317,6 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 2614253693769072846}
+  - {fileID: 1894281219}
   - {fileID: 1386917829}
   - {fileID: 233993065}
-  - {fileID: 880739308}
-  - {fileID: 1342800501}
-  - {fileID: 96990789}

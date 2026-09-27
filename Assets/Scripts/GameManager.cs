@@ -389,6 +389,11 @@ public class GameManager : MonoBehaviour
         state = GameState.Landing;
         ResetRound();
 
+        if (UIManager.Instance)
+        {
+            UIManager.Instance.ShowLanding();
+        }
+
         PlayBgm(SoundId.IntroBGM);
 
         Log("on landing page");

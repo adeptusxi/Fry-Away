@@ -4,7 +4,8 @@ using System.Collections;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
-
+    
+    [SerializeField] private GameObject menuCanvasRoot;
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject handPreferencePanel;
     [SerializeField] private GameObject settingsPanel;
@@ -13,6 +14,36 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+    }
+
+    // ---------- Landing ----------
+
+    public void ShowLanding()
+    {
+        if (menuCanvasRoot != null)
+        {
+            menuCanvasRoot.SetActive(true);
+        }
+
+        if (mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(true);
+        }
+
+        if (handPreferencePanel != null)
+        {
+            handPreferencePanel.SetActive(false);
+        }
+
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(false);
+        }
+
+        if (endScreenPanel != null)
+        {
+            endScreenPanel.SetActive(false);
+        }
     }
 
     // ---------- Main Menu ----------
@@ -73,7 +104,12 @@ public class UIManager : MonoBehaviour
         {
             handPreferencePanel.SetActive(false);
         }
-        
+
+        if (menuCanvasRoot != null)
+        {
+            menuCanvasRoot.SetActive(false);
+        }
+
         GameManager.Instance?.SelectHandedness(right);
     }
 
