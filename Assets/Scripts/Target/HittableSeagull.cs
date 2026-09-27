@@ -49,6 +49,20 @@ public class HittableSeagull : HittableTarget
     [Header("On Hit")]
     [SerializeField] private GameObject longShotVfx;
 
+    [Header("Approach Sound")]
+    [SerializeField] private SoundId approachSoundId = SoundId.SeagullApproach;
+    [SerializeField, Min(0f), Tooltip("Play one squawk when this bird gets within this many meters of the player. Zero disables it.")]
+    private float approachSoundDistance = 8f;
+    private bool approachSoundPlayed;
+    [SerializeField, Min(0f), Tooltip("Repeat the call inside this distance. Zero disables repetition.")]
+    private float closeSoundDistance = 3f;
+    private AudioSource approachOneShot;
+    private AudioSource closeSoundLoop;
+    [SerializeField, Min(0f), Tooltip("Silent pause in seconds after each nearby call finishes.")]
+    private float closeSoundPause = 1f;
+    private bool closeCallWasPlaying;
+    private float nextCloseCallTime;
+
     private State state = State.Approaching;
     private State failedCatchState = State.Approaching;
 
@@ -136,6 +150,8 @@ public class HittableSeagull : HittableTarget
     
     protected override void Move()
     {
+        UpdateCloseSoundLoop();
+        TryPlayApproachSound();
         if ((state == State.Approaching || state == State.Hovering) && TryNoticeBread())
         {
             failedCatchState = state;
@@ -162,6 +178,94 @@ public class HittableSeagull : HittableTarget
         }
     }
     
+    private void TryPlayApproachSound()
+    {
+        if (approachSoundPlayed || approachSoundId == SoundId.None ||
+            approachSoundDistance <= 0f || !MoveTo ||
+            (state != State.Approaching && state != State.Swooping))
+        {
+            return;
+        }
+
+        if ((transform.position - MoveTo.position).sqrMagnitude >
+            approachSoundDistance * approachSoundDistance)
+        {
+            return;
+        }
+
+        if (AudioManager.Instance != null)
+        {
+            // Attempt once per bird, including when clips are not assigned yet.
+            approachSoundPlayed = true;
+            approachOneShot = AudioManager.Instance.PlayAttachedOneShot(
+                approachSoundId, transform);
+        }
+    }
+
+    private void UpdateCloseSoundLoop()
+    {
+        // A half-meter margin prevents rapid restarting at the boundary.
+        float range = closeSoundDistance + (closeSoundLoop != null ? 0.5f : 0f);
+        bool shouldLoop = closeSoundDistance > 0f && MoveTo &&
+            approachSoundId != SoundId.None &&
+            state != State.Leaving && state != State.FlyingAway &&
+            (transform.position - MoveTo.position).sqrMagnitude <= range * range;
+
+        if (!shouldLoop)
+        {
+            StopCloseSoundLoop();
+            return;
+        }
+
+        if (closeSoundLoop == null && AudioManager.Instance != null)
+        {
+            // Let the initial approach call finish before repeating.
+            if (approachOneShot != null && approachOneShot.isPlaying)
+                return;
+
+            closeSoundLoop = AudioManager.Instance.StartAttachedLoop(approachSoundId, transform);
+            if (closeSoundLoop != null)
+            {
+                approachSoundPlayed = true;
+                closeSoundLoop.loop = false;
+                closeCallWasPlaying = true;
+            }
+        }
+
+        if (closeSoundLoop == null || closeSoundLoop.isPlaying)
+            return;
+
+        // Measure silence from the end of the call, not from its start.
+        if (closeCallWasPlaying)
+        {
+            closeCallWasPlaying = false;
+            nextCloseCallTime = Time.time + closeSoundPause;
+        }
+
+        if (Time.time >= nextCloseCallTime)
+        {
+            closeSoundLoop.Play();
+            closeCallWasPlaying = true;
+        }
+    }
+
+    private void StopCloseSoundLoop()
+    {
+        closeCallWasPlaying = false;
+        nextCloseCallTime = 0f;
+        if (closeSoundLoop != null)
+        {
+            closeSoundLoop.Stop();
+            Destroy(closeSoundLoop);
+            closeSoundLoop = null;
+        }
+    }
+
+    private void OnDisable()
+    {
+        StopCloseSoundLoop();
+    }
+
     private Vector3 BaseHeading()
     {
         if (!MoveTo)
@@ -261,6 +365,7 @@ public class HittableSeagull : HittableTarget
         if (state == State.FlyingAway || state == State.Leaving)
             return;
 
+        StopCloseSoundLoop();
         state = State.Leaving;
         noticedBread = null;
 
@@ -326,6 +431,7 @@ public class HittableSeagull : HittableTarget
 
     private void BeginFlyAway()
     {
+        StopCloseSoundLoop();
         state = State.FlyingAway;
         flyAwayElapsed = 0f;
         flyAwayStartHeading = transform.forward;

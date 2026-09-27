@@ -300,6 +300,31 @@ public class AudioManager : MonoBehaviour
         Destroy(temp, clip.length);
     }
 
+    // Follow a moving bird and route its call through the SFX mixer.
+    public AudioSource PlayAttachedOneShot(SoundId id, Transform target)
+    {
+        if (target == null || !TryGetClip(id, out AudioClip clip, out float volume))
+        {
+            return null;
+        }
+
+        AudioSource source = target.gameObject.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.clip = clip;
+        source.volume = volume;
+        source.loop = false;
+        source.spatialBlend = 1f;
+        source.dopplerLevel = 0f;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        // Keep the approach call audible at its default eight-meter trigger.
+        source.minDistance = id == SoundId.SeagullApproach ? 8f : 2f;
+        source.maxDistance = 20f;
+        source.outputAudioMixerGroup = sfxMixerGroup;
+        source.Play();
+        Destroy(source, clip.length);
+        return source;
+    }
+
     // ---------- 2D One-Shot SFX ----------
 
     public void PlayOneShot2D(
@@ -379,6 +404,13 @@ public class AudioManager : MonoBehaviour
         source.loop = true;
         source.playOnAwake = false;
         source.spatialBlend = 1f;
+        if (id == SoundId.SeagullApproach)
+        {
+            source.dopplerLevel = 0f;
+            source.rolloffMode = AudioRolloffMode.Linear;
+            source.minDistance = 8f;
+            source.maxDistance = 20f;
+        }
 
         // Route moving-object sounds through SFX volume.
         source.outputAudioMixerGroup = sfxMixerGroup;

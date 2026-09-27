@@ -21,5 +21,6 @@ public enum SoundId
     Countdown,
 
     // Append new IDs to preserve existing serialized sound assignments.
-    UIButtonHover
+    UIButtonHover,
+    SeagullApproach
 }
