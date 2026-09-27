@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -87,6 +88,9 @@ public class GameManager : MonoBehaviour
     private float outOfBreadTime;
     private TutorialSeagull tutorialSeagull;
     private SoundId currentBgm = SoundId.None;
+    private Coroutine countdownRoutine;
+    private AudioSource countdownSource;
+    private bool countdownInProgress;
 
     public static GameManager Instance { get; private set; }
 
@@ -260,7 +264,7 @@ public class GameManager : MonoBehaviour
             tutorialSign.Enter();
         }
 
-        PlayBgm(SoundId.CombatBGM);
+        // Keep the intro music until the tutorial hit starts the countdown.
 
         Log("tutorial started, bread is unlimited until the freebie seagull is hit");
 
@@ -364,7 +368,7 @@ public class GameManager : MonoBehaviour
     // start core gameplay. no points earned 
     public void ReportTutorialHit()
     {
-        if (state != GameState.Tutorial)
+        if (state != GameState.Tutorial || countdownInProgress)
         {
             return;
         }
@@ -374,10 +378,63 @@ public class GameManager : MonoBehaviour
             tutorialSign.Exit();
         }
 
-        AudioManager.Instance?.PlayOneShot2D(SoundId.Countdown);
+        countdownInProgress = true;
+        countdownRoutine = StartCoroutine(CountdownThenPlay());
+    }
 
-        Log("freebie seagull hit, core game loop starting");
+    private IEnumerator CountdownThenPlay()
+    {
+        AudioManager.Instance?.StopBgmImmediately();
+        currentBgm = SoundId.None;
+        AudioManager.Instance?.StopLoop(AudioManager.LoopTrack.Loading);
+        countdownSource = AudioManager.Instance?.PlayTrackedOneShot2D(SoundId.Countdown);
+
+        Log("freebie seagull hit, waiting for countdown");
+        // Yield once even if the cue is missing, so the routine handle is assigned.
+        yield return null;
+        while (countdownSource != null && countdownSource.isPlaying)
+        {
+            yield return null;
+        }
+
+        ReleaseCountdownSource();
+        countdownRoutine = null;
+        countdownInProgress = false;
+
+        if (state != GameState.Tutorial)
+        {
+            yield break;
+        }
+
+        AudioManager.Instance?.PlayBgmImmediately(SoundId.CombatBGM);
+        currentBgm = SoundId.CombatBGM;
         EnterPlaying();
+    }
+
+    private void ReleaseCountdownSource()
+    {
+        if (countdownSource != null)
+        {
+            countdownSource.Stop();
+            Destroy(countdownSource.gameObject);
+            countdownSource = null;
+        }
+    }
+
+    private void CancelCountdown()
+    {
+        if (countdownRoutine != null)
+        {
+            StopCoroutine(countdownRoutine);
+            countdownRoutine = null;
+        }
+        ReleaseCountdownSource();
+        countdownInProgress = false;
+    }
+
+    private void OnDisable()
+    {
+        CancelCountdown();
     }
 
     #endregion
@@ -507,6 +564,7 @@ public class GameManager : MonoBehaviour
 
     private void ResetRound()
     {
+        CancelCountdown();
         Score = 0;
         breadRemaining = 0;
         breadInFlight = 0;
@@ -583,6 +641,7 @@ public class GameManager : MonoBehaviour
         if (!tutorialSeagullPrefab || !tutorialSpawnPoint)
         {
             Debug.LogError("[GameManager] no tutorial seagull prefab or spawn point assigned, skipping tutorial", this);
+            PlayBgm(SoundId.CombatBGM);
             EnterPlaying();
             return;
         }
