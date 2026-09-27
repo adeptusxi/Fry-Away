@@ -86,6 +86,7 @@ public class GameManager : MonoBehaviour
     private int breadRemaining;
     private int breadInFlight;
     private bool outOfBread;
+    private bool combatBgmSpedUp;
     private float outOfBreadTime;
     private TutorialSeagull tutorialSeagull;
     private SoundId currentBgm = SoundId.None;
@@ -496,6 +497,7 @@ public class GameManager : MonoBehaviour
         state = GameState.Playing;
 
         breadRemaining = breadCount;
+        combatBgmSpedUp = false;
         breadInFlight = 0;
         outOfBread = false;
 
@@ -698,6 +700,13 @@ public class GameManager : MonoBehaviour
 
         breadRemaining = Mathf.Max(0, breadRemaining - 1);
         breadInFlight++;
+
+        if (!combatBgmSpedUp && breadRemaining <= Mathf.FloorToInt(breadCount * 0.5f))
+        {
+            combatBgmSpedUp = true;
+            AudioManager.Instance?.SetBgmPitch(1.05f);
+            Log("half the bread used, combat BGM speed increased to 1.05x");
+        }
 
         Action onFlightStopped = null;
         onFlightStopped = () =>
