@@ -389,9 +389,25 @@ public class GameManager : MonoBehaviour
         AudioManager.Instance?.StopLoop(AudioManager.LoopTrack.Loading);
         countdownSource = AudioManager.Instance?.PlayTrackedOneShot2D(SoundId.Countdown);
 
-        Log("freebie seagull hit, waiting for countdown");
-        // Yield once even if the cue is missing, so the routine handle is assigned.
-        yield return null;
+        Log("freebie seagull hit, gameplay and combat music start at 4.55 seconds");
+        // Start at the 4.55-second cue, rather than waiting for the clip to end.
+        yield return new WaitForSecondsRealtime(4.55f);
+
+        if (state != GameState.Tutorial)
+        {
+            ReleaseCountdownSource();
+            countdownRoutine = null;
+            countdownInProgress = false;
+            yield break;
+        }
+
+        AudioManager.Instance?.PlayBgmImmediately(SoundId.CombatBGM);
+        currentBgm = SoundId.CombatBGM;
+        EnterPlaying();
+        countdownInProgress = false;
+
+        // Let the countdown's remaining audio finish over gameplay and music.
+        // Keep the routine handle so a reset can still cancel and clean it up.
         while (countdownSource != null && countdownSource.isPlaying)
         {
             yield return null;
@@ -399,16 +415,6 @@ public class GameManager : MonoBehaviour
 
         ReleaseCountdownSource();
         countdownRoutine = null;
-        countdownInProgress = false;
-
-        if (state != GameState.Tutorial)
-        {
-            yield break;
-        }
-
-        AudioManager.Instance?.PlayBgmImmediately(SoundId.CombatBGM);
-        currentBgm = SoundId.CombatBGM;
-        EnterPlaying();
     }
 
     private void ReleaseCountdownSource()
