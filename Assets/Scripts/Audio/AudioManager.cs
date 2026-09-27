@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -12,6 +13,15 @@ public class AudioManager : MonoBehaviour
     }
 
     public static AudioManager Instance { get; private set; }
+
+    [Header("BGM Fades")]
+    [Tooltip("Seconds for background music to fade in.")]
+    [SerializeField, Min(0f)] private float bgmFadeInSeconds = 1f;
+
+    [Tooltip("Seconds for background music to fade out.")]
+    [SerializeField, Min(0f)] private float bgmFadeOutSeconds = 1f;
+
+    private Coroutine bgmTransition;
 
     [Header("Audio Data")]
     [SerializeField] private SoundLibrary library;
@@ -60,7 +70,6 @@ public class AudioManager : MonoBehaviour
             _ => null
         };
     }
-
     public void PlayLoop(SoundId id, LoopTrack track)
     {
         if (!TryGetClip(id, out AudioClip clip, out float volume))
@@ -78,6 +87,15 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
+        if (track == LoopTrack.BGM)
+        {
+            CancelBgmTransition();
+            bgmTransition = StartCoroutine(
+                TransitionBgm(source, clip, volume)
+            );
+            return;
+        }
+
         source.Stop();
         source.clip = clip;
         source.volume = volume;
@@ -89,14 +107,140 @@ public class AudioManager : MonoBehaviour
     {
         AudioSource source = GetLoopSource(track);
 
-        if (source != null)
+        if (source == null)
         {
-            source.Stop();
-            source.clip = null;
+            return;
+        }
+
+        if (track == LoopTrack.BGM)
+        {
+            CancelBgmTransition();
+            bgmTransition = StartCoroutine(
+                TransitionBgm(source, null, 0f)
+            );
+            return;
+        }
+
+        source.Stop();
+        source.clip = null;
+    }
+
+    // Used when a cue must start or stop without the normal music fades.
+    public void PlayBgmImmediately(SoundId id)
+    {
+        if (bgmSource == null || !TryGetClip(id, out AudioClip clip, out float volume))
+        {
+            return;
+        }
+
+        CancelBgmTransition();
+        bgmSource.Stop();
+        bgmSource.clip = clip;
+        bgmSource.volume = volume;
+        bgmSource.loop = true;
+        bgmSource.Play();
+    }
+
+    public void StopBgmImmediately()
+    {
+        CancelBgmTransition();
+        if (bgmSource != null)
+        {
+            bgmSource.Stop();
+            bgmSource.clip = null;
         }
     }
 
+    // A separate source lets the game wait for or cancel this cue alone.
+    public AudioSource PlayTrackedOneShot2D(SoundId id)
+    {
+        if (sfx2DSource == null || !TryGetClip(id, out AudioClip clip, out float volume))
+        {
+            return null;
+        }
+
+        GameObject cue = new GameObject($"TrackedOneShot_{id}");
+        cue.transform.SetParent(transform, false);
+        AudioSource source = cue.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.spatialBlend = 0f;
+        source.outputAudioMixerGroup = sfx2DSource.outputAudioMixerGroup;
+        source.volume = volume * sfx2DSource.volume;
+        source.mute = sfx2DSource.mute;
+        source.clip = clip;
+        source.Play();
+        return source;
+    }
+
+    private void CancelBgmTransition()
+    {
+        if (bgmTransition != null)
+        {
+            StopCoroutine(bgmTransition);
+            bgmTransition = null;
+        }
+    }
+
+    private IEnumerator TransitionBgm(
+        AudioSource source, AudioClip nextClip, float volume)
+    {
+        if (source.isPlaying)
+        {
+            yield return FadeBgm(source, 0f, bgmFadeOutSeconds);
+        }
+
+        if (source == null)
+        {
+            yield break;
+        }
+
+        source.Stop();
+        source.clip = nextClip;
+
+        if (nextClip != null)
+        {
+            source.loop = true;
+            source.volume = 0f;
+            source.Play();
+
+            yield return FadeBgm(source, volume, bgmFadeInSeconds);
+        }
+
+        bgmTransition = null;
+    }
+
+    private IEnumerator FadeBgm(
+        AudioSource source, float targetVolume, float seconds)
+    {
+        float startVolume = source.volume;
+        float elapsed = 0f;
+
+        while (elapsed < seconds)
+        {
+            if (source == null)
+            {
+                yield break;
+            }
+
+            elapsed += Time.unscaledDeltaTime;
+            source.volume = Mathf.Lerp(
+                startVolume,
+                targetVolume,
+                Mathf.Clamp01(elapsed / seconds)
+            );
+
+            yield return null;
+        }
+
+        if (source != null)
+        {
+            source.volume = targetVolume;
+        }
+    }
+
+
     // ---------- Volume Controls ----------
+
 
     public void SetMasterVolume(float value)
     {
