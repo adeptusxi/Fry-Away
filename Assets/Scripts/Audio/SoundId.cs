@@ -22,5 +22,6 @@ public enum SoundId
 
     // Append new IDs to preserve existing serialized sound assignments.
     UIButtonHover,
-    SeagullApproach
+    SeagullApproach,
+    GameEnd
 }

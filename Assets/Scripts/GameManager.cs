@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
         Landing,   // handedness selection, no gameplay objects
         Tutorial,  // freebie seagull + diagetic guide sign, unlimited bread
         Playing,   // core loop, bread is limited
-        GameOver   // end sign is up
+        GameOver,  // end sign is up
+        Countdown  // waiting for the gameplay/music cue
     }
 
     public struct HitResult
@@ -90,6 +91,7 @@ public class GameManager : MonoBehaviour
     private SoundId currentBgm = SoundId.None;
     private Coroutine countdownRoutine;
     private AudioSource countdownSource;
+    private AudioSource gameEndSource;
     private bool countdownInProgress;
 
     public static GameManager Instance { get; private set; }
@@ -271,7 +273,7 @@ public class GameManager : MonoBehaviour
         SpawnTutorialSeagull();
     }
 
-    // (hook) round begins immediately (no tutorial; same handedness as previously selected)
+    // (hook) replay the countdown without repeating the tutorial; keep the selected hand
     public void PlayAgain()
     {
         if (state != GameState.GameOver)
@@ -279,7 +281,10 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        EnterPlayingDirectly();
+        ResetRound();
+        state = GameState.Countdown;
+        countdownInProgress = true;
+        countdownRoutine = StartCoroutine(CountdownThenPlay(true));
     }
 
     // (hook) 
@@ -378,22 +383,23 @@ public class GameManager : MonoBehaviour
             tutorialSign.Exit();
         }
 
+        state = GameState.Countdown;
         countdownInProgress = true;
         countdownRoutine = StartCoroutine(CountdownThenPlay());
     }
 
-    private IEnumerator CountdownThenPlay()
+    private IEnumerator CountdownThenPlay(bool showBasketAtCue = false)
     {
         AudioManager.Instance?.StopBgmImmediately();
         currentBgm = SoundId.None;
         AudioManager.Instance?.StopLoop(AudioManager.LoopTrack.Loading);
         countdownSource = AudioManager.Instance?.PlayTrackedOneShot2D(SoundId.Countdown);
 
-        Log("freebie seagull hit, gameplay and combat music start at 4.55 seconds");
+        Log("countdown started, gameplay and combat music start at 4.55 seconds");
         // Start at the 4.55-second cue, rather than waiting for the clip to end.
         yield return new WaitForSecondsRealtime(4.55f);
 
-        if (state != GameState.Tutorial)
+        if (state != GameState.Countdown)
         {
             ReleaseCountdownSource();
             countdownRoutine = null;
@@ -403,6 +409,10 @@ public class GameManager : MonoBehaviour
 
         AudioManager.Instance?.PlayBgmImmediately(SoundId.CombatBGM);
         currentBgm = SoundId.CombatBGM;
+        if (showBasketAtCue)
+        {
+            ShowBasket();
+        }
         EnterPlaying();
         countdownInProgress = false;
 
@@ -438,9 +448,20 @@ public class GameManager : MonoBehaviour
         countdownInProgress = false;
     }
 
+    private void StopGameEndSound()
+    {
+        if (gameEndSource != null)
+        {
+            gameEndSource.Stop();
+            Destroy(gameEndSource.gameObject);
+            gameEndSource = null;
+        }
+    }
+
     private void OnDisable()
     {
         CancelCountdown();
+        StopGameEndSound();
     }
 
     #endregion
@@ -544,6 +565,12 @@ public class GameManager : MonoBehaviour
 
     private void EnterGameOverSign()
     {
+        CancelCountdown();
+        StopGameEndSound();
+        AudioManager.Instance?.FadeOutBgm(0.5f);
+        currentBgm = SoundId.None;
+        gameEndSource = AudioManager.Instance?.PlayTrackedOneShot2D(SoundId.GameEnd);
+
         if (endSign)
         {
             endSign.Enter();
@@ -570,6 +597,7 @@ public class GameManager : MonoBehaviour
 
     private void ResetRound()
     {
+        StopGameEndSound();
         CancelCountdown();
         Score = 0;
         breadRemaining = 0;

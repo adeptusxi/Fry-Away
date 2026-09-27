@@ -125,6 +125,16 @@ public class AudioManager : MonoBehaviour
         source.clip = null;
     }
 
+    public void FadeOutBgm(float seconds)
+    {
+        CancelBgmTransition();
+        if (bgmSource != null)
+        {
+            bgmTransition = StartCoroutine(
+                TransitionBgm(bgmSource, null, 0f, Mathf.Max(0f, seconds)));
+        }
+    }
+
     // Used when a cue must start or stop without the normal music fades.
     public void PlayBgmImmediately(SoundId id)
     {
@@ -182,11 +192,11 @@ public class AudioManager : MonoBehaviour
     }
 
     private IEnumerator TransitionBgm(
-        AudioSource source, AudioClip nextClip, float volume)
+        AudioSource source, AudioClip nextClip, float volume, float fadeOutSeconds = -1f)
     {
         if (source.isPlaying)
         {
-            yield return FadeBgm(source, 0f, bgmFadeOutSeconds);
+            yield return FadeBgm(source, 0f, fadeOutSeconds >= 0f ? fadeOutSeconds : bgmFadeOutSeconds);
         }
 
         if (source == null)
