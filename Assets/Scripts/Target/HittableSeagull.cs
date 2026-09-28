@@ -47,11 +47,13 @@ public class HittableSeagull : HittableTarget
     [SerializeField, Min(0f), Tooltip("in seconds, until it despawns")] private float leaveLifetime = 8f;
 
     [Header("Fly Away (after caught bread)")]
-    [SerializeField, Range(0f, 90f)] private float flyAwayAngle = 65f; // 90 is straight up
+    [SerializeField, Range(0f, 90f)] private float flyAwayAngle = 25f; // 90 is straight up. shallow, since this now sustains over a longer flyAwayDuration - a steep angle held that long looks like a rocket launch
     [SerializeField, Min(0f), Tooltip("in seconds, length of the turn onto the climb")] private float flyAwayTurnDuration = 0.35f;
     [SerializeField, Min(0f), Tooltip("in m/s")] private float flyAwaySpeed = 9f;
-    [SerializeField, Min(0f), Tooltip("in seconds")] private float flyAwayDuration = 1.2f;
-    [SerializeField, Tooltip("normalized 0-1")] private AnimationCurve flyAwayScaleCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f); // for smoothly disappearing
+    [SerializeField, Min(0f), Tooltip("in seconds")] private float flyAwayDuration = 3f;
+    [SerializeField, Range(0f, 1f), Tooltip("fraction of the flight (0-1) before it starts shrinking away. keeps it full-size while it's still visibly departing, instead of fading out right next to the player")]
+    private float flyAwayShrinkStart = 0.6f;
+    [SerializeField, Tooltip("normalized 0-1, evaluated only over the shrink portion of the flight (see flyAwayShrinkStart)")] private AnimationCurve flyAwayScaleCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f); // for smoothly disappearing
 
     [Header("On Hit")]
     [SerializeField] private GameObject longShotVfx;
@@ -480,6 +482,11 @@ public class HittableSeagull : HittableTarget
         state = State.Leaving;
         noticedBread = null;
 
+        if (animator)
+        {
+            animator.speed = 1f;
+        }
+
         leaveElapsed = 0f;
         leaveStartHeading = transform.forward;
 
@@ -545,6 +552,11 @@ public class HittableSeagull : HittableTarget
         StopCloseSoundLoop();
         state = State.FlyingAway;
         flyAwayElapsed = 0f;
+
+        if (animator)
+        {
+            animator.speed = 1f;
+        }
         flyAwayStartHeading = transform.forward;
 
         Vector3 horizontal = flyAwayStartHeading;
@@ -583,9 +595,13 @@ public class HittableSeagull : HittableTarget
         transform.position += heading * (Mathf.Lerp(speed, flyAwaySpeed, turnProgress) * Time.deltaTime);
         transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
 
+        float shrinkProgress = flyAwayShrinkStart < 1f
+            ? Mathf.Clamp01((progress - flyAwayShrinkStart) / (1f - flyAwayShrinkStart))
+            : (progress >= 1f ? 1f : 0f);
+
         float scale = flyAwayScaleCurve != null && flyAwayScaleCurve.length > 0
-            ? flyAwayScaleCurve.Evaluate(progress)
-            : 1f - progress;
+            ? flyAwayScaleCurve.Evaluate(shrinkProgress)
+            : 1f - shrinkProgress;
 
         transform.localScale = originalScale * Mathf.Max(0f, scale);
 
@@ -698,6 +714,10 @@ public class HittableSeagull : HittableTarget
     private float landingSettleDuration = 0.4f;
     [SerializeField, Min(0f), Tooltip("in seconds, minimum time spent idle on the ground")] private float idleDurationMin = 3f;
     [SerializeField, Min(0f), Tooltip("in seconds, maximum time spent idle on the ground")] private float idleDurationMax = 8f;
+    [SerializeField, Tooltip("optional. its playback speed is slowed while idle so the flap reads as 'settled' instead of full-speed flying, and restored on takeoff/leave/fly-away")]
+    private Animator animator;
+    [SerializeField, Range(0f, 1f), Tooltip("Animator.speed multiplier while idle on the ground")]
+    private float idleAnimationSpeed = 0.3f;
 
     private float hoverTimeSinceLastLandingCheck;
 
@@ -808,6 +828,11 @@ public class HittableSeagull : HittableTarget
         Vector3 toPlayer = MoveTo ? MoveTo.position - transform.position : landingHeading;
         toPlayer.y = 0f;
         idleFaceDirection = toPlayer.sqrMagnitude > Mathf.Epsilon ? toPlayer.normalized : landingHeading;
+
+        if (animator)
+        {
+            animator.speed = idleAnimationSpeed;
+        }
     }
 
     private void MoveIdle()
@@ -837,6 +862,11 @@ public class HittableSeagull : HittableTarget
 
         hoverTimeSinceLastLandingCheck = 0f;
         state = State.Hovering;
+
+        if (animator)
+        {
+            animator.speed = 1f;
+        }
     }
 
 #if UNITY_EDITOR

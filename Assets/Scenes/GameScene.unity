@@ -555,7 +555,7 @@ MonoBehaviour:
   longShotBonus: 50
   maxHoveringSeagulls: 5
   showDebugDisplays: 0
-  spawnImmediately: 1
+  spawnImmediately: 0
   verbose: 1
 --- !u!4 &49955672
 Transform:

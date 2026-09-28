@@ -98,10 +98,11 @@ MonoBehaviour:
   leaveIrregularity: 0.85
   leaveClimb: 0.2
   leaveLifetime: 8
-  flyAwayAngle: 65
+  flyAwayAngle: 25
   flyAwayTurnDuration: 0.35
   flyAwaySpeed: 9
   flyAwayDuration: 1.2
+  flyAwayShrinkStart: 0.6
   flyAwayScaleCurve:
     serializedVersion: 2
     m_Curve:
@@ -145,6 +146,8 @@ MonoBehaviour:
   landingSettleDuration: 0.4
   idleDurationMin: 3
   idleDurationMax: 8
+  animator: {fileID: 6608693277366188148}
+  idleAnimationSpeed: 0.3
   beak: {fileID: 5601694743596393290}
   noticeRadius: 1.2
 --- !u!136 &487653903476520873
