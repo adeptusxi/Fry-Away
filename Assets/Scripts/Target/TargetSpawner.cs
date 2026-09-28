@@ -26,6 +26,9 @@ public class TargetSpawner : MonoBehaviour
     [Tooltip("how far above the floor (meters) the lowest target can spawn, so it isn't half-buried")]
     [SerializeField, Min(0f)] private float floorClearance = 1f;
 
+    [Tooltip("in meters above coneOrigin. targets never spawn higher than this. 0 disables the cap")]
+    [SerializeField, Min(0f)] private float maxSpawnHeightAboveOrigin = 15f;
+
     [Header("Limits")]
     [SerializeField, Min(1)] private int maxTargets = 15;
 
@@ -47,6 +50,7 @@ public class TargetSpawner : MonoBehaviour
     public float MaxDistance => maxDistance;
     public bool HasFloor => floor != null;
     public float MinSpawnHeight => floor != null ? floor.position.y + floorClearance : float.NegativeInfinity;
+    public float MaxSpawnHeight => maxSpawnHeightAboveOrigin > 0f ? coneOrigin.position.y + maxSpawnHeightAboveOrigin : float.PositiveInfinity;
 
     private void Awake()
     {
@@ -131,10 +135,17 @@ public class TargetSpawner : MonoBehaviour
 
         if (floor != null && pos.y < MinSpawnHeight)
         {
-            // mirror vertically 
+            // mirror vertically
             dir.y = -dir.y;
             pos = coneOrigin.position + dir * dist;
             pos.y = Mathf.Max(pos.y, MinSpawnHeight);
+        }
+        else if (pos.y > MaxSpawnHeight)
+        {
+            // mirror vertically the other way, so it doesn't spawn absurdly high
+            dir.y = -dir.y;
+            pos = coneOrigin.position + dir * dist;
+            pos.y = Mathf.Min(pos.y, MaxSpawnHeight);
         }
 
         Quaternion rot = Quaternion.LookRotation(-dir, Vector3.up);

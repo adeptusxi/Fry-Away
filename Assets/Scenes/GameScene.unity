@@ -3784,6 +3784,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20dac12491ccd4efa9ec87e1cb1ee794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  bgmFadeInSeconds: 1
+  bgmFadeOutSeconds: 1
   library: {fileID: 11400000, guid: fa95428a76eb04d2494c0fdb82e2c3d7, type: 2}
   bgmSource: {fileID: 880739309}
   ambientSource: {fileID: 1944109828}
@@ -6498,11 +6500,15 @@ MonoBehaviour:
   verbose: 0
   hoverHeightMin: 0
   hoverHeightMax: 2
+  hoverHeightJitter: 0.5
+  hoverHeightBiasStrength: 0.6
   hoverRadiusMin: 1.5
   hoverRadiusMax: 3.5
   hoverYawRange: 180
   minHoverSeparation: 1.2
   hoverPlacementAttempts: 8
+  seaLevel: {fileID: 310715970}
+  attractionYawRange: 180
 --- !u!1 &1892425473
 GameObject:
   m_ObjectHideFlags: 0

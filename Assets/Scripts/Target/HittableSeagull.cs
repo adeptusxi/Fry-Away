@@ -186,8 +186,52 @@ public class HittableSeagull : HittableTarget
                 MoveApproach();
                 break;
         }
+
+        ClampAboveFloor();
     }
-    
+
+    // the higher of the floor's spawn-clearance height and the sea level, whichever is more restrictive.
+    // in the beach scene the floor reference (a mostly-buried sand block) sits well below the
+    // actual water surface, so sea level is normally the one that matters here.
+    private float EffectiveMinHeight()
+    {
+        float minHeight = float.NegativeInfinity;
+
+        if (hoverSpace)
+        {
+            if (hoverSpace.HasFloor)
+            {
+                minHeight = hoverSpace.MinSpawnHeight;
+            }
+
+            if (hoverSpace.HasSeaLevel)
+            {
+                minHeight = Mathf.Max(minHeight, hoverSpace.SeaLevelHeight);
+            }
+        }
+
+        return minHeight;
+    }
+
+    // hard safety net: whatever a state's movement did this frame, never let the bird end up
+    // below the floor/sea level (the soft pitch-weave damping only reduces how hard it dives, it doesn't guarantee this)
+    private void ClampAboveFloor()
+    {
+        float minHeight = EffectiveMinHeight();
+
+        if (float.IsNegativeInfinity(minHeight))
+        {
+            return;
+        }
+
+        if (transform.position.y < minHeight)
+        {
+            Vector3 position = transform.position;
+            position.y = minHeight;
+            transform.position = position;
+        }
+    }
+
     private void TryPlayApproachSound()
     {
         if (approachSoundPlayed || approachSoundId == SoundId.None ||
@@ -352,11 +396,16 @@ public class HittableSeagull : HittableTarget
             appliedOffset += pitchOffset * waveform;
         }
 
-        // don't let a downward pitch dive the bird into the ground
-        if (appliedOffset < 0f && pitchGroundDamping > 0f && hoverSpace && hoverSpace.HasFloor)
+        // don't let a downward pitch dive the bird into the ground/water
+        if (appliedOffset < 0f && pitchGroundDamping > 0f)
         {
-            float clearance = transform.position.y - hoverSpace.MinSpawnHeight;
-            appliedOffset *= Mathf.Clamp01(clearance / pitchGroundDamping);
+            float minHeight = EffectiveMinHeight();
+
+            if (!float.IsNegativeInfinity(minHeight))
+            {
+                float clearance = transform.position.y - minHeight;
+                appliedOffset *= Mathf.Clamp01(clearance / pitchGroundDamping);
+            }
         }
 
         return Quaternion.AngleAxis(appliedOffset, pitchAxis) * heading;
@@ -538,6 +587,8 @@ public class HittableSeagull : HittableTarget
     [SerializeField, Min(0f), Tooltip("in meters, wobble around its hover spot")] private float hoverBobAmplitude = 0.4f;
     [SerializeField, Min(0f)] private float hoverBobFrequency = 0.5f;
     [SerializeField, Min(0f), Tooltip("how fast it turns to face the player")] private float hoverTurnRate = 2f;
+    [SerializeField, Min(0f), Tooltip("in meters. beyond this distance from its hover spot, it faces the way it's actually flying instead of the player, so it doesn't look like it's sliding in sideways")]
+    private float hoverSettleDistance = 1.5f;
 
     public bool IsHovering => state == State.Hovering || (state == State.Swooping && failedCatchState == State.Hovering);
 
@@ -559,21 +610,35 @@ public class HittableSeagull : HittableTarget
         ) * hoverBobAmplitude;
 
         Vector3 desired = HoverAnchor + bob;
+        Vector3 toDesired = desired - transform.position;
+        float distanceToAnchor = toDesired.magnitude;
+
         transform.position = Vector3.MoveTowards(transform.position, desired, hoverSpeed * Time.deltaTime);
 
-        if (!MoveTo)
+        // while still closing in on its hover spot, face the way it's actually flying rather than
+        // the player, so it reads as directed flight instead of sliding in sideways/backwards
+        Vector3? faceDirection = null;
+
+        if (distanceToAnchor > hoverSettleDistance && toDesired.sqrMagnitude > Mathf.Epsilon)
         {
-            return;
+            faceDirection = toDesired.normalized;
+        }
+        else if (MoveTo)
+        {
+            Vector3 toPlayer = MoveTo.position - transform.position;
+            toPlayer.y = 0f;
+
+            if (toPlayer.sqrMagnitude > Mathf.Epsilon)
+            {
+                faceDirection = toPlayer.normalized;
+            }
         }
 
-        Vector3 toPlayer = MoveTo.position - transform.position;
-        toPlayer.y = 0f;
-
-        if (toPlayer.sqrMagnitude > Mathf.Epsilon)
+        if (faceDirection.HasValue)
         {
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
-                Quaternion.LookRotation(toPlayer.normalized, Vector3.up),
+                Quaternion.LookRotation(faceDirection.Value, Vector3.up),
                 hoverTurnRate * Time.deltaTime
             );
         }
@@ -591,7 +656,10 @@ public class HittableSeagull : HittableTarget
 
     public bool HasBread { get; private set; }
 
-    private bool NoticedBreadAvailable => noticedBread && noticedBread.IsInFlight && !noticedBread.Taken;
+    // stops mid-chase too: if the bread it's already after sinks below sea level, this goes false
+    // and MoveSwoop()'s guard ends the chase, same as if the bread had been caught by someone else
+    private bool NoticedBreadAvailable => noticedBread && noticedBread.IsInFlight && !noticedBread.Taken &&
+        (!hoverSpace || !hoverSpace.HasSeaLevel || noticedBread.transform.position.y > hoverSpace.SeaLevelHeight);
 
     private Vector3 NoticedBreadPosition => noticedBread.transform.position;
 
@@ -604,9 +672,19 @@ public class HittableSeagull : HittableTarget
 
         noticedBread = Catchable.FindNearestInFlight(transform.position, noticeRadius);
 
-        return noticedBread;
+        // never chase bread behind the player, and never chase bread that's already underwater
+        bool valid = NoticedBreadAvailable &&
+            (!hoverSpace || hoverSpace.IsWithinAttractionSector(noticedBread.transform.position));
+
+        if (!valid)
+        {
+            noticedBread = null;
+            return false;
+        }
+
+        return true;
     }
-    
+
     // may fail if another seagull got it first 
     private bool TryCatch(ThrowInteractable hitBy)
     {
