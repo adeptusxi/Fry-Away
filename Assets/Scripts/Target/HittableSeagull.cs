@@ -23,8 +23,11 @@ public class HittableSeagull : HittableTarget
 
     [Header("Weave Towards Player")]
     [SerializeField, Range(0f, 90f), Tooltip("in degrees to either side. 0 flies straight")] private float maxYawOffset = 25f;
+    [SerializeField, Range(0f, 90f), Tooltip("in degrees up/down. 0 adds no vertical weave")] private float maxPitchOffset = 15f;
     [SerializeField, Min(0f)] private float weaveFrequency = 0.35f;
     [SerializeField, Range(0f, 1f), Tooltip("0 is a sine wave, 1 is an uneven wander")] private float irregularity = 0.5f;
+    [SerializeField, Min(0f), Tooltip("in meters above the floor. pitch weave dampens toward level flight within this height, so it can't dive into the ground")]
+    private float pitchGroundDamping = 3f;
 
     [Header("Swoop Towards Bread")]
     [SerializeField, Min(0f), Tooltip("in m/s")] private float swoopSpeed = 7f;
@@ -299,11 +302,12 @@ public class HittableSeagull : HittableTarget
     private void MoveApproach()
     {
         Vector3 heading = Weave(BaseHeading(), maxYawOffset, irregularity);
+        heading = PitchWeave(heading, maxPitchOffset, irregularity);
 
         transform.position += heading * (speed * Time.deltaTime);
         transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
     }
-    
+
     // swings a heading off course by up to yawOffset degrees to either side
     private Vector3 Weave(Vector3 heading, float yawOffset, float waveIrregularity)
     {
@@ -314,8 +318,42 @@ public class HittableSeagull : HittableTarget
 
         return Quaternion.AngleAxis(yawOffset * waveform, Vector3.up) * heading;
     }
-    
-    #endregion 
+
+    // swings a heading up/down by up to pitchOffset degrees, phase-shifted off the yaw weave so they don't move in lockstep
+    private Vector3 PitchWeave(Vector3 heading, float pitchOffset, float waveIrregularity)
+    {
+        if (pitchOffset <= 0f)
+        {
+            return heading;
+        }
+
+        Vector3 pitchAxis = Vector3.Cross(heading, Vector3.up);
+
+        if (pitchAxis.sqrMagnitude < 0.0001f)
+        {
+            return heading;
+        }
+
+        pitchAxis.Normalize();
+
+        float t = (Time.time + phaseOffset) * weaveFrequency + 0.25f;
+        float sine = Mathf.Sin(t * 2f * Mathf.PI);
+        float noise = Mathf.PerlinNoise(t, noiseSeed + 50f) * 2f - 1f;
+        float waveform = Mathf.Lerp(sine, noise, waveIrregularity);
+
+        float appliedOffset = pitchOffset * waveform;
+
+        // don't let a downward pitch dive the bird into the ground
+        if (appliedOffset < 0f && pitchGroundDamping > 0f && hoverSpace && hoverSpace.HasFloor)
+        {
+            float clearance = transform.position.y - hoverSpace.MinSpawnHeight;
+            appliedOffset *= Mathf.Clamp01(clearance / pitchGroundDamping);
+        }
+
+        return Quaternion.AngleAxis(appliedOffset, pitchAxis) * heading;
+    }
+
+    #endregion
     
     #region Swooping 
 
