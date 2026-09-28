@@ -6451,6 +6451,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BreadSpawnerBasket
   spawnPoint: {fileID: 420366528}
   prefab: {fileID: 5427119376664213527, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
+  prefabs:
+  - {fileID: 5427119376664213527, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
+  - {fileID: 3198760371447014909, guid: b3dd80e9acbd03744890a14a28bf5a11, type: 3}
+  - {fileID: 1270410600851750535, guid: a6eec4914058a1444a4d29fcc3aae781, type: 3}
+  - {fileID: 6086263952354917749, guid: f52995555698ef7488766516d123c33d, type: 3}
+  - {fileID: 2965154657244041388, guid: ac6ee3bbe50d72d4a92dda8d0b3c5ad4, type: 3}
   verbose: 0
   attachPoint: {fileID: 191814418}
 --- !u!1 &1885502841

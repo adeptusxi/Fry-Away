@@ -6,6 +6,7 @@ public class ThrowInteractableSpawner : MonoBehaviour
 {
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private GameObject prefab;
+    [SerializeField] private GameObject[] prefabs;
     [SerializeField] protected bool verbose;
 
     private ThrowInteractable current;

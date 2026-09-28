@@ -88,15 +88,24 @@ public class FixedGripTransformer : MonoBehaviour, ITransformer
             return;
         }
 
-        Gizmos.color = Color.white;
-        Gizmos.DrawSphere(Vector3.zero, h);
+        //Gizmos.color = Color.white;
+        //Gizmos.DrawSphere(Vector3.zero, h);
 
+        //Matrix4x4 old = Gizmos.matrix;
+        //Gizmos.color = Color.red;
+        //Gizmos.matrix = grabbable == null
+        //    ? heldOffsetTransform.localToWorldMatrix
+        //    : grabbable.Transform.localToWorldMatrix;
+        //Gizmos.DrawWireCube(Vector3.zero, new Vector3(3 * h, h, 3 * h));
+        //Gizmos.matrix = old;
+
+        // draw where the hand will be in relation to the bread
         Matrix4x4 old = Gizmos.matrix;
-        Gizmos.color = Color.red;
-        Gizmos.matrix = grabbable == null
+        Matrix4x4 matrix = grabbable == null
             ? heldOffsetTransform.localToWorldMatrix
             : grabbable.Transform.localToWorldMatrix;
-        Gizmos.DrawWireCube(Vector3.zero, new Vector3(3 * h, h, 3 * h));
+        Gizmos.matrix = matrix.inverse;
+        Gizmos.DrawSphere(matrix * Vector3.zero, h);
         Gizmos.matrix = old;
     }
 }
