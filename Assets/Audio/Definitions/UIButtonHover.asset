@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: UIButtonHover
   m_EditorClassIdentifier: Assembly-CSharp::SoundDefinition
   id: 11
-  clips: []
+  clips:
+  - {fileID: 8300000, guid: 39fb1690a42354048a04c94fd4342172, type: 3}
   volume: 1
   variantSelection: 0
