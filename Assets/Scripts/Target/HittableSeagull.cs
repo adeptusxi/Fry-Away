@@ -13,6 +13,8 @@ public class HittableSeagull : HittableTarget
         Approaching,
         Hovering, // got too close to player
         Swooping, // going towards a bread
+        Landing, // gliding down to a ground spot
+        Idle, // sitting on the ground
         Leaving, // game over, lost interest
         FlyingAway // caught a bread
     }
@@ -124,8 +126,9 @@ public class HittableSeagull : HittableTarget
 
         hoverOffset = hoverSpace.PickHoverOffset(this);
         state = State.Hovering;
+        hoverTimeSinceLastLandingCheck = 0f;
     }
-    
+
     public override void OnObjectHit(ThrowInteractable hitBy, RaycastHit hit)
     {
         if (state == State.FlyingAway)
@@ -179,6 +182,12 @@ public class HittableSeagull : HittableTarget
             case State.Hovering:
                 MoveHover();
                 break;
+            case State.Landing:
+                MoveLanding();
+                break;
+            case State.Idle:
+                MoveIdle();
+                break;
             case State.Leaving:
                 MoveLeave();
                 break;
@@ -187,7 +196,13 @@ public class HittableSeagull : HittableTarget
                 break;
         }
 
-        ClampAboveFloor();
+        // Landing/Idle deliberately target the ground (via the floor reference), which can sit
+        // lower than sea level on dry land - the flight-safety clamp would otherwise fight them
+        // and drag a landed bird back up to sea level
+        if (state != State.Landing && state != State.Idle)
+        {
+            ClampAboveFloor();
+        }
     }
 
     // the higher of the floor's spawn-clearance height and the sea level, whichever is more restrictive.
@@ -642,7 +657,201 @@ public class HittableSeagull : HittableTarget
                 hoverTurnRate * Time.deltaTime
             );
         }
+
+        // only roll the chance to land once it's actually settled at its hover spot,
+        // not while it's still gliding in
+        if (distanceToAnchor > hoverSettleDistance)
+        {
+            return;
+        }
+
+        hoverTimeSinceLastLandingCheck += Time.deltaTime;
+
+        if (hoverTimeSinceLastLandingCheck < landingCheckInterval)
+        {
+            return;
+        }
+
+        hoverTimeSinceLastLandingCheck = 0f;
+
+        if (Random.value < landingChance && TryPickLandingSpot(out Vector3 spot))
+        {
+            BeginLanding(spot);
+        }
     }
+
+    #endregion
+
+    #region Landing
+
+    [Header("Landing")]
+    [SerializeField, Min(0f), Tooltip("in meters from the player. landing spots are picked at least this far away so they stay visible, not underfoot")]
+    private float landingDistanceMin = 4f;
+    [SerializeField, Min(0f), Tooltip("in meters from the player. landing spots are picked at most this far away")]
+    private float landingDistanceMax = 7f;
+    [SerializeField, Min(0f), Tooltip("in seconds, how often it rolls the chance to land while settled in hovering")]
+    private float landingCheckInterval = 2f;
+    [SerializeField, Range(0f, 1f), Tooltip("chance per check to start landing")] private float landingChance = 0.4f;
+    [SerializeField, Min(0f), Tooltip("in seconds, length of the glide down")] private float landingDuration = 1.5f;
+    [SerializeField, Min(0f), Tooltip("in seconds, length of the turn onto the glide")] private float landingTurnDuration = 0.4f;
+    [SerializeField, Min(0f), Tooltip("in seconds, length of the turn to face the player at the end of the glide")]
+    private float landingSettleDuration = 0.4f;
+    [SerializeField, Min(0f), Tooltip("in seconds, minimum time spent idle on the ground")] private float idleDurationMin = 3f;
+    [SerializeField, Min(0f), Tooltip("in seconds, maximum time spent idle on the ground")] private float idleDurationMax = 8f;
+
+    private float hoverTimeSinceLastLandingCheck;
+
+    private float landingElapsed;
+    private Vector3 landingStartPosition;
+    private Vector3 landingTargetPosition;
+    private Vector3 landingStartHeading;
+    private Vector3 landingHeading;
+    private Vector3 landingTurnAxis;
+
+    private float idleElapsed;
+    private float idleDuration;
+    private Vector3 idleFaceDirection;
+
+    // picks a ground point near where this bird is currently hovering. returns false if there's
+    // no floor configured to land on. deliberately uses the floor (sand) height, not
+    // EffectiveMinHeight() - that one leans on sea level to keep flight above the water, but a
+    // landing spot needs the actual ground it's supposed to stand on
+    private bool TryPickLandingSpot(out Vector3 spot)
+    {
+        if (!hoverSpace || !hoverSpace.HasFloor || !MoveTo)
+        {
+            spot = transform.position;
+            return false;
+        }
+
+        // land out along the same direction it was already hovering in (so it stays within the
+        // front sector, same as hovering), just farther out - a spot picked as a small jitter
+        // around the hover anchor could end up right underfoot and go unnoticed
+        Vector3 fromPlayer = HoverAnchor - MoveTo.position;
+        fromPlayer.y = 0f;
+
+        Vector3 direction = fromPlayer.sqrMagnitude > Mathf.Epsilon ? fromPlayer.normalized : Vector3.zero;
+
+        if (direction.sqrMagnitude < Mathf.Epsilon)
+        {
+            Vector3 forwardFlat = transform.forward;
+            forwardFlat.y = 0f;
+            direction = forwardFlat.sqrMagnitude > Mathf.Epsilon ? forwardFlat.normalized : Vector3.forward;
+        }
+
+        float distance = Random.Range(landingDistanceMin, landingDistanceMax);
+        Vector3 groundPoint = MoveTo.position + direction * distance;
+
+        spot = new Vector3(groundPoint.x, hoverSpace.MinSpawnHeight, groundPoint.z);
+        return true;
+    }
+
+    private void BeginLanding(Vector3 spot)
+    {
+        state = State.Landing;
+        landingElapsed = 0f;
+        landingStartPosition = transform.position;
+        landingTargetPosition = spot;
+        landingStartHeading = transform.forward;
+
+        // horizontal-only: otherwise it points straight down at the ground for the whole glide,
+        // which reads as diving in head-first instead of a level approach that sinks in altitude
+        Vector3 toSpotFlat = spot - transform.position;
+        toSpotFlat.y = 0f;
+        landingHeading = toSpotFlat.sqrMagnitude > Mathf.Epsilon ? toSpotFlat.normalized : landingStartHeading;
+        landingTurnAxis = TurnAxis(landingStartHeading, landingHeading);
+    }
+
+    private void MoveLanding()
+    {
+        landingElapsed += Time.deltaTime;
+
+        float progress = landingDuration > 0f ? Mathf.Clamp01(landingElapsed / landingDuration) : 1f;
+        float turnProgress = landingTurnDuration > 0f ? Mathf.Clamp01(landingElapsed / landingTurnDuration) : 1f;
+
+        Vector3 heading = TurnToward(landingStartHeading, landingHeading, landingTurnAxis, turnProgress);
+
+        // the landing spot is picked further out from the player than the bird already was, so the
+        // glide heading points away from the player - ease into facing the player over the last
+        // stretch, so it doesn't touch down with its back turned
+        float settleStart = Mathf.Max(0f, landingDuration - landingSettleDuration);
+
+        if (landingElapsed > settleStart && MoveTo)
+        {
+            Vector3 toPlayer = MoveTo.position - transform.position;
+            toPlayer.y = 0f;
+
+            if (toPlayer.sqrMagnitude > Mathf.Epsilon)
+            {
+                float settleProgress = landingSettleDuration > 0f
+                    ? Mathf.Clamp01((landingElapsed - settleStart) / landingSettleDuration)
+                    : 1f;
+                heading = Vector3.Slerp(landingHeading, toPlayer.normalized, settleProgress).normalized;
+            }
+        }
+
+        transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
+        transform.position = Vector3.Lerp(landingStartPosition, landingTargetPosition, progress);
+
+        if (progress >= 1f)
+        {
+            BeginIdle();
+        }
+    }
+
+    private void BeginIdle()
+    {
+        state = State.Idle;
+        idleElapsed = 0f;
+        idleDuration = Random.Range(idleDurationMin, idleDurationMax);
+
+        Vector3 toPlayer = MoveTo ? MoveTo.position - transform.position : landingHeading;
+        toPlayer.y = 0f;
+        idleFaceDirection = toPlayer.sqrMagnitude > Mathf.Epsilon ? toPlayer.normalized : landingHeading;
+    }
+
+    private void MoveIdle()
+    {
+        idleElapsed += Time.deltaTime;
+
+        if (idleElapsed >= idleDuration)
+        {
+            BeginTakeOff();
+            return;
+        }
+
+        // small cosmetic look-around, rotation only, no translation - centered on facing the player
+        float t = (Time.time + phaseOffset) * 0.2f;
+        float yaw = (Mathf.PerlinNoise(t, noiseSeed) * 2f - 1f) * 20f;
+        transform.rotation = Quaternion.LookRotation(Quaternion.AngleAxis(yaw, Vector3.up) * idleFaceDirection, Vector3.up);
+    }
+
+    private void BeginTakeOff()
+    {
+        // re-picks a hover offset and hands off to MoveHover(), which already knows how to glide
+        // smoothly from wherever it currently is up to a hover anchor (see hoverSettleDistance)
+        if (hoverSpace)
+        {
+            hoverOffset = hoverSpace.PickHoverOffset(this);
+        }
+
+        hoverTimeSinceLastLandingCheck = 0f;
+        state = State.Hovering;
+    }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        if (!Application.isPlaying || !TryPickLandingSpot(out Vector3 spot))
+        {
+            return;
+        }
+
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(spot, 0.25f);
+        Gizmos.DrawLine(transform.position, spot);
+    }
+#endif
 
     #endregion
 

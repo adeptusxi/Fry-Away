@@ -555,7 +555,7 @@ MonoBehaviour:
   longShotBonus: 50
   maxHoveringSeagulls: 5
   showDebugDisplays: 0
-  spawnImmediately: 0
+  spawnImmediately: 1
   verbose: 1
 --- !u!4 &49955672
 Transform:
@@ -1608,6 +1608,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &305583336
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 305583337}
+  m_Layer: 0
+  m_Name: groundmarker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &305583337
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 305583336}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.00043195084, z: -0, w: 0.99999994}
+  m_LocalPosition: {x: 0.01, y: -0.52, z: 0.86}
+  m_LocalScale: {x: 0.5810814, y: 0.5810814, z: 0.5810814}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -0.049, z: 0}
 --- !u!1 &310715969
 GameObject:
   m_ObjectHideFlags: 0
@@ -6494,8 +6525,9 @@ MonoBehaviour:
   minDistance: 50
   maxDistance: 60
   coneAngle: 45
-  floor: {fileID: 295480125}
-  floorClearance: 0.5
+  floor: {fileID: 305583337}
+  floorClearance: 0.1
+  maxSpawnHeightAboveOrigin: 15
   maxTargets: 10
   verbose: 0
   hoverHeightMin: 0
@@ -8326,3 +8358,4 @@ SceneRoots:
   - {fileID: 1894281219}
   - {fileID: 1386917829}
   - {fileID: 233993065}
+  - {fileID: 305583337}

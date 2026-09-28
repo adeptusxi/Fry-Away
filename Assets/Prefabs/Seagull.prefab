@@ -83,8 +83,12 @@ MonoBehaviour:
   minSpeed: 4
   maxSpeed: 6
   maxYawOffset: 10
+  maxPitchOffset: 15
   weaveFrequency: 0.35
   irregularity: 0.1
+  pitchGroundDamping: 3
+  lowHeightPitchBias: -8
+  highHeightPitchBias: 8
   swoopSpeed: 7
   swoopTurnRate: 4
   leavePauseDuration: 0.5
@@ -123,10 +127,24 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   longShotVfx: {fileID: 0}
+  approachSoundId: 12
+  approachSoundDistance: 8
+  closeSoundDistance: 3
+  closeSoundPause: 1
   hoverSpeed: 1.5
   hoverBobAmplitude: 0.4
   hoverBobFrequency: 0.5
   hoverTurnRate: 2
+  hoverSettleDistance: 1.5
+  landingDistanceMin: 4
+  landingDistanceMax: 7
+  landingCheckInterval: 3
+  landingChance: 0.6
+  landingDuration: 1.5
+  landingTurnDuration: 0.4
+  landingSettleDuration: 0.4
+  idleDurationMin: 3
+  idleDurationMax: 8
   beak: {fileID: 5601694743596393290}
   noticeRadius: 1.2
 --- !u!136 &487653903476520873
