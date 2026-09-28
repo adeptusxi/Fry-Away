@@ -4,45 +4,136 @@ using System.Collections;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
-    
-    [SerializeField] private GameObject menuCanvasRoot;
+
+    [Header("Menu Sign")]
+    [SerializeField] private SignSlideAnimation menuSign;
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject handPreferencePanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject endScreenPanel;
 
+    [Header("Tutorial Sign")]
+    [SerializeField] private SignSlideAnimation tutorialSign;
+
+    private SignSlideAnimation[] signs;
+    private GameObject[] panels;
+    private Coroutine swapRoutine;
+
     private void Awake()
     {
         Instance = this;
+
+        signs = new[] { menuSign, tutorialSign };
+        panels = new[] { mainMenuPanel, handPreferencePanel, settingsPanel, endScreenPanel };
+
+        HideSignsImmediate();
     }
 
-    // ---------- Landing ----------
+    // ---------- Signs ----------
 
     public void ShowLanding()
     {
-        if (menuCanvasRoot != null)
+        ShowSign(menuSign, mainMenuPanel);
+    }
+
+    public void ShowTutorial()
+    {
+        ShowSign(tutorialSign);
+    }
+
+    public void ShowEndScreen()
+    {
+        ShowSign(menuSign, endScreenPanel);
+    }
+
+    public void HideSigns()
+    {
+        ShowSign(null);
+    }
+
+    public void HideSignsImmediate()
+    {
+        StopSwap();
+
+        foreach (SignSlideAnimation sign in signs)
         {
-            menuCanvasRoot.SetActive(true);
+            if (sign != null)
+            {
+                sign.Exit(true);
+            }
+        }
+    }
+
+    private void ShowSign(SignSlideAnimation next, GameObject panel = null)
+    {
+        StopSwap();
+        swapRoutine = StartCoroutine(SwapTo(next, panel));
+    }
+
+    private IEnumerator SwapTo(SignSlideAnimation next, GameObject panel)
+    {
+        if (next != null && next.IsShown)
+        {
+            ShowPanel(panel);
         }
 
-        if (mainMenuPanel != null)
+        foreach (SignSlideAnimation sign in signs)
         {
-            mainMenuPanel.SetActive(true);
+            if (sign != null && sign != next && sign.IsShown)
+            {
+                sign.Exit();
+            }
         }
 
-        if (handPreferencePanel != null)
+        while (AnyExiting())
         {
-            handPreferencePanel.SetActive(false);
+            yield return null;
         }
 
-        if (settingsPanel != null)
+        if (next != null && !next.IsShown)
         {
-            settingsPanel.SetActive(false);
+            ShowPanel(panel);
+            next.Enter();
         }
 
-        if (endScreenPanel != null)
+        swapRoutine = null;
+    }
+
+    private void ShowPanel(GameObject panel)
+    {
+        if (panel == null)
         {
-            endScreenPanel.SetActive(false);
+            return;
+        }
+
+        foreach (GameObject p in panels)
+        {
+            if (p != null)
+            {
+                p.SetActive(p == panel);
+            }
+        }
+    }
+
+    private bool AnyExiting()
+    {
+        foreach (SignSlideAnimation sign in signs)
+        {
+            if (sign != null && !sign.IsShown && sign.IsAnimating)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void StopSwap()
+    {
+        if (swapRoutine != null)
+        {
+            StopCoroutine(swapRoutine);
+            swapRoutine = null;
         }
     }
 
@@ -56,30 +147,12 @@ public class UIManager : MonoBehaviour
             AudioManager.LoopTrack.Loading
         );
 
-        // Hide main menu
-        if (mainMenuPanel != null)
-        {
-            mainMenuPanel.SetActive(false);
-        }
-
-        // Show hand preference
-        if (handPreferencePanel != null)
-        {
-            handPreferencePanel.SetActive(true);
-        }
+        ShowSign(menuSign, handPreferencePanel);
     }
 
     public void OnSettingsPressed()
     {
-        if (mainMenuPanel != null)
-        {
-            mainMenuPanel.SetActive(false);
-        }
-
-        if (settingsPanel != null)
-        {
-            settingsPanel.SetActive(true);
-        }
+        ShowSign(menuSign, settingsPanel);
     }
 
     // ---------- Hand Preference ----------
@@ -99,105 +172,26 @@ public class UIManager : MonoBehaviour
             AudioManager.LoopTrack.Loading
         );
 
-        // Hide hand preference panel
-        if (handPreferencePanel != null)
-        {
-            handPreferencePanel.SetActive(false);
-        }
-
-        if (menuCanvasRoot != null)
-        {
-            menuCanvasRoot.SetActive(false);
-        }
-
-        GameManager.Instance?.SelectHandedness(right);
+        GameManager.Instance?.SelectHandedness(right); // start round 
     }
 
     // ---------- Settings ----------
 
     public void OnSettingsBackPressed()
     {
-        if (settingsPanel != null)
-        {
-            settingsPanel.SetActive(false);
-        }
-
-        if (mainMenuPanel != null)
-        {
-            mainMenuPanel.SetActive(true);
-        }
-    }
-    
-    // ---------- Guide / Start Game ----------
-
-    public void OnGuideDismissed()
-    {
-        StartCoroutine(StartGameSequence());
-    }
-
-    private IEnumerator StartGameSequence()
-    {
-        //// Hide guide
-        //if (guidePanel != null)
-        //{
-        //    guidePanel.SetActive(false);
-        //}
-        //// (this is now handled from GameManager as a diagetic ui)
-
-        // Stop loading/start sound if it is currently playing
-        AudioManager.Instance?.StopLoop(
-            AudioManager.LoopTrack.Loading
-        );
-
-        // Play countdown
-        AudioManager.Instance?.PlayOneShot2D(
-            SoundId.Countdown
-        );
-
-        // Find countdown length
-        float countdownLength = 0f;
-
-        if (AudioManager.Instance != null)
-        {
-            countdownLength =
-                AudioManager.Instance.GetClipLength(
-                    SoundId.Countdown
-                );
-        }
-
-        // Wait until countdown finishes
-        if (countdownLength > 0f)
-        {
-            yield return new WaitForSeconds(
-                countdownLength
-            );
-        }
-
-        // Make sure countdown sound has stopped
-        AudioManager.Instance?.StopOneShot2D();
-
-        // Start actual gameplay
-        GameManager.Instance?.StartRound();
+        ShowSign(menuSign, mainMenuPanel);
     }
 
     // ---------- End Screen ----------
 
-    public void ShowEndScreen()
-    {
-        if (endScreenPanel != null)
-        {
-            endScreenPanel.SetActive(true);
-        }
-    }
-
     public void OnTryAgainPressed()
     {
-        if (endScreenPanel != null)
-        {
-            endScreenPanel.SetActive(false);
-        }
-
         GameManager.Instance?.PlayAgain();
+    }
+
+    public void OnReturnToMenuPressed()
+    {
+        GameManager.Instance?.ExitToLanding();
     }
 
     // ---------- Exit ----------

@@ -23,6 +23,9 @@ public class SignSlideAnimation : MonoBehaviour
 
     private float SpinDegrees => spinTurns * 360f;
 
+    public bool IsShown { get; private set; } // true from Enter until Exit 
+    public bool IsAnimating => slide != null && isActiveAndEnabled;
+
     private void Awake()
     {
         CaptureShownPose(); // "up" is whatever height it was at in the scene 
@@ -41,6 +44,7 @@ public class SignSlideAnimation : MonoBehaviour
     public void Enter(bool immediate = false)
     {
         CaptureShownPose();
+        IsShown = true;
 
         if (immediate)
         {
@@ -61,6 +65,7 @@ public class SignSlideAnimation : MonoBehaviour
     public void Exit(bool immediate = false)
     {
         CaptureShownPose();
+        IsShown = false;
 
         if (immediate)
         {

@@ -26,10 +26,6 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private TargetSpawner seagullSpawner;
 
-    [Header("Diagetic Signs")]
-    [SerializeField] private SignSlideAnimation tutorialSign;
-    [SerializeField] private SignSlideAnimation endSign;
-
     [Header("Tutorial Seagull")]
     [SerializeField] private TutorialSeagull tutorialSeagullPrefab;
 
@@ -262,9 +258,9 @@ public class GameManager : MonoBehaviour
 
         ShowBasket();
 
-        if (tutorialSign)
+        if (UIManager.Instance)
         {
-            tutorialSign.Enter();
+            UIManager.Instance.ShowTutorial();
         }
 
         // Keep the intro music until the tutorial hit starts the countdown.
@@ -283,6 +279,12 @@ public class GameManager : MonoBehaviour
         }
 
         ResetRound();
+
+        if (UIManager.Instance)
+        {
+            UIManager.Instance.HideSigns();
+        }
+
         state = GameState.Countdown;
         countdownInProgress = true;
         countdownRoutine = StartCoroutine(CountdownThenPlay(true));
@@ -379,9 +381,9 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (tutorialSign)
+        if (UIManager.Instance)
         {
-            tutorialSign.Exit();
+            UIManager.Instance.HideSigns();
         }
 
         state = GameState.Countdown;
@@ -487,6 +489,12 @@ public class GameManager : MonoBehaviour
     private void EnterPlayingDirectly()
     {
         ResetRound();
+
+        if (UIManager.Instance)
+        {
+            UIManager.Instance.HideSignsImmediate();
+        }
+
         ShowBasket();
         PlayBgm(SoundId.CombatBGM);
         EnterPlaying();
@@ -573,11 +581,6 @@ public class GameManager : MonoBehaviour
         currentBgm = SoundId.None;
         gameEndSource = AudioManager.Instance?.PlayTrackedOneShot2D(SoundId.GameEnd);
 
-        if (endSign)
-        {
-            endSign.Enter();
-        }
-        
         if (UIManager.Instance)
         {
             UIManager.Instance.ShowEndScreen();
@@ -632,16 +635,6 @@ public class GameManager : MonoBehaviour
 
             breadSpawner.gameObject.SetActive(false);
         }
-
-        if (tutorialSign)
-        {
-            tutorialSign.Exit(true);
-        }
-
-        if (endSign)
-        {
-            endSign.Exit(true);
-        }
     }
 
     // attach and start spawning breads 
@@ -677,6 +670,12 @@ public class GameManager : MonoBehaviour
         if (!tutorialSeagullPrefab || !tutorialSpawnPoint)
         {
             Debug.LogError("[GameManager] no tutorial seagull prefab or spawn point assigned, skipping tutorial", this);
+
+            if (UIManager.Instance)
+            {
+                UIManager.Instance.HideSigns();
+            }
+
             PlayBgm(SoundId.CombatBGM);
             EnterPlaying();
             return;
