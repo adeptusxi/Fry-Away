@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 // basic spawner: spawns at a fixed worldspace position
 public class ThrowInteractableSpawner : MonoBehaviour
@@ -85,7 +87,11 @@ public class ThrowInteractableSpawner : MonoBehaviour
         needsSpawn = false;
 
         Release();
-
+        if (prefabs == null || prefabs.Length == 0)
+        {
+            Debug.LogError("[ThrowInteractableSpawner] has empty prefabs list", this);
+        }
+        prefab = prefabs[Random.Range(0, prefabs.Length)];
         GameObject instance = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation);
         ThrowInteractable spawned = instance.GetComponentInChildren<ThrowInteractable>(true);
         

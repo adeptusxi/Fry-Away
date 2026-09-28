@@ -1,6 +1,7 @@
 using Oculus.Interaction.Input;
-
+using Oculus.Platform.Models;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 
@@ -88,6 +89,23 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
 
         }
 
+        if (target == Handedness.Left) // TODO clean up (reusable code in FixedGripTransformer, also is hardcoded for starting on right hand and only one switch
+        {
+            Vector3 position = attachPoint.position;
+            position.x = -position.x;
+            Quaternion rotation = attachPoint.rotation;
+            // Mirror
+            Vector3 forward = rotation * Vector3.forward;
+            Vector3 up = rotation * Vector3.up;
+
+            forward.x = -forward.x;
+            up.x = -up.x;
+
+            rotation = Quaternion.LookRotation(forward, up);
+            //
+            attachPoint.position = position;
+            attachPoint.rotation = rotation;
+        }
 
 
         Quaternion relativeRot = attachPoint != null
@@ -95,7 +113,6 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
             ? Quaternion.Inverse(transform.rotation) * attachPoint.rotation
 
             : Quaternion.identity;
-
 
 
         transform.SetParent(anchor, false);
