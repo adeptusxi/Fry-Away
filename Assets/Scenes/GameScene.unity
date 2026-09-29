@@ -9813,6 +9813,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Frisbee Spawner
       objectReference: {fileID: 0}
+    - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
+      propertyPath: prefabs.Array.size
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

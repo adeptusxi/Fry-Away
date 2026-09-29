@@ -14,7 +14,8 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
     [SerializeField, Tooltip("Point on the basket where it attaches to the controller")]
     private Transform attachPoint;
     private Transform attachPosition;
-
+    [SerializeField, Tooltip("For debugging scenes")]
+    private bool activateOnStart = false;
 
     private Handedness dominant = Handedness.Right;
 
@@ -31,6 +32,7 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
     private void Start() {
 
         AttachBasket();
+        if (activateOnStart) { Activate(true);  }
 
     }
 
@@ -71,6 +73,11 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
     public void AttachBasket()
 
     {
+        if (!attachPoint)
+        {
+            Debug.LogError($"[BreadSpawnerBasket] no attachPoint found, can't attach", this);
+            return;
+        }
         if (attachPosition != null) { Destroy(attachPosition.gameObject); }
 
         Handedness target = dominant == Handedness.Right ? Handedness.Left : Handedness.Right;
