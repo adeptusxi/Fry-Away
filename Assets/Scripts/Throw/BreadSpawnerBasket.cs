@@ -12,9 +12,8 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
 {
 
     [SerializeField, Tooltip("Point on the basket where it attaches to the controller")]
-
     private Transform attachPoint;
-
+    private Transform attachPosition;
 
 
     private Handedness dominant = Handedness.Right;
@@ -72,6 +71,7 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
     public void AttachBasket()
 
     {
+        if (attachPosition != null) { Destroy(attachPosition.gameObject); }
 
         Handedness target = dominant == Handedness.Right ? Handedness.Left : Handedness.Right;
 
@@ -88,29 +88,29 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
             return;
 
         }
-
+        attachPosition = new GameObject("AttachPositionReference").transform;
+        attachPosition.SetParent(attachPoint.parent, false);
+        Vector3 position = attachPoint.localPosition;
+        Quaternion rotation = attachPoint.localRotation;
         if (target == Handedness.Left) // TODO clean up (reusable code in FixedGripTransformer, also is hardcoded for starting on right hand and only one switch
         {
-            Vector3 position = attachPoint.position;
-            position.x = -position.x;
-            Quaternion rotation = attachPoint.rotation;
             // Mirror
+            position.x = -position.x;
+            
             Vector3 forward = rotation * Vector3.forward;
             Vector3 up = rotation * Vector3.up;
-
             forward.x = -forward.x;
             up.x = -up.x;
 
             rotation = Quaternion.LookRotation(forward, up);
-            //
-            attachPoint.position = position;
-            attachPoint.rotation = rotation;
         }
 
+        attachPosition.localPosition = position;
+        attachPosition.localRotation = rotation;
 
-        Quaternion relativeRot = attachPoint != null
+        Quaternion relativeRot = attachPosition != null
 
-            ? Quaternion.Inverse(transform.rotation) * attachPoint.rotation
+            ? Quaternion.Inverse(transform.rotation) * attachPosition.rotation
 
             : Quaternion.identity;
 
@@ -127,7 +127,7 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
 
         {
 
-            transform.position += anchor.position - attachPoint.position;
+            transform.position += anchor.position - attachPosition.position;
 
         }
 
@@ -146,7 +146,6 @@ public class BreadSpawnerBasket : ThrowInteractableSpawner
             Debug.Log($"[BreadSpawnerBasket] attached to {target} controller ({anchor.name})");
 
         }
-
     }
 
 
