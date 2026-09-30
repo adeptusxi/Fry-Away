@@ -331,6 +331,99 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &29118822
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 29118825}
+  - component: {fileID: 29118824}
+  - component: {fileID: 29118823}
+  m_Layer: 0
+  m_Name: Terrain
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!154 &29118823
+TerrainCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29118822}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_TerrainData: {fileID: 15600000, guid: dba5821e3f12a4554b092f2437b537b1, type: 2}
+  m_EnableTreeColliders: 1
+--- !u!218 &29118824
+Terrain:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29118822}
+  m_Enabled: 1
+  serializedVersion: 6
+  m_TerrainData: {fileID: 15600000, guid: dba5821e3f12a4554b092f2437b537b1, type: 2}
+  m_TreeDistance: 5000
+  m_TreeBillboardDistance: 50
+  m_TreeCrossFadeLength: 5
+  m_TreeMaximumFullLODCount: 50
+  m_DetailObjectDistance: 80
+  m_DetailObjectDensity: 1
+  m_HeightmapPixelError: 5
+  m_SplatMapDistance: 1057
+  m_HeightmapMinimumLODSimplification: 0
+  m_HeightmapMaximumLOD: 0
+  m_ShadowCastingMode: 2
+  m_DrawHeightmap: 1
+  m_DrawInstanced: 0
+  m_DrawTreesAndFoliage: 1
+  m_StaticShadowCaster: 0
+  m_IgnoreQualitySettings: 0
+  m_ReflectionProbeUsage: 1
+  m_MaterialTemplate: {fileID: 2100000, guid: 594ea882c5a793440b60ff72d896021e, type: 2}
+  m_BakeLightProbesForTrees: 1
+  m_PreserveTreePrototypeLayers: 0
+  m_DeringLightProbesForTrees: 1
+  m_ReceiveGI: 1
+  m_ScaleInLightmap: 0.0256
+  m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
+  m_GroupingID: 0
+  m_RenderingLayerMask: 1
+  m_AllowAutoConnect: 1
+  m_EnableHeightmapRayTracing: 1
+  m_EnableTreesAndDetailsRayTracing: 0
+  m_TreeMotionVectorModeOverride: 3
+--- !u!4 &29118825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 29118822}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -23.2, y: -0.4, z: -38.5}
+  m_LocalScale: {x: -14.64, y: -14.64, z: -14.64}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &49955670
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,47 +453,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e932afee1e79b4f4995dabfa8c24caa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  breadSpawner: {fileID: 1880818961}
+  frisbeeSpawner: {fileID: 0}
   seagullSpawner: {fileID: 1885502845}
-  tutorialSeagullPrefab: {fileID: 7881745442616627744, guid: fd401fac53210e147b7b8c2f92886497, type: 3}
-  tutorialSpawnPoint: {fileID: 1879667434}
-  playerTransform: {fileID: 207147544}
-  breadCount: 20
-  lastThrowResolveTimeout: 10
-  maxPointsAtRange: 100
-  minScoreDistance: 3
-  maxScoreDistance: 20
-  scoreCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  hoveringPointsScalar: 0.25
-  longShotDistance: 15
-  longShotBonus: 50
-  maxHoveringSeagulls: 5
   showDebugDisplays: 0
   spawnImmediately: 0
-  verbose: 1
 --- !u!4 &49955672
 Transform:
   m_ObjectHideFlags: 0
@@ -699,15 +755,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  scaleEnabled: 1
-  scaleTarget: {fileID: 0}
-  hoverScale: 1.1
-  pressScale: 0.95
-  transitionSpeed: 15
-  soundEnabled: 1
-  hoverSound: 11
-  clickSound: 4
-  sustainClickUntilStopped: 0
 --- !u!1 &96990786
 GameObject:
   m_ObjectHideFlags: 0
@@ -1059,20 +1106,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  scaleEnabled: 1
-  scaleTarget: {fileID: 0}
-  hoverScale: 1.1
-  pressScale: 0.95
-  transitionSpeed: 15
-  soundEnabled: 1
-  hoverSound: 11
-  clickSound: 4
-  sustainClickUntilStopped: 0
---- !u!4 &207147544 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2175522431906157856, guid: 3df992adda16d4703b07ba657ac93782, type: 3}
-  m_PrefabInstance: {fileID: 2614253693769072846}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &208163267
 GameObject:
   m_ObjectHideFlags: 0
@@ -1196,6 +1229,79 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 1
+--- !u!1001 &233839395
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.823
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.3056
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.2568
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
+      propertyPath: m_Name
+      value: basket2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: be8ea0fea6d1d4dd2adb0d99e08e10a5, type: 3}
 --- !u!1 &233993064
 GameObject:
   m_ObjectHideFlags: 0
@@ -2319,15 +2425,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  scaleEnabled: 1
-  scaleTarget: {fileID: 0}
-  hoverScale: 1.1
-  pressScale: 0.95
-  transitionSpeed: 15
-  soundEnabled: 1
-  hoverSound: 11
-  clickSound: 4
-  sustainClickUntilStopped: 0
 --- !u!114 &485735652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2793,15 +2890,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  scaleEnabled: 1
-  scaleTarget: {fileID: 0}
-  hoverScale: 1.1
-  pressScale: 0.95
-  transitionSpeed: 15
-  soundEnabled: 1
-  hoverSound: 11
-  clickSound: 4
-  sustainClickUntilStopped: 0
 --- !u!114 &567950085
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3219,15 +3307,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  scaleEnabled: 1
-  scaleTarget: {fileID: 0}
-  hoverScale: 1.1
-  pressScale: 0.95
-  transitionSpeed: 15
-  soundEnabled: 1
-  hoverSound: 11
-  clickSound: 4
-  sustainClickUntilStopped: 0
 --- !u!1 &743128481
 GameObject:
   m_ObjectHideFlags: 0
@@ -3374,15 +3453,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  scaleEnabled: 1
-  scaleTarget: {fileID: 0}
-  hoverScale: 1.1
-  pressScale: 0.95
-  transitionSpeed: 15
-  soundEnabled: 1
-  hoverSound: 11
-  clickSound: 4
-  sustainClickUntilStopped: 0
 --- !u!114 &773190232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3566,57 +3636,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e6ea46094420489cb8e8fc4e913ac29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SignSlideAnimation
-  duration: 1.2
-  curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0.3616634
-      outSlope: 0.3616634
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.21944447
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: -0.5792567
-      outSlope: -0.5792567
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.20277774
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  hiddenHeight: -2
-  spinTurns: 2
-  spinCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3694,7 +3713,7 @@ Transform:
   m_GameObject: {fileID: 844818993}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 21.16, y: 2.07, z: 1.29}
+  m_LocalPosition: {x: 21.16, y: 2.07, z: 1.2799997}
   m_LocalScale: {x: 4, y: 6, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3850,7 +3869,7 @@ Transform:
   m_GameObject: {fileID: 859472954}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.081174225, z: -0, w: 0.9966999}
-  m_LocalPosition: {x: 19.2, y: 2.85, z: -4}
+  m_LocalPosition: {x: 19.2, y: 2.85, z: -4.01}
   m_LocalScale: {x: 6, y: 7.714286, z: 6}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -3964,8 +3983,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20dac12491ccd4efa9ec87e1cb1ee794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  bgmFadeInSeconds: 1
-  bgmFadeOutSeconds: 1
   library: {fileID: 11400000, guid: fa95428a76eb04d2494c0fdb82e2c3d7, type: 2}
   bgmSource: {fileID: 880739309}
   ambientSource: {fileID: 1944109828}
@@ -4116,7 +4133,7 @@ Transform:
   m_GameObject: {fileID: 881596913}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.255602, z: -0, w: 0.96678215}
-  m_LocalPosition: {x: 23.17, y: 0.04, z: 7.03}
+  m_LocalPosition: {x: 23.17, y: 0.04, z: 7.02}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4342,7 +4359,7 @@ Transform:
   m_GameObject: {fileID: 971936167}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.063127816, z: -0, w: 0.9980055}
-  m_LocalPosition: {x: 12.6, y: 2.33, z: -10.9}
+  m_LocalPosition: {x: 12.6, y: 2.33, z: -10.91}
   m_LocalScale: {x: 6.8499994, y: 8.807142, z: 6.8499994}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -4529,7 +4546,7 @@ Transform:
   m_GameObject: {fileID: 998030135}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.53, z: -15.6}
+  m_LocalPosition: {x: 0, y: 3.53, z: -15.610001}
   m_LocalScale: {x: 7, y: 9, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4792,12 +4809,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4245f0007c3484cd4aaef7ba6064c3e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  menuSign: {fileID: 1086062708}
   mainMenuPanel: {fileID: 1888378349}
   handPreferencePanel: {fileID: 24385264}
+  guidePanel: {fileID: 0}
   settingsPanel: {fileID: 1828803794}
   endScreenPanel: {fileID: 324790388}
-  tutorialSign: {fileID: 820677948}
 --- !u!4 &1067684453
 Transform:
   m_ObjectHideFlags: 0
@@ -4943,7 +4959,7 @@ Transform:
   m_GameObject: {fileID: 1071392815}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.11613952, z: -0, w: 0.9932329}
-  m_LocalPosition: {x: 22.69, y: 1.31, z: 4.65}
+  m_LocalPosition: {x: 22.69, y: 1.31, z: 4.64}
   m_LocalScale: {x: 3, y: 6, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5110,57 +5126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e6ea46094420489cb8e8fc4e913ac29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SignSlideAnimation
-  duration: 1.2
-  curve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0.3616634
-      outSlope: 0.3616634
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.21944447
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: -0.5792567
-      outSlope: -0.5792567
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.20277774
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  hiddenHeight: -2
-  spinTurns: 2
-  spinCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &1106564347
 GameObject:
   m_ObjectHideFlags: 0
@@ -5487,7 +5452,7 @@ Transform:
   m_GameObject: {fileID: 1233742670}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.081174225, z: -0, w: 0.9966999}
-  m_LocalPosition: {x: 19.2, y: 2.85, z: -4}
+  m_LocalPosition: {x: 19.2, y: 2.85, z: -4.01}
   m_LocalScale: {x: 6, y: 7.714286, z: 6}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -5819,9 +5784,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea626a6da2d9b47928b20f171ee605b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VRPointableCanvasModule
-  m_SendPointerHoverToParent: 1
-  _useInitialPressPositionForDrag: 1
-  _exclusiveMode: 1
 --- !u!1 &1386917828
 GameObject:
   m_ObjectHideFlags: 0
@@ -6279,7 +6241,7 @@ Transform:
   m_GameObject: {fileID: 1551957961}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.17367432, z: -0, w: 0.98480314}
-  m_LocalPosition: {x: 6.1, y: 1.9, z: -13.1}
+  m_LocalPosition: {x: 6.1, y: 1.9, z: -13.110001}
   m_LocalScale: {x: 5, y: 6.428571, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -6615,7 +6577,7 @@ Transform:
   m_GameObject: {fileID: 1668647742}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.09908425, z: -0, w: 0.9950791}
-  m_LocalPosition: {x: 15.97, y: 0.36, z: -7}
+  m_LocalPosition: {x: 15.97, y: 0.36, z: -7.01}
   m_LocalScale: {x: 6, y: 7.714286, z: 6}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -6727,7 +6689,7 @@ Transform:
   m_GameObject: {fileID: 1731022909}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.09908425, z: -0, w: 0.9950791}
-  m_LocalPosition: {x: 15.97, y: 0.36, z: -7}
+  m_LocalPosition: {x: 15.97, y: 0.36, z: -7.01}
   m_LocalScale: {x: 6, y: 7.714286, z: 6}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -6964,15 +6926,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  scaleEnabled: 1
-  scaleTarget: {fileID: 0}
-  hoverScale: 1.1
-  pressScale: 0.95
-  transitionSpeed: 15
-  soundEnabled: 1
-  hoverSound: 11
-  clickSound: 4
-  sustainClickUntilStopped: 0
 --- !u!114 &1756942465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7540,17 +7493,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3419611729733117946, guid: 33e497381ff042347948c32d14cdc421, type: 3}
   m_PrefabInstance: {fileID: 8175064566906462991}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1880818961 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
-  m_PrefabInstance: {fileID: 8175064566906462991}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc1b09766025d41ac8c5667548418203, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BreadSpawnerBasket
 --- !u!1 &1885502841
 GameObject:
   m_ObjectHideFlags: 0
@@ -7615,30 +7557,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0df924cd4759347b2e264c6b757234, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeagullSpawner
-  hittableTarget: {fileID: 7659762126626740027, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
-  coneOrigin: {fileID: 2062685998}
-  initialSpawnDelay: 3
-  minSpawnInterval: 1.5
-  maxSpawnInterval: 3.5
-  minDistance: 50
-  maxDistance: 60
-  coneAngle: 45
-  floor: {fileID: 305583337}
-  floorClearance: 0.1
-  maxSpawnHeightAboveOrigin: 15
-  maxTargets: 10
-  verbose: 0
-  hoverHeightMin: 0
-  hoverHeightMax: 2
-  hoverHeightJitter: 0.5
-  hoverHeightBiasStrength: 0.6
-  hoverRadiusMin: 1.5
-  hoverRadiusMax: 3.5
-  hoverYawRange: 180
-  minHoverSeparation: 1.2
-  hoverPlacementAttempts: 8
-  seaLevel: {fileID: 310715970}
-  attractionYawRange: 180
 --- !u!1 &1888378349
 GameObject:
   m_ObjectHideFlags: 0
@@ -8077,15 +7995,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  scaleEnabled: 1
-  scaleTarget: {fileID: 0}
-  hoverScale: 1.1
-  pressScale: 0.95
-  transitionSpeed: 15
-  soundEnabled: 1
-  hoverSound: 11
-  clickSound: 4
-  sustainClickUntilStopped: 0
 --- !u!1 &1938911374
 GameObject:
   m_ObjectHideFlags: 0
@@ -8857,15 +8766,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  scaleEnabled: 1
-  scaleTarget: {fileID: 0}
-  hoverScale: 1.1
-  pressScale: 0.95
-  transitionSpeed: 15
-  soundEnabled: 1
-  hoverSound: 11
-  clickSound: 4
-  sustainClickUntilStopped: 0
 --- !u!1 &2042529467
 GameObject:
   m_ObjectHideFlags: 0
@@ -8894,7 +8794,7 @@ Transform:
   m_GameObject: {fileID: 2042529467}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.17367432, z: -0, w: 0.98480314}
-  m_LocalPosition: {x: 6.1, y: 1.9, z: -13.1}
+  m_LocalPosition: {x: 6.1, y: 1.9, z: -13.110001}
   m_LocalScale: {x: 5, y: 6.428571, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -9117,15 +9017,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa11e647b723447d9d806214f40e384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  scaleEnabled: 1
-  scaleTarget: {fileID: 0}
-  hoverScale: 1.1
-  pressScale: 0.95
-  transitionSpeed: 15
-  soundEnabled: 1
-  hoverSound: 11
-  clickSound: 4
-  sustainClickUntilStopped: 0
 --- !u!1 &2070893017
 GameObject:
   m_ObjectHideFlags: 0
@@ -9303,9 +9194,9 @@ Transform:
   m_GameObject: {fileID: 2079548424}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 0, z: -20.1}
+  m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 920500446}
   - {fileID: 2070893018}
@@ -9339,7 +9230,7 @@ Transform:
   m_GameObject: {fileID: 2088694947}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.063127816, z: -0, w: 0.9980055}
-  m_LocalPosition: {x: 12.6, y: 2.33, z: -10.9}
+  m_LocalPosition: {x: 12.6, y: 2.33, z: -10.91}
   m_LocalScale: {x: 6.8499994, y: 8.807142, z: 6.8499994}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -9833,3 +9724,5 @@ SceneRoots:
   - {fileID: 1386917829}
   - {fileID: 233993065}
   - {fileID: 305583337}
+  - {fileID: 233839395}
+  - {fileID: 29118825}
