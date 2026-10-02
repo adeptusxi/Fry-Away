@@ -293,11 +293,12 @@ public class AudioManager : MonoBehaviour
     }
 
     // ---------- 3D One-Shot SFX ----------
-
+    
     public void PlayOneShotAtPosition(
         SoundId id,
         Vector3 position,
-        float intensity01 = 0f
+        float intensity01 = 0f,
+        float fullVolumeDistance = 1f // in meters
     )
     {
         if (!TryGetClip(id, out AudioClip clip, out float volume, intensity01))
@@ -313,6 +314,7 @@ public class AudioManager : MonoBehaviour
         source.clip = clip;
         source.volume = volume;
         source.spatialBlend = 1f;
+        source.minDistance = Mathf.Max(0.01f, fullVolumeDistance);
         source.outputAudioMixerGroup = sfxMixerGroup;
 
         source.Play();

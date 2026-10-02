@@ -31,13 +31,7 @@ public class TutorialSeagull : HittableTarget
         if (flyingAway)
             return;
 
-        if (HitSoundId != SoundId.None)
-        {
-            AudioManager.Instance?.PlayOneShotAtPosition(
-                HitSoundId,
-                hit.point
-            );
-        }
+        PlayHitSound(hit.point);
 
         TryCatch(hitBy);
 

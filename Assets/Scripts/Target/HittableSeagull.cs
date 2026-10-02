@@ -141,13 +141,7 @@ public class HittableSeagull : HittableTarget
     
     private void ResolveHit(Catchable bread, Vector3 point)
     {
-        if (HitSoundId != SoundId.None)
-        {
-            AudioManager.Instance?.PlayOneShotAtPosition(
-                HitSoundId,
-                point
-            );
-        }
+        PlayHitSound(point);
 
         TryCatch(bread);
 

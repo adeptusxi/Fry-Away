@@ -11,8 +11,21 @@ public abstract class HittableTarget : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private SoundId hitSoundId = SoundId.None;
+    [SerializeField, Min(0f), Tooltip("in meters")] private float hitSoundFullVolumeDistance = 20f;
 
-    protected SoundId HitSoundId => hitSoundId;
+    protected void PlayHitSound(Vector3 point)
+    {
+        if (hitSoundId == SoundId.None)
+        {
+            return;
+        }
+
+        AudioManager.Instance?.PlayOneShotAtPosition(
+            hitSoundId,
+            point,
+            fullVolumeDistance: hitSoundFullVolumeDistance
+        );
+    }
 
     private bool reachedTarget;
 
