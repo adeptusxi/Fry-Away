@@ -5,10 +5,10 @@ public class HitPointsPopup : MonoBehaviour
 {
     [SerializeField] private TMP_Text label;
     
-    [Header("Text Format")]
+    [Header("Text")]
     [SerializeField] private string format = "+{0}";
     [SerializeField, TextArea] private string longShotFormat = "LONG SHOT!\n+{0}";
-    [SerializeField] private Color longShotColor = new(1f, 0.8f, 0.2f);
+    [SerializeField, Tooltip("min score to max score")] private Gradient scoreColor;
 
     [Header("Motion")]
     [SerializeField, Min(0.01f), Tooltip("in seconds")] private float lifetime = 1.2f;
@@ -24,7 +24,7 @@ public class HitPointsPopup : MonoBehaviour
     private float elapsed;
     private Camera playerCamera;
 
-    public void Show(int points, bool isLongShot)
+    public void Show(int points, float pointsFraction, bool isLongShot)
     {
         origin = transform.position;
         elapsed = 0f;
@@ -33,11 +33,7 @@ public class HitPointsPopup : MonoBehaviour
         if (label != null)
         {
             label.text = string.Format(isLongShot ? longShotFormat : format, points);
-
-            if (isLongShot)
-            {
-                label.color = longShotColor;
-            }
+            label.color = scoreColor.Evaluate(pointsFraction);
         }
 
         Apply(0f);

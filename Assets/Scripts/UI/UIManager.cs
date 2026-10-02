@@ -351,7 +351,7 @@ public class UIManager : MonoBehaviour
         }
 
         HitPointsPopup popup = Instantiate(hitPointPopupPrefab, result.position, Quaternion.identity);
-        popup.Show(result.points, result.isLongShot);
+        popup.Show(result.points, result.pointsFraction, result.isLongShot);
     }
 
     // ---------- End Screen ----------

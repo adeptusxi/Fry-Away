@@ -854,7 +854,7 @@ MonoBehaviour:
   tutorialSeagullPrefab: {fileID: 7881745442616627744, guid: fd401fac53210e147b7b8c2f92886497, type: 3}
   tutorialSpawnPoint: {fileID: 0}
   playerTransform: {fileID: 0}
-  breadCount: 20
+  breadCount: -1
   lastThrowResolveTimeout: 10
   maxPointsAtRange: 100
   minScoreDistance: 3
@@ -884,7 +884,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   hoveringPointsScalar: 0.25
-  longShotDistance: 15
+  longShotDistance: 10
   longShotBonus: 50
   onHitVFX: {fileID: 6580971150351711595, guid: b234d68a3543d4c65acd19331f6a7021, type: 3}
   maxHoveringSeagulls: 5

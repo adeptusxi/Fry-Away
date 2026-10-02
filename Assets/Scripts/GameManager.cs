@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public struct HitResult
     {
         public int points;
+        public float pointsFraction; // 0-1 
         public bool isLongShot;
         public Vector3 position; // world space
     }
@@ -38,8 +39,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform playerTransform;
 
     [Header("Bread")]
-    [Tooltip("how many breads the player gets once the tutorial is over. running out is the win condition")]
-    [SerializeField, Min(1)] private int breadCount = 20;
+    [Tooltip("how many breads the player gets once the tutorial is over. running out is the win condition. -1 means infinite")]
+    [SerializeField, Min(-1)] private int breadCount = 20;
 
     [Tooltip("in seconds. safety net: if the last bread never reports landing, win anyway after this long")]
     [SerializeField, Min(0f)] private float lastThrowResolveTimeout = 10f;
@@ -61,7 +62,7 @@ public class GameManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float hoveringPointsScalar = 0.25f;
 
     [Tooltip("in meters. a kill at or beyond this distance counts as a long shot")]
-    [SerializeField, Min(0f)] private float longShotDistance = 15f;
+    [SerializeField, Min(0f)] private float longShotDistance = 10f;
 
     [SerializeField, Min(0)] private int longShotBonus = 50;
 
@@ -101,6 +102,8 @@ public class GameManager : MonoBehaviour
     public GameState State => state;
     public int Score { get; private set; }
     public int BreadRemaining => breadRemaining;
+
+    private bool UnlimitedBread => breadCount < 0;
 
     private BreadSpawnerBasket Basket => breadSpawner as BreadSpawnerBasket; // null if a general ThrowInteractableSpawner was referenced 
 
@@ -370,7 +373,7 @@ public class GameManager : MonoBehaviour
             points *= hoveringPointsScalar;
         }
 
-        result.points = Mathf.Max(0, Mathf.RoundToInt(points));
+        result.points = Mathf.Max(1, Mathf.RoundToInt(points));
 
         result.isLongShot = !wasHovering && distance >= longShotDistance;
 
@@ -378,6 +381,8 @@ public class GameManager : MonoBehaviour
         {
             result.points += longShotBonus;
         }
+
+        result.pointsFraction = Mathf.InverseLerp(1f, maxPointsAtRange + longShotBonus, result.points);
 
         result.position = hitPosition;
 
@@ -521,7 +526,7 @@ public class GameManager : MonoBehaviour
     {
         state = GameState.Playing;
 
-        breadRemaining = breadCount;
+        breadRemaining = UnlimitedBread ? int.MaxValue : breadCount;
         combatBgmSpedUp = false;
         breadInFlight = 0;
         outOfBread = false;
@@ -531,7 +536,7 @@ public class GameManager : MonoBehaviour
             seagullSpawner.Activate(true);
         }
 
-        Log($"core loop started with {breadRemaining} bread");
+        Log($"core loop started with {(UnlimitedBread ? "unlimited" : breadRemaining.ToString())} bread");
     }
 
     private void WinGame()
@@ -714,10 +719,14 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        breadRemaining = Mathf.Max(0, breadRemaining - 1);
+        if (!UnlimitedBread)
+        {
+            breadRemaining = Mathf.Max(0, breadRemaining - 1);
+        }
+
         breadInFlight++;
 
-        if (!combatBgmSpedUp && breadRemaining <= Mathf.FloorToInt(breadCount * 0.5f))
+        if (!UnlimitedBread && !combatBgmSpedUp && breadRemaining <= Mathf.FloorToInt(breadCount * 0.5f))
         {
             combatBgmSpedUp = true;
             AudioManager.Instance?.SetBgmPitch(1.05f);
