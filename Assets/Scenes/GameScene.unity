@@ -5695,6 +5695,26 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1211838853595583364, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      propertyPath: m_fontColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1211838853595583364, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.02745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 1211838853595583364, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.02745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 1211838853595583364, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0.8156863
+      objectReference: {fileID: 0}
+    - target: {fileID: 1211838853595583364, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278650832
+      objectReference: {fileID: 0}
     - target: {fileID: 1980017533520547290, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -5799,6 +5819,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1067684452}
+    - target: {fileID: 5692021371435515929, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1067684452}
+    - target: {fileID: 5692021371435515929, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnReturnToMenuPressed
+      objectReference: {fileID: 0}
     - target: {fileID: 6447912129839043616, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -5827,6 +5855,18 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1067684452}
+    - target: {fileID: 8428222827484184578, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1067684452}
+    - target: {fileID: 8428222827484184578, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnExitPressed
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558632843444268038, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -77
+      objectReference: {fileID: 0}
     - target: {fileID: 8688492717932693499, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -5840,9 +5880,19 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5644968300440697508, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1042486869054742220, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7517204121164419228, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 1765661579316137011, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
