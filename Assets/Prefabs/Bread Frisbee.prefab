@@ -92,9 +92,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53f8100dfbf5842f0bcb0b9e56081340, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FixedGripTransformer
-  h: 0.08
   heldOffsetTransform: {fileID: 8286063178565640297}
-  leftHand: 0
+  fallbackHand: 1
+  h: 0.08
 --- !u!114 &6065844527232452624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,7 +113,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 3072
   timeout: 10
-  aimAssist: 0.3
+  aimAssist: 0.5
   maxAssistAngle: 30
   maxAssistRange: 30
   mHand: 1
@@ -141,7 +141,7 @@ MonoBehaviour:
   body: {fileID: 4847551345403790988}
   gripTransformer: {fileID: 1028909722648472315}
   physicsProvider: {fileID: 6065844527232452624}
-  throwVelocityThreshold: 0.3
+  throwVelocityThreshold: 0.27
   minWhooshSpeed: 2
   maxWhooshSpeed: 8
   throwDuration: 0.25
@@ -807,15 +807,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 225f4f7f3e85d463586841a5af29b282, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.1
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 225f4f7f3e85d463586841a5af29b282, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.1
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 225f4f7f3e85d463586841a5af29b282, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.1
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 225f4f7f3e85d463586841a5af29b282, type: 3}
       propertyPath: m_LocalPosition.x

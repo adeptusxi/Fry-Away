@@ -12,6 +12,14 @@ PrefabInstance:
       propertyPath: m_Radius
       value: 0.73
       objectReference: {fileID: 0}
+    - target: {fileID: 1415174660630248338, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a60ea63b79b5b4c29bdbbe7c33b8fef9, type: 2}
+    - target: {fileID: 2940489524597432524, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a60ea63b79b5b4c29bdbbe7c33b8fef9, type: 2}
     - target: {fileID: 7768305294588918595, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
       propertyPath: m_Name
       value: TutorialSeagull
