@@ -211,6 +211,15 @@ public abstract class ThrowPhysics : MonoBehaviour
         return found;
     }
 
+    // ends the flight early externally
+    public void ForceStop()
+    {
+        if (IsSimulating)
+        {
+            StopSimulating();
+        }
+    }
+
     private void StopSimulating()
     {
         IsSimulating = false;

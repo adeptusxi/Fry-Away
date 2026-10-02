@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-// visual and audio hover/click feedback for button
-[RequireComponent(typeof(Button))]
+// visual and audio hover/click feedback for a button, toggle or slider 
+[RequireComponent(typeof(Selectable))]
 public class UIButton : MonoBehaviour,
     IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
@@ -22,24 +22,24 @@ public class UIButton : MonoBehaviour,
     [Tooltip("Enable for the Start button: loops until StopSustained() is called.")]
     [SerializeField] private bool sustainClickUntilStopped;
 
-    private Button button;
+    private Selectable selectable;
 
     private Vector3 baseScale;
     private bool hovered;
     private bool pressed;
 
-    private bool Interactable => button && button.interactable;
+    private bool Interactable => selectable && selectable.interactable;
 
     private void Reset()
     {
-        button = GetComponent<Button>();
+        selectable = GetComponent<Selectable>();
     }
 
     private void Awake()
     {
-        if (!button)
+        if (!selectable)
         {
-            button = GetComponent<Button>();
+            selectable = GetComponent<Selectable>();
         }
 
         if (!scaleTarget)
@@ -52,17 +52,26 @@ public class UIButton : MonoBehaviour,
 
     private void OnEnable()
     {
-        if (button)
+        // a slider has no click event
+        if (selectable is Button button)
         {
             button.onClick.AddListener(PlayClickSound);
+        }
+        else if (selectable is Toggle toggle)
+        {
+            toggle.onValueChanged.AddListener(OnToggleChanged);
         }
     }
 
     private void OnDisable()
     {
-        if (button)
+        if (selectable is Button button)
         {
             button.onClick.RemoveListener(PlayClickSound);
+        }
+        else if (selectable is Toggle toggle)
+        {
+            toggle.onValueChanged.RemoveListener(OnToggleChanged);
         }
 
         hovered = false;
@@ -105,6 +114,11 @@ public class UIButton : MonoBehaviour,
     public void OnPointerDown(PointerEventData eventData)
     {
         pressed = true;
+
+        if (selectable is Slider && Interactable)
+        {
+            PlayClickSound();
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -115,6 +129,11 @@ public class UIButton : MonoBehaviour,
     #endregion
 
     #region Sound
+
+    private void OnToggleChanged(bool isOn)
+    {
+        PlayClickSound();
+    }
 
     private void PlayClickSound()
     {

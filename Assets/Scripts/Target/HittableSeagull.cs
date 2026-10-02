@@ -136,18 +136,23 @@ public class HittableSeagull : HittableTarget
         if (state == State.FlyingAway)
             return;
 
+        ResolveHit(hitBy ? hitBy.GetComponentInParent<Catchable>() : null, hit.point);
+    }
+    
+    private void ResolveHit(Catchable bread, Vector3 point)
+    {
         if (HitSoundId != SoundId.None)
         {
             AudioManager.Instance?.PlayOneShotAtPosition(
                 HitSoundId,
-                hit.point
+                point
             );
         }
 
-        TryCatch(hitBy);
+        TryCatch(bread);
 
         GameManager.HitResult result = GameManager.Instance
-            ? GameManager.Instance.ReportSeagullHit(this, hit)
+            ? GameManager.Instance.ReportSeagullHit(this, point)
             : default;
 
         if (result.isLongShot && longShotVfx)
@@ -437,6 +442,14 @@ public class HittableSeagull : HittableTarget
         if (!NoticedBreadAvailable)
         {
             EndSwoop();
+            return;
+        }
+
+        // close enough 
+        if (beak && catchRadius > 0f &&
+            (NoticedBreadPosition - beak.position).sqrMagnitude <= catchRadius * catchRadius)
+        {
+            ResolveHit(noticedBread, NoticedBreadPosition);
             return;
         }
 
@@ -890,6 +903,7 @@ public class HittableSeagull : HittableTarget
     [Header("Beak")]
     [SerializeField, Tooltip("put it on a head bone so the bread follows the animation")] private Transform beak;
     [SerializeField, Min(0f), Tooltip("in meters, how close a thrown bread has to be to chase it")] private float noticeRadius = 6f;
+    [SerializeField, Min(0f), Tooltip("in meters from the beak. 0 means just use hitbox")] private float catchRadius = 0.25f;
 
     private Catchable noticedBread;
 
@@ -925,18 +939,11 @@ public class HittableSeagull : HittableTarget
     }
 
     // may fail if another seagull got it first 
-    private bool TryCatch(ThrowInteractable hitBy)
+    private bool TryCatch(Catchable catchable)
     {
        noticedBread = null;
 
-        if (!hitBy || !beak)
-        {
-            return false;
-        }
-
-        Catchable catchable = hitBy.GetComponentInParent<Catchable>();
-
-        if (!catchable || !catchable.TryGiveTo(beak))
+        if (!catchable || !beak || !catchable.TryGiveTo(beak))
         {
             return false;
         }

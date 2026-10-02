@@ -395,6 +395,15 @@ public class ThrowInteractable : MonoBehaviour
         OnFlightStopped?.Invoke();
     }
 
+    // ends a throw that is still in the air
+    public void StopFlight()
+    {
+        if (physicsProvider != null)
+        {
+            physicsProvider.ForceStop();
+        }
+    }
+
     private void SetInteractablesEnabled(bool value)
     {
         if (interactables == null)

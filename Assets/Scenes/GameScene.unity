@@ -531,7 +531,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f58afa040e3534936b9064b5d9730c14, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.08000001
+      value: 0.231
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f58afa040e3534936b9064b5d9730c14, type: 3}
       propertyPath: m_LocalPosition.z
@@ -603,8 +603,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd7a648064884363a6faaaeaeea14aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BobAnimation
+  target: 1
   amplitude: 0.1
   period: 3
+  randomizeOffset: 1
 --- !u!4 &207147544 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2175522431906157856, guid: 3df992adda16d4703b07ba657ac93782, type: 3}
@@ -1177,7 +1179,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4cf12e030794e4899b384dcf5c501827, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.16100001
+      value: 0.343
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4cf12e030794e4899b384dcf5c501827, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1249,8 +1251,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd7a648064884363a6faaaeaeea14aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BobAnimation
+  target: 1
   amplitude: 0.1
   period: 3
+  randomizeOffset: 1
 --- !u!1 &466238412
 GameObject:
   m_ObjectHideFlags: 0
@@ -4179,7 +4183,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da99fa16750bf42058ac293fbce9bf96, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.30796865
+      value: 0.47
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: da99fa16750bf42058ac293fbce9bf96, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4251,8 +4255,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd7a648064884363a6faaaeaeea14aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BobAnimation
+  target: 1
   amplitude: 0.05
   period: 2.5
+  randomizeOffset: 1
 --- !u!1 &1646539185
 GameObject:
   m_ObjectHideFlags: 0
@@ -5266,7 +5272,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3786bad48f5884f64a3837ead0df877a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.06999999
+      value: 0.322
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3786bad48f5884f64a3837ead0df877a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5338,8 +5344,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd7a648064884363a6faaaeaeea14aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BobAnimation
+  target: 1
   amplitude: 0.1
   period: 3
+  randomizeOffset: 1
 --- !u!1001 &2027934079
 PrefabInstance:
   m_ObjectHideFlags: 0

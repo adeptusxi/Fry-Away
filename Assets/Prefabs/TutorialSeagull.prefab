@@ -93,7 +93,7 @@ MonoBehaviour:
   moveTo: {fileID: 0}
   tooCloseDistance: 0
   hitSoundId: 6
-  beak: {fileID: 3335864587533034741}
+  beak: {fileID: 1550436891496755885}
   growDuration: 0.8
   growCurve:
     serializedVersion: 2
@@ -119,8 +119,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  flyAwayAngle: 65
-  flyAwaySpeed: 9
+  flyAwayAngle: 50
+  flyAwaySpeed: 5
   flyAwayDuration: 1.2
   flyAwayScaleCurve:
     serializedVersion: 2
@@ -146,8 +146,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!4 &3335864587533034741 stripped
+--- !u!4 &1550436891496755885 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 5601694743596393290, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8534931217321653522, guid: 3f23f7ca12f344bfbbf2cd671056e883, type: 3}
   m_PrefabInstance: {fileID: 7203059672084531135}
   m_PrefabAsset: {fileID: 0}

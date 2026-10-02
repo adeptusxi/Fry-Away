@@ -100,6 +100,10 @@ public class Catchable : MonoBehaviour
         model.localPosition = Vector3.zero;
         model.localRotation = Quaternion.identity;
         
+        // may have been "snatched" mid-air instead of hitting hitbox 
+        if (throwable)
+            throwable.StopFlight();
+
         Destroy(gameObject);
 
         return true;

@@ -341,7 +341,7 @@ public class GameManager : MonoBehaviour
         return distance;
     }
 
-    public HitResult ReportSeagullHit(HittableSeagull seagull, RaycastHit hit)
+    public HitResult ReportSeagullHit(HittableSeagull seagull, Vector3 hitPosition)
     {
         HitResult result = default;
 
@@ -379,7 +379,7 @@ public class GameManager : MonoBehaviour
             result.points += longShotBonus;
         }
 
-        result.position = hit.point;
+        result.position = hitPosition;
 
         Score += result.points;
 
