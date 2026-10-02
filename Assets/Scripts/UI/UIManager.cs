@@ -25,7 +25,7 @@ public class UIManager : MonoBehaviour
     [Header("Tutorial Sign")]
     [SerializeField] private SignSlideAnimation tutorialSign;
 
-    [Header("Score Popup")]
+    [Header("On Hit")]
     [SerializeField] private HitPointsPopup hitPointPopupPrefab;
 
     // A, B, X, Y, and Menu buttons open the pause menu 
@@ -341,7 +341,7 @@ public class UIManager : MonoBehaviour
     // ---------- Score Popup ----------
 
     // (hook) called when a seagull is hit 
-    public void ShowScorePopup(GameManager.HitResult result, Vector3 worldPosition)
+    public void ShowScorePopup(GameManager.HitResult result)
     {
         seagullsHit++;
 
@@ -350,7 +350,7 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        HitPointsPopup popup = Instantiate(hitPointPopupPrefab, worldPosition, Quaternion.identity);
+        HitPointsPopup popup = Instantiate(hitPointPopupPrefab, result.position, Quaternion.identity);
         popup.Show(result.points, result.isLongShot);
     }
 

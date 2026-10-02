@@ -886,6 +886,7 @@ MonoBehaviour:
   hoveringPointsScalar: 0.25
   longShotDistance: 15
   longShotBonus: 50
+  onHitVFX: {fileID: 6580971150351711595, guid: b234d68a3543d4c65acd19331f6a7021, type: 3}
   maxHoveringSeagulls: 5
   showDebugDisplays: 0
   spawnImmediately: 0

@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     {
         public int points;
         public bool isLongShot;
+        public Vector3 position; // world space
     }
 
     [Header("Spawners")]
@@ -63,6 +64,9 @@ public class GameManager : MonoBehaviour
     [SerializeField, Min(0f)] private float longShotDistance = 15f;
 
     [SerializeField, Min(0)] private int longShotBonus = 50;
+
+    [Header("Hit Feedback")] 
+    [SerializeField] private ParticleSystem onHitVFX;
 
     [Header("Lose Condition")]
     [Tooltip("this many seagulls hovering overhead at once and the run is lost")]
@@ -296,11 +300,18 @@ public class GameManager : MonoBehaviour
         EnterLanding();
     }
     
-    public void ShowScorePopup(HitResult result, Vector3 worldPosition)
+    public void OnHitVisual(HitResult result)
     {
         if (UIManager.Instance)
         {
-            UIManager.Instance.ShowScorePopup(result, worldPosition);
+            UIManager.Instance.ShowScorePopup(result);
+        }
+
+        if (onHitVFX)
+        {
+            ParticleSystem vfx = Instantiate(onHitVFX, result.position, Quaternion.identity);
+            vfx.Play();
+            Destroy(vfx.gameObject, 4f);
         }
 
         if (result.isLongShot)
@@ -368,9 +379,11 @@ public class GameManager : MonoBehaviour
             result.points += longShotBonus;
         }
 
+        result.position = hit.point;
+
         Score += result.points;
 
-        ShowScorePopup(result, hit.point);
+        OnHitVisual(result);
 
         Log($"hit at {distance:F1}m{(wasHovering ? " (hovering)" : "")} for {result.points} points, total {Score}");
 
