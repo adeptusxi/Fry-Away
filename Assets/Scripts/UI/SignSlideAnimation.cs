@@ -118,7 +118,7 @@ public class SignSlideAnimation : MonoBehaviour
 
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime; 
             float progress = Mathf.Clamp01(elapsed / duration);
 
             SetHeight(Mathf.LerpUnclamped(from, to, curve.Evaluate(progress)));

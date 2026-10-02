@@ -173,11 +173,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4245f0007c3484cd4aaef7ba6064c3e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  pausedSFX:
+  - {fileID: 1600552167427108844}
+  - {fileID: 2487190453243353474}
   menuSign: {fileID: 0}
   mainMenuPanel: {fileID: 0}
   handPreferencePanel: {fileID: 0}
   settingsPanel: {fileID: 0}
   endScreenPanel: {fileID: 0}
+  pausePanel: {fileID: 0}
+  creditsPanel: {fileID: 0}
+  scoreText: {fileID: 0}
+  bestScoreText: {fileID: 0}
+  seagullsHitText: {fileID: 0}
   tutorialSign: {fileID: 0}
 --- !u!1 &3999566626334817877
 GameObject:
@@ -318,6 +326,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 684f468212e6c4c3bbe86231e55e8a4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SettingsManager
+  hapticsToggle: {fileID: 0}
+  handToggle: {fileID: 0}
 --- !u!1 &6222310182401640804
 GameObject:
   m_ObjectHideFlags: 0

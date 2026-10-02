@@ -1,9 +1,13 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
+    
+    [SerializeField, Tooltip("sounds which should play even while game is paused")] private AudioSource[] pausedSFX;
 
     [Header("Menu Sign")]
     [SerializeField] private SignSlideAnimation menuSign;
@@ -11,48 +15,133 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject handPreferencePanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject endScreenPanel;
+    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject creditsPanel;
+
+    [Header("End Screen")]
+    [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text bestScoreText;
+    [SerializeField] private TMP_Text seagullsHitText;
 
     [Header("Tutorial Sign")]
     [SerializeField] private SignSlideAnimation tutorialSign;
 
+    // A, B, X, Y, and Menu buttons open the pause menu 
+    private const OVRInput.Button PauseButtons = OVRInput.Button.One | OVRInput.Button.Two | OVRInput.Button.Three | OVRInput.Button.Four | OVRInput.Button.Start;
+
     private SignSlideAnimation[] signs;
     private GameObject[] panels;
     private Coroutine swapRoutine;
+    private SignSlideAnimation signBeforePause; 
+
+    private const string BestScoreKey = "score.best";
+
+    private readonly HashSet<HittableSeagull> seagullsHit = new HashSet<HittableSeagull>();
+    private bool wasPlaying;
+
+    public bool IsPaused { get; private set; }
+    
+    // can only pause mid-round (not during countdown or while another menu is active) 
+    private bool CanPause
+    {
+        get
+        {
+            if (IsPaused || GameManager.Instance == null || menuSign == null)
+            {
+                return false;
+            }
+
+            GameManager.GameState state = GameManager.Instance.State;
+
+            if (state != GameManager.GameState.Tutorial && state != GameManager.GameState.Playing)
+            {
+                return false;
+            }
+
+            return !menuSign.IsShown && !menuSign.IsAnimating;
+        }
+    }
 
     private void Awake()
     {
         Instance = this;
 
         signs = new[] { menuSign, tutorialSign };
-        panels = new[] { mainMenuPanel, handPreferencePanel, settingsPanel, endScreenPanel };
+        panels = new[] { mainMenuPanel, handPreferencePanel, settingsPanel, endScreenPanel, pausePanel, creditsPanel };
+
+        if (pausedSFX != null)
+        {
+            foreach (AudioSource source in pausedSFX)
+            {
+                if (source != null)
+                {
+                    source.ignoreListenerPause = true;
+                }
+            }
+        }
 
         HideSignsImmediate();
     }
 
-    // ---------- Signs ----------
+    private void Update()
+    {
+        if (OVRInput.GetDown(PauseButtons, OVRInput.Controller.Touch))
+        {
+            ShowPause();
+        }
 
+        bool playing = GameManager.Instance != null
+            && GameManager.Instance.State == GameManager.GameState.Playing;
+
+        if (playing && !wasPlaying)
+        {
+            // new round 
+            seagullsHit.Clear(); 
+        }
+
+        if (playing)
+        {
+            CountSeagullHits();
+        }
+
+        wasPlaying = playing;
+    }
+
+    private void OnDestroy()
+    {
+        SetPaused(false);
+    }
+
+    // ---------- Signs ----------
+    
     public void ShowLanding()
     {
+        SetPaused(false);
         ShowSign(menuSign, mainMenuPanel);
     }
 
     public void ShowTutorial()
     {
+        SetPaused(false);
         ShowSign(tutorialSign);
     }
 
     public void ShowEndScreen()
     {
+        SetPaused(false);
+        PopulateEndScreen();
         ShowSign(menuSign, endScreenPanel);
     }
 
     public void HideSigns()
     {
+        SetPaused(false);
         ShowSign(null);
     }
 
     public void HideSignsImmediate()
     {
+        SetPaused(false);
         StopSwap();
 
         foreach (SignSlideAnimation sign in signs)
@@ -155,6 +244,18 @@ public class UIManager : MonoBehaviour
         ShowSign(menuSign, settingsPanel);
     }
 
+    public void OnCreditsPressed()
+    {
+        ShowSign(menuSign, creditsPanel);
+    }
+
+    // ---------- Credits ----------
+
+    public void OnCreditsBackPressed()
+    {
+        ShowSign(menuSign, mainMenuPanel);
+    }
+
     // ---------- Hand Preference ----------
 
     public void OnHandPreferenceSelected(bool right)
@@ -179,10 +280,119 @@ public class UIManager : MonoBehaviour
 
     public void OnSettingsBackPressed()
     {
-        ShowSign(menuSign, mainMenuPanel);
+        if (!IsPaused)
+        {
+            ShowSign(menuSign, mainMenuPanel);
+            return;
+        }
+
+        ApplyHandPreference();
+        ShowSign(menuSign, pausePanel);
+    }
+
+    private void ApplyHandPreference()
+    {
+        GameManager game = GameManager.Instance;
+
+        if (game == null || SettingsManager.Instance == null)
+            return;
+
+        if (game.State == GameManager.GameState.Playing && game.BreadRemaining <= 0)
+            return;
+
+        game.SelectHandedness(
+            SettingsManager.Instance.CurrentHand == SettingsManager.PreferredHand.Right
+        );
+    }
+
+    // ---------- Pause ----------
+
+    // (hook) brings up the pause menu and freezes the round. no-op if game is not in a pausable state
+    public void ShowPause()
+    {
+        if (!CanPause)
+            return;
+
+        signBeforePause = tutorialSign != null && tutorialSign.IsShown ? tutorialSign : null;
+
+        SetPaused(true);
+        ShowSign(menuSign, pausePanel);
+    }
+
+    // (hook) unpauses and put back whatever sign was up before
+    public void OnContinuePressed()
+    {
+        if (!IsPaused)
+            return;
+
+        SetPaused(false);
+        ShowSign(signBeforePause);
+    }
+    
+    private void SetPaused(bool paused)
+    {
+        if (IsPaused == paused)
+        {
+            return;
+        }
+
+        IsPaused = paused;
+        Time.timeScale = paused ? 0f : 1f;
+        AudioListener.pause = paused;
     }
 
     // ---------- End Screen ----------
+
+    private void PopulateEndScreen()
+    {
+        CountSeagullHits(); 
+
+        int score = GameManager.Instance != null ? GameManager.Instance.Score : 0;
+        int best = PlayerPrefs.GetInt(BestScoreKey, 0);
+
+        if (score > best)
+        {
+            best = score;
+
+            PlayerPrefs.SetInt(
+                BestScoreKey,
+                best
+            );
+
+            PlayerPrefs.Save(); 
+        }
+
+        SetText(scoreText, score);
+        SetText(bestScoreText, best);
+        SetText(seagullsHitText, seagullsHit.Count);
+    }
+
+    private void SetText(TMP_Text text, int value)
+    {
+        if (text != null)
+        {
+            text.text = value.ToString();
+        }
+    }
+    
+    private void CountSeagullHits()
+    {
+        if (TargetSpawner.Instance == null)
+        {
+            return;
+        }
+
+        IReadOnlyList<HittableTarget> targets = TargetSpawner.Instance.CurrentTargets;
+
+        for (int i = 0; i < targets.Count; i++)
+        {
+            if (targets[i] is HittableSeagull seagull && seagull
+                && seagull.TryGetComponent(out Collider hitbox) && !hitbox.enabled)
+            {
+                seagullsHit.Add(seagull);
+            }
+        }
+    }
 
     public void OnTryAgainPressed()
     {

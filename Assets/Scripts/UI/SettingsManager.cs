@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class SettingsManager : MonoBehaviour
         Left,
         Right
     }
+
+    [Header("Toggles")]
+    [SerializeField] private Toggle hapticsToggle;
+    [SerializeField] private Toggle handToggle;
 
     private const string MasterKey = "settings.masterVolume";
     private const string MusicKey = "settings.musicVolume";
@@ -73,6 +78,8 @@ public class SettingsManager : MonoBehaviour
         AudioManager.Instance?.SetSfxVolume(
             SfxVolume
         );
+
+        RefreshToggles();
     }
 
     public void SetMasterVolume(float value)
@@ -125,6 +132,8 @@ public class SettingsManager : MonoBehaviour
             HapticsKey,
             value ? 1 : 0
         );
+
+        RefreshToggles();
     }
 
     public void SelectLeftHand()
@@ -135,6 +144,8 @@ public class SettingsManager : MonoBehaviour
             HandKey,
             (int)PreferredHand.Left
         );
+
+        RefreshToggles();
     }
 
     public void SelectRightHand()
@@ -145,6 +156,24 @@ public class SettingsManager : MonoBehaviour
             HandKey,
             (int)PreferredHand.Right
         );
+
+        RefreshToggles();
+    }
+
+    public void SetRightHand(bool right)
+    {
+        if (right)
+            SelectRightHand();
+        else
+            SelectLeftHand();
+    }
+
+    private void RefreshToggles()
+    {
+        if (hapticsToggle != null)
+            hapticsToggle.SetIsOnWithoutNotify(HapticsEnabled);
+        if (handToggle != null)
+            handToggle.SetIsOnWithoutNotify(CurrentHand == PreferredHand.Right);
     }
 
     private void OnDestroy()
