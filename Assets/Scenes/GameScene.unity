@@ -5565,18 +5565,6 @@ PrefabInstance:
       propertyPath: handPreferencePanel
       value: 
       objectReference: {fileID: 766198732}
-    - target: {fileID: 9005494819435441202, guid: 576940768193b47afb155c479f946dbc, type: 3}
-      propertyPath: playWhilePaused.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 9005494819435441202, guid: 576940768193b47afb155c479f946dbc, type: 3}
-      propertyPath: 'playWhilePaused.Array.data[0]'
-      value: 
-      objectReference: {fileID: 3689358354937588727}
-    - target: {fileID: 9005494819435441202, guid: 576940768193b47afb155c479f946dbc, type: 3}
-      propertyPath: 'playWhilePaused.Array.data[1]'
-      value: 
-      objectReference: {fileID: 3689358354937588726}
     - target: {fileID: 9042238675064963069, guid: 576940768193b47afb155c479f946dbc, type: 3}
       propertyPath: m_Name
       value: Managers
@@ -5586,16 +5574,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 576940768193b47afb155c479f946dbc, type: 3}
---- !u!82 &3689358354937588726 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 2487190453243353474, guid: 576940768193b47afb155c479f946dbc, type: 3}
-  m_PrefabInstance: {fileID: 3689358354937588725}
-  m_PrefabAsset: {fileID: 0}
---- !u!82 &3689358354937588727 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 1600552167427108844, guid: 576940768193b47afb155c479f946dbc, type: 3}
-  m_PrefabInstance: {fileID: 3689358354937588725}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5780618411924336585
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5672,10 +5650,6 @@ PrefabInstance:
     - target: {fileID: 6006338469919561221, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
       propertyPath: m_Name
       value: Tutorial Sign
-      objectReference: {fileID: 0}
-    - target: {fileID: 6006338469919561221, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8172679866248994070, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
       propertyPath: m_LocalPosition.x
