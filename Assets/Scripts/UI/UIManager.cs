@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 
 public class UIManager : MonoBehaviour
@@ -26,6 +25,9 @@ public class UIManager : MonoBehaviour
     [Header("Tutorial Sign")]
     [SerializeField] private SignSlideAnimation tutorialSign;
 
+    [Header("Score Popup")]
+    [SerializeField] private HitPointsPopup hitPointPopupPrefab;
+
     // A, B, X, Y, and Menu buttons open the pause menu 
     private const OVRInput.Button PauseButtons = OVRInput.Button.One | OVRInput.Button.Two | OVRInput.Button.Three | OVRInput.Button.Four | OVRInput.Button.Start;
 
@@ -36,7 +38,7 @@ public class UIManager : MonoBehaviour
 
     private const string BestScoreKey = "score.best";
 
-    private readonly HashSet<HittableSeagull> seagullsHit = new HashSet<HittableSeagull>();
+    private int seagullsHit;
     private bool wasPlaying;
 
     public bool IsPaused { get; private set; }
@@ -96,12 +98,7 @@ public class UIManager : MonoBehaviour
         if (playing && !wasPlaying)
         {
             // new round 
-            seagullsHit.Clear(); 
-        }
-
-        if (playing)
-        {
-            CountSeagullHits();
+            seagullsHit = 0;
         }
 
         wasPlaying = playing;
@@ -341,12 +338,26 @@ public class UIManager : MonoBehaviour
         AudioListener.pause = paused;
     }
 
+    // ---------- Score Popup ----------
+
+    // (hook) called when a seagull is hit 
+    public void ShowScorePopup(GameManager.HitResult result, Vector3 worldPosition)
+    {
+        seagullsHit++;
+
+        if (hitPointPopupPrefab == null)
+        {
+            return;
+        }
+
+        HitPointsPopup popup = Instantiate(hitPointPopupPrefab, worldPosition, Quaternion.identity);
+        popup.Show(result.points, result.isLongShot);
+    }
+
     // ---------- End Screen ----------
 
     private void PopulateEndScreen()
     {
-        CountSeagullHits(); 
-
         int score = GameManager.Instance != null ? GameManager.Instance.Score : 0;
         int best = PlayerPrefs.GetInt(BestScoreKey, 0);
 
@@ -364,7 +375,7 @@ public class UIManager : MonoBehaviour
 
         SetText(scoreText, score);
         SetText(bestScoreText, best);
-        SetText(seagullsHitText, seagullsHit.Count);
+        SetText(seagullsHitText, seagullsHit);
     }
 
     private void SetText(TMP_Text text, int value)
@@ -375,25 +386,6 @@ public class UIManager : MonoBehaviour
         }
     }
     
-    private void CountSeagullHits()
-    {
-        if (TargetSpawner.Instance == null)
-        {
-            return;
-        }
-
-        IReadOnlyList<HittableTarget> targets = TargetSpawner.Instance.CurrentTargets;
-
-        for (int i = 0; i < targets.Count; i++)
-        {
-            if (targets[i] is HittableSeagull seagull && seagull
-                && seagull.TryGetComponent(out Collider hitbox) && !hitbox.enabled)
-            {
-                seagullsHit.Add(seagull);
-            }
-        }
-    }
-
     public void OnTryAgainPressed()
     {
         GameManager.Instance?.PlayAgain();

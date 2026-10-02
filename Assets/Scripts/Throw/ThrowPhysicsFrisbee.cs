@@ -72,7 +72,6 @@ public class ThrowPhysicsFrisbee : ThrowPhysics
 
     protected override void Stop()
     {
-        // TODO: Xiao - make this look better 
         Destroy(Target.gameObject);
     }
 }

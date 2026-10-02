@@ -296,9 +296,13 @@ public class GameManager : MonoBehaviour
         EnterLanding();
     }
     
-    // TODO: xiao/shiyu - UI popup (e.g. "Long shot! Bonus +N" or something)
     public void ShowScorePopup(HitResult result, Vector3 worldPosition)
     {
+        if (UIManager.Instance)
+        {
+            UIManager.Instance.ShowScorePopup(result, worldPosition);
+        }
+
         if (result.isLongShot)
         {
             Log($"Long shot. Bonus +{longShotBonus} ({result.points} total for this hit)");
