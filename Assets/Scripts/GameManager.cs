@@ -73,6 +73,29 @@ public class GameManager : MonoBehaviour
     [Tooltip("this many seagulls hovering overhead at once and the run is lost")]
     [SerializeField, Min(1)] private int maxHoveringSeagulls = 5;
 
+    [Header("Hovering Crowd Audio")]
+    [SerializeField, Range(0.75f, 1f), Tooltip("Lowest BGM speed before the loss threshold. Also lowers pitch.")]
+    private float crowdBgmSpeedFloor = 0.75f;
+    [SerializeField, Min(0f), Tooltip("Seconds to smoothly adjust speed and warning cadence after the crowd changes.")]
+    private float crowdAudioTransitionSeconds = 0.5f;
+    [SerializeField, Tooltip("Your warning one-shot. Repeats while gulls hover and stops at game over.")]
+    private AudioClip crowdWarningBeep;
+    [SerializeField, Min(0.1f), Tooltip("Seconds between warning starts with one hovering gull.")]
+    private float crowdBeepSlowInterval = 1.2f;
+    [SerializeField, Min(0.1f), Tooltip("Seconds between warning starts just before the loss threshold.")]
+    private float crowdBeepFastInterval = 0.7f;
+
+    private AudioSource crowdWarningSource;
+    private int previousHoveringCount = -1;
+    private float crowdPitch = 1f;
+    private float crowdPitchFrom = 1f;
+    private float crowdPitchTarget = 1f;
+    private float crowdBeepInterval = 1.2f;
+    private float crowdBeepIntervalFrom = 1.2f;
+    private float crowdBeepIntervalTarget = 1.2f;
+    private float crowdTransitionElapsed;
+    private float crowdBeepPhase;
+
     [Header("Debug")]
     [Tooltip("Turn every DebugDisplay in the scene on or off")]
     [SerializeField] private bool showDebugDisplays = true;
@@ -87,7 +110,6 @@ public class GameManager : MonoBehaviour
     private int breadRemaining;
     private int breadInFlight;
     private bool outOfBread;
-    private bool combatBgmSpedUp;
     private float outOfBreadTime;
     private TutorialSeagull tutorialSeagull;
     private SoundId currentBgm = SoundId.None;
@@ -186,16 +208,20 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (state != GameState.Playing)
+        if (state != GameState.Playing || Time.timeScale <= 0f || AudioListener.pause ||
+            (UIManager.Instance != null && UIManager.Instance.IsPaused))
         {
             return;
         }
 
-        if (HoveringCount >= maxHoveringSeagulls)
+        int hoveringCount = HoveringCount;
+        if (hoveringCount >= maxHoveringSeagulls)
         {
             LoseGame();
             return;
         }
+
+        UpdateCrowdAudio(hoveringCount);
 
         if (!outOfBread)
         {
@@ -206,6 +232,93 @@ public class GameManager : MonoBehaviour
         {
             WinGame();
         }
+    }
+
+    private void UpdateCrowdAudio(int hoveringCount)
+    {
+        if (hoveringCount != previousHoveringCount)
+        {
+            // The warning cadence scales toward the last playable crowd size.
+            int lastPlayableCount = Mathf.Max(1, maxHoveringSeagulls - 1);
+            float beepFraction = Mathf.Clamp01(
+                (float)(hoveringCount - 1) / Mathf.Max(1, lastPlayableCount - 1));
+            // Keep a short gap even for longer clips, rather than layering repeated warnings.
+            float minimumInterval = crowdWarningBeep != null ? crowdWarningBeep.length + 0.05f : 0.1f;
+            float slowInterval = Mathf.Max(minimumInterval, crowdBeepSlowInterval);
+            float fastInterval = Mathf.Clamp(crowdBeepFastInterval, minimumInterval, slowInterval);
+
+            crowdPitchFrom = crowdPitch;
+            // Reduce speed by 5% per hovering gull, with a 75% minimum.
+            crowdPitchTarget = Mathf.Max(
+                Mathf.Clamp(crowdBgmSpeedFloor, 0.75f, 1f),
+                1f - hoveringCount * 0.05f
+            );
+            crowdBeepIntervalFrom = crowdBeepInterval;
+            crowdBeepIntervalTarget = Mathf.Lerp(slowInterval, fastInterval, beepFraction);
+            crowdTransitionElapsed = 0f;
+
+            // Play the first warning immediately; preserve beat progress on later count changes.
+            if (hoveringCount > 0 && previousHoveringCount <= 0)
+                crowdBeepPhase = 1f;
+
+            previousHoveringCount = hoveringCount;
+        }
+
+        crowdTransitionElapsed += Time.deltaTime;
+        float progress = crowdAudioTransitionSeconds <= 0f ? 1f
+            : Mathf.Clamp01(crowdTransitionElapsed / crowdAudioTransitionSeconds);
+        float blend = Mathf.SmoothStep(0f, 1f, progress);
+        crowdPitch = Mathf.Lerp(crowdPitchFrom, crowdPitchTarget, blend);
+        crowdBeepInterval = Mathf.Lerp(crowdBeepIntervalFrom, crowdBeepIntervalTarget, blend);
+        AudioManager.Instance?.SetBgmPitch(crowdPitch);
+
+        if (hoveringCount <= 0 || crowdWarningBeep == null)
+        {
+            StopCrowdWarning();
+            return;
+        }
+
+        if (crowdWarningSource == null)
+        {
+            crowdWarningSource = AudioManager.Instance?.CreateGameplayOneShotSource();
+            if (crowdWarningSource == null)
+                return;
+        }
+
+        crowdBeepPhase += Time.deltaTime / Mathf.Max(0.1f, crowdBeepInterval);
+        if (crowdBeepPhase >= 1f)
+        {
+            if (crowdWarningSource.isPlaying)
+            {
+                crowdBeepPhase = 1f;
+                return;
+            }
+            // At most one new warning per frame, even after a frame stall.
+            crowdWarningSource.PlayOneShot(crowdWarningBeep);
+            crowdBeepPhase %= 1f;
+        }
+    }
+
+    private void StopCrowdWarning()
+    {
+        crowdBeepPhase = 0f;
+        if (crowdWarningSource != null)
+        {
+            crowdWarningSource.Stop();
+            Destroy(crowdWarningSource.gameObject);
+            crowdWarningSource = null;
+        }
+    }
+
+    private void ResetCrowdAudio()
+    {
+        StopCrowdWarning();
+        previousHoveringCount = -1;
+        crowdPitch = crowdPitchFrom = crowdPitchTarget = 1f;
+        crowdBeepInterval = crowdBeepIntervalFrom = crowdBeepIntervalTarget =
+            Mathf.Max(0.1f, crowdBeepSlowInterval);
+        crowdTransitionElapsed = 0f;
+        AudioManager.Instance?.SetBgmPitch(1f);
     }
 
     private void OnDestroy()
@@ -485,6 +598,7 @@ public class GameManager : MonoBehaviour
 
     private void OnDisable()
     {
+        StopCrowdWarning();
         CancelCountdown();
         StopGameEndSound();
     }
@@ -524,10 +638,10 @@ public class GameManager : MonoBehaviour
 
     private void EnterPlaying()
     {
+        ResetCrowdAudio();
         state = GameState.Playing;
 
         breadRemaining = UnlimitedBread ? int.MaxValue : breadCount;
-        combatBgmSpedUp = false;
         breadInFlight = 0;
         outOfBread = false;
 
@@ -611,6 +725,7 @@ public class GameManager : MonoBehaviour
     
     private void StopGameplay()
     {
+        StopCrowdWarning();
         if (seagullSpawner)
         {
             seagullSpawner.Activate(false);
@@ -624,6 +739,7 @@ public class GameManager : MonoBehaviour
 
     private void ResetRound()
     {
+        ResetCrowdAudio();
         StopGameEndSound();
         CancelCountdown();
         Score = 0;
@@ -725,13 +841,6 @@ public class GameManager : MonoBehaviour
         }
 
         breadInFlight++;
-
-        if (!UnlimitedBread && !combatBgmSpedUp && breadRemaining <= Mathf.FloorToInt(breadCount * 0.5f))
-        {
-            combatBgmSpedUp = true;
-            AudioManager.Instance?.SetBgmPitch(1.05f);
-            Log("half the bread used, combat BGM speed increased to 1.05x");
-        }
 
         Action onFlightStopped = null;
         onFlightStopped = () =>
