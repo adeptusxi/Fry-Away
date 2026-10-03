@@ -74,16 +74,20 @@ public class GameManager : MonoBehaviour
     [SerializeField, Min(1)] private int maxHoveringSeagulls = 5;
 
     [Header("Hovering Crowd Audio")]
-    [SerializeField, Range(0.75f, 1f), Tooltip("Lowest BGM speed before the loss threshold. Also lowers pitch.")]
-    private float crowdBgmSpeedFloor = 0.75f;
+    [SerializeField, Range(1f, 1.25f), Tooltip("Highest BGM speed before the loss threshold. Also raises pitch.")]
+    private float crowdBgmSpeedCeiling = 1.25f;
     [SerializeField, Min(0f), Tooltip("Seconds to smoothly adjust speed and warning cadence after the crowd changes.")]
     private float crowdAudioTransitionSeconds = 0.5f;
     [SerializeField, Tooltip("Your warning one-shot. Repeats while gulls hover and stops at game over.")]
     private AudioClip crowdWarningBeep;
+    [SerializeField, Min(0f), Tooltip("Fixed loudness multiplier for every hovering-gull warning, including the first.")]
+    private float crowdWarningVolumeScale = 2f;
     [SerializeField, Min(0.1f), Tooltip("Seconds between warning starts with one hovering gull.")]
     private float crowdBeepSlowInterval = 1.2f;
-    [SerializeField, Min(0.1f), Tooltip("Seconds between warning starts just before the loss threshold.")]
-    private float crowdBeepFastInterval = 0.7f;
+    [SerializeField, Min(0.1f), Tooltip("Warning starts per second just before the loss threshold.")]
+    private float crowdBeepFastRate = 3f;
+    [SerializeField, Min(1f), Tooltip("Warning playback speed just before the loss threshold. Raises its pitch too.")]
+    private float crowdWarningFastPitch = 2.2f;
 
     private AudioSource crowdWarningSource;
     private int previousHoveringCount = -1;
@@ -93,6 +97,9 @@ public class GameManager : MonoBehaviour
     private float crowdBeepInterval = 1.2f;
     private float crowdBeepIntervalFrom = 1.2f;
     private float crowdBeepIntervalTarget = 1.2f;
+    private float crowdWarningPitch = 1f;
+    private float crowdWarningPitchFrom = 1f;
+    private float crowdWarningPitchTarget = 1f;
     private float crowdTransitionElapsed;
     private float crowdBeepPhase;
 
@@ -242,19 +249,23 @@ public class GameManager : MonoBehaviour
             int lastPlayableCount = Mathf.Max(1, maxHoveringSeagulls - 1);
             float beepFraction = Mathf.Clamp01(
                 (float)(hoveringCount - 1) / Mathf.Max(1, lastPlayableCount - 1));
-            // Keep a short gap even for longer clips, rather than layering repeated warnings.
-            float minimumInterval = crowdWarningBeep != null ? crowdWarningBeep.length + 0.05f : 0.1f;
-            float slowInterval = Mathf.Max(minimumInterval, crowdBeepSlowInterval);
-            float fastInterval = Mathf.Clamp(crowdBeepFastInterval, minimumInterval, slowInterval);
+            crowdWarningPitchFrom = crowdWarningPitch;
+            crowdWarningPitchTarget = Mathf.Lerp(1f, Mathf.Max(1f, crowdWarningFastPitch), beepFraction);
+            // Keep a short gap between warnings at the faster playback speed.
+            float minimumInterval = crowdWarningBeep != null
+                ? crowdWarningBeep.length / crowdWarningPitchTarget + 0.05f : 0.1f;
+            float slowInterval = Mathf.Max(crowdBeepSlowInterval, minimumInterval);
 
             crowdPitchFrom = crowdPitch;
-            // Reduce speed by 5% per hovering gull, with a 75% minimum.
-            crowdPitchTarget = Mathf.Max(
-                Mathf.Clamp(crowdBgmSpeedFloor, 0.75f, 1f),
-                1f - hoveringCount * 0.05f
+            // Increase speed by 5% per hovering gull, with a 125% maximum.
+            crowdPitchTarget = Mathf.Min(
+                Mathf.Clamp(crowdBgmSpeedCeiling, 1f, 1.25f),
+                1f + hoveringCount * 0.05f
             );
             crowdBeepIntervalFrom = crowdBeepInterval;
-            crowdBeepIntervalTarget = Mathf.Lerp(slowInterval, fastInterval, beepFraction);
+            // Increase beeps per second evenly for each additional hovering gull.
+            float beepRate = Mathf.Lerp(1f / slowInterval, Mathf.Max(0.1f, crowdBeepFastRate), beepFraction);
+            crowdBeepIntervalTarget = Mathf.Max(minimumInterval, 1f / beepRate);
             crowdTransitionElapsed = 0f;
 
             // Play the first warning immediately; preserve beat progress on later count changes.
@@ -270,6 +281,7 @@ public class GameManager : MonoBehaviour
         float blend = Mathf.SmoothStep(0f, 1f, progress);
         crowdPitch = Mathf.Lerp(crowdPitchFrom, crowdPitchTarget, blend);
         crowdBeepInterval = Mathf.Lerp(crowdBeepIntervalFrom, crowdBeepIntervalTarget, blend);
+        crowdWarningPitch = Mathf.Lerp(crowdWarningPitchFrom, crowdWarningPitchTarget, blend);
         AudioManager.Instance?.SetBgmPitch(crowdPitch);
 
         if (hoveringCount <= 0 || crowdWarningBeep == null)
@@ -285,6 +297,7 @@ public class GameManager : MonoBehaviour
                 return;
         }
 
+        crowdWarningSource.pitch = crowdWarningPitch;
         crowdBeepPhase += Time.deltaTime / Mathf.Max(0.1f, crowdBeepInterval);
         if (crowdBeepPhase >= 1f)
         {
@@ -294,7 +307,7 @@ public class GameManager : MonoBehaviour
                 return;
             }
             // At most one new warning per frame, even after a frame stall.
-            crowdWarningSource.PlayOneShot(crowdWarningBeep);
+            crowdWarningSource.PlayOneShot(crowdWarningBeep, crowdWarningVolumeScale);
             crowdBeepPhase %= 1f;
         }
     }
@@ -317,6 +330,7 @@ public class GameManager : MonoBehaviour
         crowdPitch = crowdPitchFrom = crowdPitchTarget = 1f;
         crowdBeepInterval = crowdBeepIntervalFrom = crowdBeepIntervalTarget =
             Mathf.Max(0.1f, crowdBeepSlowInterval);
+        crowdWarningPitch = crowdWarningPitchFrom = crowdWarningPitchTarget = 1f;
         crowdTransitionElapsed = 0f;
         AudioManager.Instance?.SetBgmPitch(1f);
     }
