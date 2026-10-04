@@ -171,6 +171,29 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // The caller owns this source and can stop its one-shots without stopping other SFX.
+    public AudioSource CreateGameplayOneShotSource()
+    {
+        if (sfx2DSource == null)
+        {
+            Debug.LogWarning("[AudioManager] No AudioSource assigned for 2D one-shots.");
+            return null;
+        }
+
+        GameObject cue = new GameObject("CrowdWarningSFX");
+        cue.transform.SetParent(transform, false);
+        AudioSource source = cue.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.loop = false;
+        source.spatialBlend = 0f;
+        source.pitch = 1f;
+        source.ignoreListenerPause = false;
+        source.outputAudioMixerGroup = sfx2DSource.outputAudioMixerGroup;
+        source.volume = sfx2DSource.volume;
+        source.mute = sfx2DSource.mute;
+        return source;
+    }
+
     // A separate source lets the game wait for or cancel this cue alone.
     public AudioSource PlayTrackedOneShot2D(SoundId id)
     {
