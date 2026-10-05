@@ -143,10 +143,12 @@ public class HittableSeagull : HittableTarget
     {
         PlayHitSound(point);
 
+        bool fromGround = bread && bread.IsGrounded; 
+
         TryCatch(bread);
 
         GameManager.HitResult result = GameManager.Instance
-            ? GameManager.Instance.ReportSeagullHit(this, point)
+            ? GameManager.Instance.ReportSeagullHit(this, point, fromGround)
             : default;
 
         if (result.isLongShot && longShotVfx)
@@ -196,37 +198,21 @@ public class HittableSeagull : HittableTarget
                 MoveApproach();
                 break;
         }
+        
+        bool swoopingAtGround = state == State.Swooping && noticedBread && noticedBread.IsGrounded;
 
         // Landing/Idle deliberately target the ground (via the floor reference), which can sit
         // lower than sea level on dry land - the flight-safety clamp would otherwise fight them
         // and drag a landed bird back up to sea level
-        if (state != State.Landing && state != State.Idle)
+        if (state != State.Landing && state != State.Idle && !swoopingAtGround)
         {
             ClampAboveFloor();
         }
     }
-
-    // the higher of the floor's spawn-clearance height and the sea level, whichever is more restrictive.
-    // in the beach scene the floor reference (a mostly-buried sand block) sits well below the
-    // actual water surface, so sea level is normally the one that matters here.
+    
     private float EffectiveMinHeight()
     {
-        float minHeight = float.NegativeInfinity;
-
-        if (hoverSpace)
-        {
-            if (hoverSpace.HasFloor)
-            {
-                minHeight = hoverSpace.MinSpawnHeight;
-            }
-
-            if (hoverSpace.HasSeaLevel)
-            {
-                minHeight = Mathf.Max(minHeight, hoverSpace.SeaLevelHeight);
-            }
-        }
-
-        return minHeight;
+        return hoverSpace && hoverSpace.HasFloor ? hoverSpace.MinSpawnHeight : float.NegativeInfinity;
     }
 
     // hard safety net: whatever a state's movement did this frame, never let the bird end up
@@ -460,7 +446,15 @@ public class HittableSeagull : HittableTarget
             swoopTurnRate * Time.deltaTime
         ).normalized;
 
-        transform.position += heading * (swoopSpeed * Time.deltaTime);
+        float swoopStep = swoopSpeed * Time.deltaTime;
+        
+        // bread on ground doesn't move, so need to slow down to prevent circling forever 
+        if (noticedBread.IsGrounded)
+        {
+            swoopStep *= Mathf.Max(0.25f, Vector3.Dot(heading, toBread.normalized));
+        }
+
+        transform.position += heading * swoopStep;
         transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
     }
 
@@ -897,29 +891,26 @@ public class HittableSeagull : HittableTarget
     [Header("Beak")]
     [SerializeField, Tooltip("put it on a head bone so the bread follows the animation")] private Transform beak;
     [SerializeField, Min(0f), Tooltip("in meters, how close a thrown bread has to be to chase it")] private float noticeRadius = 6f;
+    [SerializeField, Min(0f), Tooltip("in meters, how close bread lying on the ground has to be to go pick it up")] private float groundedNoticeRadius = 3f;
     [SerializeField, Min(0f), Tooltip("in meters from the beak. 0 means just use hitbox")] private float catchRadius = 0.25f;
 
     private Catchable noticedBread;
 
     public bool HasBread { get; private set; }
-
-    // stops mid-chase too: if the bread it's already after sinks below sea level, this goes false
-    // and MoveSwoop()'s guard ends the chase, same as if the bread had been caught by someone else
-    private bool NoticedBreadAvailable => noticedBread && noticedBread.IsInFlight && !noticedBread.Taken &&
-        (!hoverSpace || !hoverSpace.HasSeaLevel || noticedBread.transform.position.y > hoverSpace.SeaLevelHeight);
+    
+    private bool NoticedBreadAvailable => noticedBread && noticedBread.IsAvailable && !noticedBread.Taken;
 
     private Vector3 NoticedBreadPosition => noticedBread.transform.position;
 
     private bool TryNoticeBread()
     {
-        if (HasBread || noticeRadius <= 0f)
+        if (HasBread || (noticeRadius <= 0f && groundedNoticeRadius <= 0f))
         {
             return false;
         }
 
-        noticedBread = Catchable.FindNearestInFlight(transform.position, noticeRadius);
+        noticedBread = Catchable.FindNearestAvailable(transform.position, noticeRadius, groundedNoticeRadius);
 
-        // never chase bread behind the player, and never chase bread that's already underwater
         bool valid = NoticedBreadAvailable &&
             (!hoverSpace || hoverSpace.IsWithinAttractionSector(noticedBread.transform.position));
 

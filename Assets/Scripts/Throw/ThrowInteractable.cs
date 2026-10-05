@@ -54,6 +54,7 @@ public class ThrowInteractable : MonoBehaviour
     public event Action OnThrown; // fired when the object is handed off to physics
     public event Action OnGrabbed; // fired when a hand picks the object up
     public event Action OnFlightStopped; // fired when the thrown object has come to rest (hit something, stopped, or timed out)
+    public event Action OnLanded; // fired after OnFlightStopped when it came to rest on the ground
 
     private bool isHeld;
     private int selectorId;
@@ -390,9 +391,16 @@ public class ThrowInteractable : MonoBehaviour
         isThrowing = false;
         gripTransformer.Suspended = false;
         EnsureInert();
-        SetInteractablesEnabled(true);
+
+        bool landed = physicsProvider.IsGrounded;
+        SetInteractablesEnabled(!landed);
 
         OnFlightStopped?.Invoke();
+
+        if (landed)
+        {
+            OnLanded?.Invoke();
+        }
     }
 
     // ends a throw that is still in the air

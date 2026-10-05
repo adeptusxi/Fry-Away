@@ -471,7 +471,7 @@ public class GameManager : MonoBehaviour
         return distance;
     }
 
-    public HitResult ReportSeagullHit(HittableSeagull seagull, Vector3 hitPosition)
+    public HitResult ReportSeagullHit(HittableSeagull seagull, Vector3 hitPosition, bool fromGround = false)
     {
         HitResult result = default;
 
@@ -500,9 +500,9 @@ public class GameManager : MonoBehaviour
             points *= hoveringPointsScalar;
         }
 
-        result.points = Mathf.Max(1, Mathf.RoundToInt(points));
+        result.points = fromGround ? 1 : Mathf.Max(1, Mathf.RoundToInt(points));
 
-        result.isLongShot = !wasHovering && distance >= longShotDistance;
+        result.isLongShot = !fromGround && !wasHovering && distance >= longShotDistance;
 
         if (result.isLongShot)
         {
@@ -517,7 +517,7 @@ public class GameManager : MonoBehaviour
 
         OnHitVisual(result);
 
-        Log($"hit at {distance:F1}m{(wasHovering ? " (hovering)" : "")} for {result.points} points, total {Score}");
+        Log($"hit at {distance:F1}m{(wasHovering ? " (hovering)" : "")}{(fromGround ? " (ground)" : "")} for {result.points} points, total {Score}");
 
         return result;
     }
@@ -777,6 +777,7 @@ public class GameManager : MonoBehaviour
         {
             breadSpawner.Activate(false);
             breadSpawner.DespawnCurrent();
+            Catchable.DestroyAllGrounded();
 
             BreadSpawnerBasket basket = Basket;
 

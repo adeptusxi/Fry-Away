@@ -405,7 +405,7 @@ GameObject:
   - component: {fileID: 198165103}
   - component: {fileID: 198165102}
   - component: {fileID: 198165101}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1705,7 +1705,7 @@ GameObject:
   - component: {fileID: 544039287}
   - component: {fileID: 544039289}
   - component: {fileID: 544039288}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5917,7 +5917,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8079397167512258817, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
 --- !u!1001 &8539024558391514951
 PrefabInstance:
@@ -6223,7 +6226,40 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 5644968300440697508, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2186696055577330452, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2865565658956002232, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 4438044375920276141, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2744556725016290875, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 5086595410591886415, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2809018538398972870, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2281361829863102506, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 5519504405334679068, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 1042486869054742220, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7517204121164419228, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 1765661579316137011, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 5645c3b232a8841b19352a435a06cdb2, type: 3}
 --- !u!114 &8539024558391514952 stripped
 MonoBehaviour:

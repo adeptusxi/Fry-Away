@@ -12,26 +12,29 @@ public class Catchable : MonoBehaviour
 
     public bool Taken => taken;
     public bool IsInFlight { get; private set; }
+    public bool IsGrounded { get; private set; } // lying on the ground after a throw 
+    public bool IsAvailable => IsInFlight || IsGrounded;
     
-    private static readonly List<Catchable> inFlight = new(); // currently available Catchables 
+    private static readonly List<Catchable> available = new(); 
     
-    public static Catchable FindNearestInFlight(Vector3 position, float radius)
+    public static Catchable FindNearestAvailable(Vector3 position, float flightRadius, float groundedRadius)
     {
         Catchable best = null;
-        float bestDistanceSqr = radius * radius;
+        float bestDistanceSqr = float.PositiveInfinity;
 
-        for (int i = 0; i < inFlight.Count; i++)
+        for (int i = 0; i < available.Count; i++)
         {
-            Catchable candidate = inFlight[i];
+            Catchable candidate = available[i];
 
             if (!candidate || candidate.taken)
             {
                 continue;
             }
 
+            float radius = candidate.IsGrounded ? groundedRadius : flightRadius;
             float distanceSqr = (candidate.transform.position - position).sqrMagnitude;
 
-            if (distanceSqr > bestDistanceSqr)
+            if (distanceSqr > radius * radius || distanceSqr > bestDistanceSqr)
             {
                 continue;
             }
@@ -41,6 +44,19 @@ public class Catchable : MonoBehaviour
         }
 
         return best;
+    }
+
+    public static void DestroyAllGrounded()
+    {
+        for (int i = available.Count - 1; i >= 0; i--)
+        {
+            Catchable candidate = available[i];
+
+            if (candidate && candidate.IsGrounded)
+            {
+                Destroy(candidate.gameObject);
+            }
+        }
     }
     
     #region Unity
@@ -66,6 +82,7 @@ public class Catchable : MonoBehaviour
 
         throwable.OnThrown += EnterInFlight;
         throwable.OnFlightStopped += LeaveInFlight;
+        throwable.OnLanded += EnterGrounded;
     }
 
     private void OnDestroy()
@@ -74,9 +91,11 @@ public class Catchable : MonoBehaviour
         {
             throwable.OnThrown -= EnterInFlight;
             throwable.OnFlightStopped -= LeaveInFlight;
+            throwable.OnLanded -= EnterGrounded;
         }
 
         LeaveInFlight();
+        LeaveGrounded();
     }
     
     #endregion
@@ -84,7 +103,7 @@ public class Catchable : MonoBehaviour
     // returns false if someone already caught this Catchable 
     public bool TryGiveTo(Transform attachTo)
     {
-        if (taken || !modelRoot || !attachTo)
+        if (taken || !attachTo)
         {
             return false;
         }
@@ -95,11 +114,15 @@ public class Catchable : MonoBehaviour
         modelRoot = null;
 
         LeaveInFlight();
+        LeaveGrounded();
 
-        model.SetParent(attachTo, true);
-        model.localPosition = Vector3.zero;
-        model.localRotation = Quaternion.identity;
-        
+        if (model)
+        {
+            model.SetParent(attachTo, true);
+            model.localPosition = Vector3.zero;
+            model.localRotation = Quaternion.identity;
+        }
+
         // may have been "snatched" mid-air instead of hitting hitbox 
         if (throwable)
             throwable.StopFlight();
@@ -117,7 +140,7 @@ public class Catchable : MonoBehaviour
         }
 
         IsInFlight = true;
-        inFlight.Add(this);
+        available.Add(this);
     }
 
     private void LeaveInFlight()
@@ -128,6 +151,28 @@ public class Catchable : MonoBehaviour
         }
 
         IsInFlight = false;
-        inFlight.Remove(this);
+        available.Remove(this);
+    }
+
+    private void EnterGrounded()
+    {
+        if (IsGrounded || taken)
+        {
+            return;
+        }
+
+        IsGrounded = true;
+        available.Add(this);
+    }
+
+    private void LeaveGrounded()
+    {
+        if (!IsGrounded)
+        {
+            return;
+        }
+
+        IsGrounded = false;
+        available.Remove(this);
     }
 }

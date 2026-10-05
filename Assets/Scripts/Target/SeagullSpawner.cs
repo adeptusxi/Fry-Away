@@ -15,13 +15,8 @@ public class SeagullSpawner : TargetSpawner
     [SerializeField, Min(1)] private int hoverPlacementAttempts = 8;
 
     [Header("Bread Attraction")]
-    [SerializeField, Tooltip("bread at or below this transform's height no longer attracts seagulls (e.g. once it's sunk into the water)")]
-    private Transform seaLevel;
     [SerializeField, Range(0f, 360f), Tooltip("seagulls won't notice or chase bread outside this yaw sector (centered on this spawner's forward), so they never get lured behind the player")]
     private float attractionYawRange = 180f;
-
-    public bool HasSeaLevel => seaLevel != null;
-    public float SeaLevelHeight => seaLevel ? seaLevel.position.y : float.NegativeInfinity;
 
     public bool IsWithinAttractionSector(Vector3 worldPosition)
     {

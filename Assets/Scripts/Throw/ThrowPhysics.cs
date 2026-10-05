@@ -37,6 +37,9 @@ public abstract class ThrowPhysics : MonoBehaviour
 
     [Tooltip("Max seconds to simulate before stopping automatically. <0 means no limit")]
     [SerializeField] private float timeout = 60f;
+    
+    [Tooltip("Local axis that points away from the ground if it lands")]
+    [SerializeField] private Vector3 restAxis = Vector3.up;
 
     [Header("Aim Assist")]
     [Tooltip("0 is pure physics, 1 flies straight at the nearest HittableTarget, 0.5 mixes both")]
@@ -44,7 +47,7 @@ public abstract class ThrowPhysics : MonoBehaviour
     [SerializeField, Range(0f, 180f), Tooltip("in degrees")] private float maxAssistAngle = 30f;
     [SerializeField, Min(0f), Tooltip("in meters")] private float maxAssistRange = 30f;
     private HittableTarget assistTarget; 
-
+    
     private const float velocityEpsilon = 0.01f; // below this speed, the object counts as no longer moving
     private float startTime;
     private AudioSource pathLoopSource;
@@ -57,6 +60,7 @@ public abstract class ThrowPhysics : MonoBehaviour
 
     public event Action OnStopped; 
     public bool IsSimulating { get; private set; }
+    public bool IsGrounded { get; private set; } 
 
     protected virtual void Awake()
     {
@@ -83,6 +87,7 @@ public abstract class ThrowPhysics : MonoBehaviour
         
         Data = data;
         CurrentVelocity = data.heldObject.velocity;
+        IsGrounded = false;
         Begin();
 
         FindAssistTarget();
@@ -102,7 +107,7 @@ public abstract class ThrowPhysics : MonoBehaviour
     // moves the object one frame. call TryMove() to actually apply the movement 
     protected abstract void Step();
 
-    // cleanup after the object has stopped moving 
+    // cleanup after the object has stopped moving. not called if it landed on the ground
     protected abstract void Stop();
 
     private void Update()
@@ -166,6 +171,12 @@ public abstract class ThrowPhysics : MonoBehaviour
         {
             // stop at the surface hit point 
             targetTransform.SetPositionAndRotation(targetTransform.position + delta.normalized * hit.distance, newRotation);
+
+            if (hit.collider.GetComponentInParent<HittableTarget>() == null)
+            {
+                Land(hit);
+            }
+
             StopSimulating();
             
             // notify the object that it was hit by me 
@@ -182,6 +193,34 @@ public abstract class ThrowPhysics : MonoBehaviour
         return true;
     }
     
+    private void Land(RaycastHit hit)
+    {
+        IsGrounded = true;
+
+        bool hasContact = hit.distance > 0f && hit.normal.sqrMagnitude > Mathf.Epsilon;
+        Vector3 normal = hasContact ? hit.normal : Vector3.up;
+
+        // put whichever face is already closer to the ground down 
+        Vector3 worldRestAxis = restAxis.sqrMagnitude > Mathf.Epsilon
+            ? targetTransform.TransformDirection(restAxis).normalized
+            : targetTransform.up;
+
+        if (Vector3.Dot(worldRestAxis, normal) < 0f)
+        {
+            worldRestAxis = -worldRestAxis;
+        }
+
+        targetTransform.rotation = Quaternion.FromToRotation(worldRestAxis, normal) * targetTransform.rotation;
+
+        if (hasContact && targetCollider != null)
+        {
+            Physics.SyncTransforms();
+
+            Vector3 lowest = targetCollider.ClosestPoint(targetCollider.bounds.center - normal * 100f);
+            targetTransform.position += normal * Vector3.Dot(hit.point - lowest, normal);
+        }
+    }
+    
     private bool TryGetBlockingHit(Vector3 direction, float distance, out RaycastHit blockingHit)
     {
         blockingHit = default;
@@ -192,6 +231,8 @@ public abstract class ThrowPhysics : MonoBehaviour
         {
             return false;
         }
+        
+        Physics.SyncTransforms();
 
         RaycastHit[] hits = body.SweepTestAll(direction, distance, QueryTriggerInteraction.Ignore);
         for (int i = 0; i < hits.Length; i++)
@@ -231,7 +272,11 @@ public abstract class ThrowPhysics : MonoBehaviour
             pathLoopSource = null;
         }
 
-        Stop();
+        if (!IsGrounded)
+        {
+            Stop();
+        }
+
         OnStopped?.Invoke();
     }
 }
