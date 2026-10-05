@@ -18,7 +18,8 @@ public class TargetSpawner : MonoBehaviour
     [Header("Cone")]
     [SerializeField, Min(0f), Tooltip("in meters")] private float minDistance = 8f;
     [SerializeField, Min(0f), Tooltip("in meters")] private float maxDistance = 20f;
-    [SerializeField, Range(0f, 180f), Tooltip("in meters")] private float coneAngle = 45f;
+    [SerializeField, Range(0f, 180f), Tooltip("in degrees")] private float coneAngle = 45f;
+    [SerializeField, Range(-180f, 180f), Tooltip("in degrees. yaw of the spawn cone axis relative to this spawner's forward. + is right, - is left")] private float spawnYawOffset = 0f;
 
     [Tooltip("targets never spawn below this transform's height. leave empty for no floor")]
     [SerializeField] private Transform floor;
@@ -175,8 +176,10 @@ public class TargetSpawner : MonoBehaviour
 
         Vector3 local = new Vector3(sinTheta * Mathf.Cos(phi), sinTheta * Mathf.Sin(phi), cosTheta);
 
-        return transform.rotation * local;
+        return ConeRotation * local;
     }
+
+    private Quaternion ConeRotation => Quaternion.AngleAxis(spawnYawOffset, Vector3.up) * transform.rotation;
 
     // unit direction on the cone's rim, phi radians around the axis
     public Vector3 RimDirection(float phi)
@@ -184,7 +187,7 @@ public class TargetSpawner : MonoBehaviour
         float sinMax = Mathf.Sin(coneAngle * Mathf.Deg2Rad);
         float cosMax = Mathf.Cos(coneAngle * Mathf.Deg2Rad);
 
-        return transform.rotation * new Vector3(sinMax * Mathf.Cos(phi), sinMax * Mathf.Sin(phi), cosMax);
+        return ConeRotation * new Vector3(sinMax * Mathf.Cos(phi), sinMax * Mathf.Sin(phi), cosMax);
     }
 
     // the target closest to the line of a throw, or null if nothing qualifies 
@@ -245,7 +248,7 @@ public class TargetSpawner : MonoBehaviour
         }
 
         Vector3 tip = coneOrigin.position;
-        Vector3 axis = transform.forward;
+        Vector3 axis = ConeRotation * Vector3.forward;
 
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(tip + axis * minDistance, tip + axis * maxDistance);

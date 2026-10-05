@@ -33,6 +33,11 @@ public class HittableSeagull : HittableTarget
     [SerializeField, Range(-45f, 45f), Tooltip("degrees; steady pitch bias for a 'low flier' (HeightBias near 0)")] private float lowHeightPitchBias = -8f;
     [SerializeField, Range(-45f, 45f), Tooltip("degrees; steady pitch bias for a 'high flier' (HeightBias near 1)")] private float highHeightPitchBias = 8f;
 
+    [Header("Entry Waypoint")]
+    [SerializeField, Min(0f), Tooltip("in meters. once this close to the spawner-picked entry point, it stops heading there and approaches the player as usual")] private float entryReachDistance = 3f;
+    private bool hasEntryPoint;
+    private Vector3 entryPoint;
+
     [Header("Swoop Towards Bread")]
     [SerializeField, Min(0f), Tooltip("in m/s")] private float swoopSpeed = 7f;
     [SerializeField, Min(0f)] private float swoopTurnRate = 4f;
@@ -119,6 +124,8 @@ public class HittableSeagull : HittableTarget
     {
         if (state != State.Approaching)
             return;
+
+        hasEntryPoint = false;
 
         if (!hoverSpace)
         {
@@ -329,7 +336,8 @@ public class HittableSeagull : HittableTarget
             return fallbackHeading;
         }
 
-        Vector3 toTarget = MoveTo.position - transform.position;
+        Vector3 destination = hasEntryPoint ? entryPoint : MoveTo.position;
+        Vector3 toTarget = destination - transform.position;
         return toTarget.sqrMagnitude > Mathf.Epsilon ? toTarget.normalized : fallbackHeading;
     }
     
@@ -354,6 +362,11 @@ public class HittableSeagull : HittableTarget
 
     private void MoveApproach()
     {
+        if (hasEntryPoint && (entryPoint - transform.position).sqrMagnitude <= entryReachDistance * entryReachDistance)
+        {
+            hasEntryPoint = false;
+        }
+
         Vector3 heading = Weave(BaseHeading(), maxYawOffset, irregularity);
         float pitchBias = Mathf.Lerp(lowHeightPitchBias, highHeightPitchBias, heightBias);
         heading = PitchWeave(heading, maxPitchOffset, irregularity, pitchBias);
@@ -629,6 +642,12 @@ public class HittableSeagull : HittableTarget
     public void RegisterHoverSpace(SeagullSpawner space)
     {
         hoverSpace = space;
+        hasEntryPoint = space.TryPickEntryPoint(out entryPoint);
+
+        if (hasEntryPoint)
+        {
+            transform.rotation = Quaternion.LookRotation(BaseHeading(), Vector3.up);
+        }
     }
 
     private void MoveHover()

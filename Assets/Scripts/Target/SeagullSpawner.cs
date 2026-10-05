@@ -18,6 +18,27 @@ public class SeagullSpawner : TargetSpawner
     [SerializeField, Range(0f, 360f), Tooltip("seagulls won't notice or chase bread outside this yaw sector (centered on this spawner's forward), so they never get lured behind the player")]
     private float attractionYawRange = 180f;
 
+    [Header("Entry Waypoint")]
+    [SerializeField, Min(0f), Tooltip("in meters from the player. seagulls first fly to a point in front of the player, then approach as usual. 0 max disables the waypoint")] private float entryDistanceMin = 50f;
+    [SerializeField, Min(0f), Tooltip("in meters from the player")] private float entryDistanceMax = 60f;
+    [SerializeField, Range(0f, 180f), Tooltip("in degrees, total spread of the waypoint around the player's front")] private float entryYawRange = 90f;
+
+    public bool TryPickEntryPoint(out Vector3 point)
+    {
+        point = Vector3.zero;
+
+        if (!ConeOrigin || entryDistanceMax <= 0f)
+        {
+            return false;
+        }
+
+        float yaw = Random.Range(-entryYawRange * 0.5f, entryYawRange * 0.5f);
+        Vector3 direction = Quaternion.AngleAxis(yaw, Vector3.up) * SectorCenter();
+
+        point = ConeOrigin.position + direction * Random.Range(entryDistanceMin, entryDistanceMax);
+        return true;
+    }
+
     public bool IsWithinAttractionSector(Vector3 worldPosition)
     {
         if (!ConeOrigin)
@@ -120,6 +141,7 @@ public class SeagullSpawner : TargetSpawner
     {
         hoverHeightMax = Mathf.Max(hoverHeightMin, hoverHeightMax);
         hoverRadiusMax = Mathf.Max(hoverRadiusMin, hoverRadiusMax);
+        entryDistanceMax = Mathf.Max(entryDistanceMin, entryDistanceMax);
     }
 
 #if UNITY_EDITOR
