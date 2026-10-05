@@ -5733,6 +5733,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 207147544}
     - target: {fileID: 8429420090678894126, guid: 576940768193b47afb155c479f946dbc, type: 3}
+      propertyPath: spawnImmediately
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8429420090678894126, guid: 576940768193b47afb155c479f946dbc, type: 3}
       propertyPath: tutorialSpawnPoint
       value: 
       objectReference: {fileID: 1879667434}
