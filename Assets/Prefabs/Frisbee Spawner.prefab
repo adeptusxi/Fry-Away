@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 1471443677318326156}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.004, y: -0.055, z: -0.039}
+  m_LocalPosition: {x: 0, y: 0.015, z: -0.037}
   m_LocalScale: {x: 0.39999995, y: 0.074999996, z: 0.39999995}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -95,6 +95,7 @@ Transform:
   - {fileID: 5320419102600260130}
   - {fileID: 1970631384730242686}
   - {fileID: 4061355517782093486}
+  - {fileID: 6985440436943154597}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7662459530815304061
@@ -117,9 +118,66 @@ MonoBehaviour:
   - {fileID: 3198760371447014909, guid: b3dd80e9acbd03744890a14a28bf5a11, type: 3}
   - {fileID: 1270410600851750535, guid: a6eec4914058a1444a4d29fcc3aae781, type: 3}
   - {fileID: 6086263952354917749, guid: f52995555698ef7488766516d123c33d, type: 3}
+  queueSize: 3
   verbose: 0
   attachPoint: {fileID: 5320419102600260130}
   activateOnStart: 0
+  stackOffset: {x: 0, y: -0.75, z: 0}
+  stackTwist: 25
+  stackScatter: 0.015
+--- !u!1 &8152376041441296454
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6985440436943154597}
+  - component: {fileID: 1817542597085508473}
+  m_Layer: 0
+  m_Name: GrabCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6985440436943154597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8152376041441296454}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.002, y: -0.074, z: -0.028}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3419611729733117946}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1817542597085508473
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8152376041441296454}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.18
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &4599983015056378181
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -8,6 +8,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 895884084208087586, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
+      propertyPath: queuedTilt
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 895884084208087586, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
+      propertyPath: queuedUpAxis.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 895884084208087586, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
+      propertyPath: queuedUpAxis.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1516561802553877777, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
       propertyPath: m_Name
       value: baguette mesh

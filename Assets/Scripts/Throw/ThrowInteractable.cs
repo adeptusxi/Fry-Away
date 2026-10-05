@@ -23,12 +23,6 @@ public class ThrowInteractable : MonoBehaviour
     [Tooltip("Hand speed in m/s at which a throw starts being tracked")]
     [SerializeField] private float throwVelocityThreshold = 2f;
 
-    [Header("Audio")]
-    [SerializeField, Min(0f)] private float minWhooshSpeed = 2f;
-    [SerializeField, Min(0f)] private float maxWhooshSpeed = 8f;
-
-    private AudioSource chargeLoopSource;
-
     [Tooltip("How long in seconds the hand must stay at/above the threshold for the throw to fire")]
     [SerializeField] private float throwDuration = 0.25f;
     
@@ -38,19 +32,31 @@ public class ThrowInteractable : MonoBehaviour
     [Tooltip("Rotates the sampled controller pose so its forward axis is the throw aim direction")]
     [SerializeField] private Vector3 aimRotationOffset;
 
+    [Header("Queue")]
+    [SerializeField, Tooltip("local axis that points up while waiting in a spawner")] private Vector3 queuedUpAxis = Vector3.up;
+    [SerializeField, Tooltip("degrees to lean away from straight up")] private float queuedTilt;
+
     [Header("Haptics")]
     [SerializeField, Range(0f, 1f)] private float hapticFrequency = 0.5f;
     [SerializeField, Range(0f, 1f)] private float hapticAmplitude = 0.5f;
-
+    
+    [Header("Audio")]
+    [SerializeField, Min(0f)] private float minWhooshSpeed = 2f;
+    [SerializeField, Min(0f)] private float maxWhooshSpeed = 8f;
+    
     [Header("Debug")]
     [Tooltip("Fallback hand used for haptics if the controller handedness can't be identified")]
     [SerializeField] private bool fallbackToRightHand = true;
-
     [SerializeField] private bool verbose;
+
+    private AudioSource chargeLoopSource;
     
     private PoseBuffer handPoses;
     private PoseBuffer heldPoses;
     
+    public Vector3 QueuedUpAxis => queuedUpAxis;
+    public float QueuedTilt => queuedTilt;
+
     public event Action OnThrown; // fired when the object is handed off to physics
     public event Action OnGrabbed; // fired when a hand picks the object up
     public event Action OnFlightStopped; // fired when the thrown object has come to rest (hit something, stopped, or timed out)
@@ -410,6 +416,11 @@ public class ThrowInteractable : MonoBehaviour
         {
             physicsProvider.ForceStop();
         }
+    }
+
+    public void SetGrabEnabled(bool value)
+    {
+        SetInteractablesEnabled(value);
     }
 
     private void SetInteractablesEnabled(bool value)

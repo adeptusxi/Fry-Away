@@ -659,6 +659,11 @@ public class GameManager : MonoBehaviour
         breadInFlight = 0;
         outOfBread = false;
 
+        if (breadSpawner)
+        {
+            breadSpawner.SetStock(UnlimitedBread ? -1 : breadCount);
+        }
+
         if (seagullSpawner)
         {
             seagullSpawner.Activate(true);
@@ -776,6 +781,7 @@ public class GameManager : MonoBehaviour
         if (breadSpawner)
         {
             breadSpawner.Activate(false);
+            breadSpawner.SetStock(-1);
             breadSpawner.DespawnCurrent();
             Catchable.DestroyAllGrounded();
 
