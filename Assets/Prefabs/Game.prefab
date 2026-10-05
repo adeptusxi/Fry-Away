@@ -83,8 +83,8 @@ MonoBehaviour:
   maxSpawnInterval: 3.5
   minDistance: 90
   maxDistance: 110
-  coneAngle: 30
-  spawnYawOffset: 90
+  coneAngle: 15
+  spawnYawOffset: 70
   floor: {fileID: 0}
   floorClearance: 0.1
   maxSpawnHeightAboveOrigin: 15
