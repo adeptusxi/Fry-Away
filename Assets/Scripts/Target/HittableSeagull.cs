@@ -18,10 +18,11 @@ public class HittableSeagull : HittableTarget
         Leaving, // game over, lost interest
         FlyingAway // caught a bread
     }
-
+    
     [Header("General Flight")]
     [SerializeField, Min(0f), Tooltip("in m/s")] private float minSpeed = 2f;
     [SerializeField, Min(0f), Tooltip("in m/s")] private float maxSpeed = 5f;
+    [SerializeField] private Animator animator;
 
     [Header("Weave Towards Player")]
     [SerializeField, Range(0f, 90f), Tooltip("in degrees to either side. 0 flies straight")] private float maxYawOffset = 25f;
@@ -102,6 +103,10 @@ public class HittableSeagull : HittableTarget
     private Vector3 flyAwayStartHeading;
     private Vector3 flyAwayHeading;
     private Vector3 flyAwayTurnAxis;
+    
+    private static readonly int LAND_TRIGGER = Animator.StringToHash("Land");
+    private static readonly int TAKEOFF_TRIGGER = Animator.StringToHash("Takeoff");
+    private static readonly int FLAP_STATE = Animator.StringToHash("Armature|Flap");
     
     #region Unity & Callbacks
     
@@ -491,15 +496,15 @@ public class HittableSeagull : HittableTarget
     {
         if (state == State.FlyingAway || state == State.Leaving)
             return;
+        
+        if (animator && !animator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(FLAP_STATE))
+        {
+            animator.SetTrigger(TAKEOFF_TRIGGER);
+        }
 
         StopCloseSoundLoop();
         state = State.Leaving;
         noticedBread = null;
-
-        if (animator)
-        {
-            animator.speed = 1f;
-        }
 
         leaveElapsed = 0f;
         leaveStartHeading = transform.forward;
@@ -566,11 +571,7 @@ public class HittableSeagull : HittableTarget
         StopCloseSoundLoop();
         state = State.FlyingAway;
         flyAwayElapsed = 0f;
-
-        if (animator)
-        {
-            animator.speed = 1f;
-        }
+        
         flyAwayStartHeading = transform.forward;
 
         Vector3 horizontal = flyAwayStartHeading;
@@ -734,10 +735,6 @@ public class HittableSeagull : HittableTarget
     private float landingSettleDuration = 0.4f;
     [SerializeField, Min(0f), Tooltip("in seconds, minimum time spent idle on the ground")] private float idleDurationMin = 3f;
     [SerializeField, Min(0f), Tooltip("in seconds, maximum time spent idle on the ground")] private float idleDurationMax = 8f;
-    [SerializeField, Tooltip("optional. its playback speed is slowed while idle so the flap reads as 'settled' instead of full-speed flying, and restored on takeoff/leave/fly-away")]
-    private Animator animator;
-    [SerializeField, Range(0f, 1f), Tooltip("Animator.speed multiplier while idle on the ground")]
-    private float idleAnimationSpeed = 0.3f;
 
     private float hoverTimeSinceLastLandingCheck;
 
@@ -851,7 +848,7 @@ public class HittableSeagull : HittableTarget
 
         if (animator)
         {
-            animator.speed = idleAnimationSpeed;
+            animator.SetTrigger(LAND_TRIGGER);
         }
     }
 
@@ -885,7 +882,7 @@ public class HittableSeagull : HittableTarget
 
         if (animator)
         {
-            animator.speed = 1f;
+            animator.SetTrigger(TAKEOFF_TRIGGER);
         }
     }
 
