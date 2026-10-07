@@ -1878,6 +1878,99 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 566000223}
   m_Mesh: {fileID: -8678823145569952518, guid: 945ae2507ef60417aaf8088679c291ea, type: 3}
+--- !u!1001 &591963822
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 741005710}
+    m_Modifications:
+    - target: {fileID: 6006338469919561221, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_Name
+      value: Almost Over Sign
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.035
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8079397167512258817, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 6528238212942534985, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 6662350787528019835, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+  m_SourcePrefab: {fileID: 100100000, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+--- !u!4 &591963823 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8172679866248994070, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+  m_PrefabInstance: {fileID: 591963822}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &591963824 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7505909533832826258, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+  m_PrefabInstance: {fileID: 591963822}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6b72989e8dce4bd784c46ddecbd43e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoveringWarningUI
+--- !u!114 &591963825 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2843441077966124493, guid: 23d737617f4af467bb6a708e9f787206, type: 3}
+  m_PrefabInstance: {fileID: 591963822}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e6ea46094420489cb8e8fc4e913ac29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SignSlideAnimation
 --- !u!1 &592011634
 GameObject:
   m_ObjectHideFlags: 0
@@ -2392,6 +2485,7 @@ Transform:
   - {fileID: 706274261}
   - {fileID: 1300025007}
   - {fileID: 75110567}
+  - {fileID: 591963823}
   - {fileID: 1204798634}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5733,10 +5827,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 207147544}
     - target: {fileID: 8429420090678894126, guid: 576940768193b47afb155c479f946dbc, type: 3}
-      propertyPath: spawnImmediately
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8429420090678894126, guid: 576940768193b47afb155c479f946dbc, type: 3}
       propertyPath: tutorialSpawnPoint
       value: 
       objectReference: {fileID: 1879667434}
@@ -5760,6 +5850,14 @@ PrefabInstance:
       propertyPath: pausePanel
       value: 
       objectReference: {fileID: 8539024558391514955}
+    - target: {fileID: 9005494819435441202, guid: 576940768193b47afb155c479f946dbc, type: 3}
+      propertyPath: countdownUI
+      value: 
+      objectReference: {fileID: 6740488414572382315}
+    - target: {fileID: 9005494819435441202, guid: 576940768193b47afb155c479f946dbc, type: 3}
+      propertyPath: warningSign
+      value: 
+      objectReference: {fileID: 591963825}
     - target: {fileID: 9005494819435441202, guid: 576940768193b47afb155c479f946dbc, type: 3}
       propertyPath: creditsPanel
       value: 
@@ -5788,6 +5886,10 @@ PrefabInstance:
       propertyPath: seagullsHitText
       value: 
       objectReference: {fileID: 8539024558391514952}
+    - target: {fileID: 9005494819435441202, guid: 576940768193b47afb155c479f946dbc, type: 3}
+      propertyPath: hoveringWarningUI
+      value: 
+      objectReference: {fileID: 591963824}
     - target: {fileID: 9005494819435441202, guid: 576940768193b47afb155c479f946dbc, type: 3}
       propertyPath: handPreferencePanel
       value: 
@@ -5886,6 +5988,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tutorial Sign
       objectReference: {fileID: 0}
+    - target: {fileID: 6849057497359388530, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 7760244074072733735, guid: f438f486a8c9445a79ddc9972b9c5ce1, type: 2}
     - target: {fileID: 8172679866248994070, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5933,7 +6039,21 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8079397167512258817, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 6560625383491964853, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
+--- !u!114 &6740488414572382315 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6084643024133844727, guid: e0cb2cf30c3644871b795a3efd06ca32, type: 3}
+  m_PrefabInstance: {fileID: 6740488414572382314}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a06064c7cc61402ea43c4faf7f05641, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CountdownUI
 --- !u!1001 &8539024558391514951
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -27,6 +27,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private CountdownUI countdownUI;
     [SerializeField, Min(0f)] private float countdownLingerSeconds = 0.75f;
 
+    [Header("Hovering Warning Sign")]
+    [SerializeField] private SignSlideAnimation warningSign;
+    [SerializeField] private HoveringWarningUI hoveringWarningUI;
+    [SerializeField, Min(1), Tooltip("how many seagulls hovering causes the sign to appear. should be < GameManager's MaxHoveringSeagulls")]
+        private int hoveringSeagullThreshold = 2;
+    [SerializeField, Min(0f), Tooltip("in seconds. duration that seagull count needs to stay below the threshold before the sign goes away")]
+        private float warningHideDelay = 0.75f;
+
     [Header("On Hit")]
     [SerializeField] private HitPointsPopup hitPointPopupPrefab;
 
@@ -42,6 +50,7 @@ public class UIManager : MonoBehaviour
 
     private int seagullsHit;
     private bool wasPlaying;
+    private float warningBelowElapsed;
 
     public bool IsPaused { get; private set; }
 
@@ -87,6 +96,20 @@ public class UIManager : MonoBehaviour
         }
 
         HideSignsImmediate();
+
+        if (warningSign != null)
+        {
+            warningSign.Exit(true);
+        }
+    }
+
+    private void Start()
+    {
+        if (warningSign != null && GameManager.Instance != null
+            && hoveringSeagullThreshold >= GameManager.Instance.MaxHoveringSeagulls)
+        {
+            Debug.LogWarning("[UIManager] hoveringSeagullThreshold is not below the lose count, the warning sign will never show", this);
+        }
     }
 
     private void Update()
@@ -111,6 +134,56 @@ public class UIManager : MonoBehaviour
         }
 
         wasPlaying = playing;
+
+        UpdateHoveringWarning(playing);
+    }
+
+    private void UpdateHoveringWarning(bool playing)
+    {
+        if (warningSign == null)
+            return;
+
+        if (!playing)
+        {
+            HideHoveringWarning();
+            return;
+        }
+
+        int count = GameManager.Instance.HoveringCount;
+
+        if (count >= hoveringSeagullThreshold)
+        {
+            warningBelowElapsed = 0f;
+
+            if (!warningSign.IsShown)
+            {
+                warningSign.Enter();
+            }
+        }
+        else if (warningSign.IsShown)
+        {
+            warningBelowElapsed += Time.deltaTime;
+
+            if (warningBelowElapsed >= warningHideDelay)
+            {
+                HideHoveringWarning();
+            }
+        }
+
+        if (warningSign.IsShown && hoveringWarningUI != null)
+        {
+            hoveringWarningUI.SetCount(warningSign.IsAnimating ? 0 : count);
+        }
+    }
+
+    private void HideHoveringWarning()
+    {
+        warningBelowElapsed = 0f;
+
+        if (warningSign.IsShown)
+        {
+            warningSign.Exit();
+        }
     }
 
     private void OnDestroy()

@@ -187,6 +187,12 @@ MonoBehaviour:
   bestScoreText: {fileID: 0}
   seagullsHitText: {fileID: 0}
   tutorialSign: {fileID: 0}
+  countdownUI: {fileID: 0}
+  countdownLingerSeconds: 0.75
+  warningSign: {fileID: 0}
+  hoveringWarningUI: {fileID: 0}
+  hoveringSeagullThreshold: 2
+  warningHideDelay: 0.5
   hitPointPopupPrefab: {fileID: 4078109983970039500, guid: 3ab41f082219f4719b160758b480f867, type: 3}
 --- !u!1 &3999566626334817877
 GameObject:
@@ -887,10 +893,10 @@ MonoBehaviour:
   longShotDistance: 15
   longShotBonus: 25
   onHitVFX: {fileID: 6580971150351711595, guid: b234d68a3543d4c65acd19331f6a7021, type: 3}
-  maxHoveringSeagulls: 5
+  maxHoveringSeagulls: 7
   crowdBgmSpeedCeiling: 1.25
   crowdAudioTransitionSeconds: 0.5
-  crowdWarningBeep: {fileID: 0}
+  crowdWarningBeep: {fileID: 8300000, guid: 46d841b86ead5443aa71dd967a6944cf, type: 3}
   crowdWarningVolumeScale: 2
   crowdBeepSlowInterval: 1.2
   crowdBeepFastRate: 3

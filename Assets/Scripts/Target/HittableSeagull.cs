@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /*
@@ -15,6 +16,7 @@ public class HittableSeagull : HittableTarget
         Swooping, // going towards a bread
         Landing, // gliding down to a ground spot
         Idle, // sitting on the ground
+        TakingOff, // on the ground, playing the takeoff animation
         Leaving, // game over, lost interest
         FlyingAway // caught a bread
     }
@@ -44,6 +46,7 @@ public class HittableSeagull : HittableTarget
     [SerializeField, Min(0f)] private float swoopTurnRate = 4f;
 
     [Header("Leaving (Game Over)")]
+    [SerializeField, Min(0f), Tooltip("in seconds, random extra wait before turning around")] private float leaveMaxDelay = 1f;
     [SerializeField, Min(0f), Tooltip("in seconds, stays in place before turning around")] private float leavePauseDuration = 0.5f;
     [SerializeField, Min(0f), Tooltip("in seconds, length of the U turn")] private float leaveTurnDuration = 1.5f;
     [SerializeField, Min(0f), Tooltip("in m/s")] private float leaveSpeed = 1.5f;
@@ -94,6 +97,8 @@ public class HittableSeagull : HittableTarget
     private SeagullSpawner hoverSpace;
     private Vector3 hoverOffset;
 
+    private float leaveDelay;
+    private bool leaveNeedsTakeoff;
     private float leaveElapsed;
     private Vector3 leaveStartHeading;
     private Vector3 leaveHeading;
@@ -203,6 +208,8 @@ public class HittableSeagull : HittableTarget
             case State.Idle:
                 MoveIdle();
                 break;
+            case State.TakingOff:
+                break;
             case State.Leaving:
                 MoveLeave();
                 break;
@@ -216,7 +223,7 @@ public class HittableSeagull : HittableTarget
         // Landing/Idle deliberately target the ground (via the floor reference), which can sit
         // lower than sea level on dry land - the flight-safety clamp would otherwise fight them
         // and drag a landed bird back up to sea level
-        if (state != State.Landing && state != State.Idle && !swoopingAtGround)
+        if (state != State.Landing && state != State.Idle && state != State.TakingOff && !swoopingAtGround)
         {
             ClampAboveFloor();
         }
@@ -497,10 +504,8 @@ public class HittableSeagull : HittableTarget
         if (state == State.FlyingAway || state == State.Leaving)
             return;
         
-        if (animator && !animator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(FLAP_STATE))
-        {
-            animator.SetTrigger(TAKEOFF_TRIGGER);
-        }
+        leaveDelay = Random.Range(0f, leaveMaxDelay);
+        leaveNeedsTakeoff = state == State.Idle;
 
         StopCloseSoundLoop();
         state = State.Leaving;
@@ -530,6 +535,21 @@ public class HittableSeagull : HittableTarget
 
     private void MoveLeave()
     {
+        if (leaveDelay > 0f)
+        {
+            leaveDelay -= Time.deltaTime;
+            return;
+        }
+
+        if (leaveNeedsTakeoff)
+        {
+            leaveNeedsTakeoff = false;
+            StartCoroutine(TakeoffRoutine());
+        }
+
+        if (takingOff)
+            return;
+
         leaveElapsed += Time.deltaTime;
 
         if (leaveElapsed >= leavePauseDuration + leaveLifetime)
@@ -638,6 +658,9 @@ public class HittableSeagull : HittableTarget
 
     public bool IsHovering => state == State.Hovering || (state == State.Swooping && failedCatchState == State.Hovering);
 
+    // used for lose condition 
+    public bool NearPlayer => IsHovering || state == State.Landing || state == State.Idle || state == State.TakingOff;
+
     public Vector3 HoverAnchor => MoveTo ? MoveTo.position + hoverOffset : transform.position;
 
     public void RegisterHoverSpace(SeagullSpawner space)
@@ -744,6 +767,8 @@ public class HittableSeagull : HittableTarget
     private Vector3 landingStartHeading;
     private Vector3 landingHeading;
     private Vector3 landingTurnAxis;
+
+    private bool takingOff;
 
     private float idleElapsed;
     private float idleDuration;
@@ -870,8 +895,26 @@ public class HittableSeagull : HittableTarget
 
     private void BeginTakeOff()
     {
-        // re-picks a hover offset and hands off to MoveHover(), which already knows how to glide
-        // smoothly from wherever it currently is up to a hover anchor (see hoverSettleDistance)
+        state = State.TakingOff;
+        StartCoroutine(TakeoffRoutine());
+    }
+
+    private IEnumerator TakeoffRoutine()
+    {
+        if (animator)
+        {
+            takingOff = true;
+            animator.SetTrigger(TAKEOFF_TRIGGER);
+
+            yield return new WaitUntil(() => !animator.IsInTransition(0) &&
+                animator.GetCurrentAnimatorStateInfo(0).shortNameHash == FLAP_STATE);
+
+            takingOff = false;
+        }
+
+        if (state != State.TakingOff)
+            yield break;
+        
         if (hoverSpace)
         {
             hoverOffset = hoverSpace.PickHoverOffset(this);
@@ -879,11 +922,6 @@ public class HittableSeagull : HittableTarget
 
         hoverTimeSinceLastLandingCheck = 0f;
         state = State.Hovering;
-
-        if (animator)
-        {
-            animator.SetTrigger(TAKEOFF_TRIGGER);
-        }
     }
 
 #if UNITY_EDITOR

@@ -162,7 +162,7 @@ public class GameManager : MonoBehaviour
                     continue;
                 }
 
-                if (targets[i] is HittableSeagull seagull && seagull.IsHovering)
+                if (targets[i] is HittableSeagull seagull && seagull.NearPlayer)
                 {
                     count++;
                 }
@@ -512,7 +512,7 @@ public class GameManager : MonoBehaviour
             return result;
         }
 
-        bool wasHovering = seagull.IsHovering;
+        bool wasHovering = seagull.NearPlayer;
 
         if (state != GameState.Playing)
         {
