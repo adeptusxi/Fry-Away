@@ -121,6 +121,7 @@ public class GameManager : MonoBehaviour
     private TutorialSeagull tutorialSeagull;
     private SoundId currentBgm = SoundId.None;
     private Coroutine countdownRoutine;
+    private Coroutine tutorialSpawnRoutine;
     private AudioSource countdownSource;
     private AudioSource gameEndSource;
     private bool countdownInProgress;
@@ -131,6 +132,7 @@ public class GameManager : MonoBehaviour
     public GameState State => state;
     public int Score { get; private set; }
     public int BreadRemaining => breadRemaining;
+    public int MaxHoveringSeagulls => maxHoveringSeagulls;
 
     private bool UnlimitedBread => breadCount < 0;
 
@@ -401,7 +403,37 @@ public class GameManager : MonoBehaviour
 
         Log("tutorial started, bread is unlimited until the freebie seagull is hit");
 
-        SpawnTutorialSeagull();
+        if (!tutorialSeagullPrefab || !tutorialSpawnPoint || !UIManager.Instance)
+        {
+            SpawnTutorialSeagull();
+            return;
+        }
+
+        tutorialSpawnRoutine = StartCoroutine(SpawnTutorialSeagullRoutine());
+    }
+
+    private IEnumerator SpawnTutorialSeagullRoutine()
+    {
+        while (UIManager.Instance && !UIManager.Instance.TutorialSignInView)
+        {
+            yield return null;
+        }
+
+        tutorialSpawnRoutine = null;
+
+        if (state == GameState.Tutorial)
+        {
+            SpawnTutorialSeagull();
+        }
+    }
+
+    private void CancelTutorialSpawn()
+    {
+        if (tutorialSpawnRoutine != null)
+        {
+            StopCoroutine(tutorialSpawnRoutine);
+            tutorialSpawnRoutine = null;
+        }
     }
 
     // (hook) replay the countdown without repeating the tutorial; keep the selected hand
@@ -416,7 +448,7 @@ public class GameManager : MonoBehaviour
 
         if (UIManager.Instance)
         {
-            UIManager.Instance.HideSigns();
+            UIManager.Instance.ShowCountdown();
         }
 
         state = GameState.Countdown;
@@ -532,7 +564,7 @@ public class GameManager : MonoBehaviour
 
         if (UIManager.Instance)
         {
-            UIManager.Instance.HideSigns();
+            UIManager.Instance.ShowCountdown();
         }
 
         state = GameState.Countdown;
@@ -614,6 +646,7 @@ public class GameManager : MonoBehaviour
     {
         StopCrowdWarning();
         CancelCountdown();
+        CancelTutorialSpawn();
         StopGameEndSound();
     }
 
@@ -771,6 +804,8 @@ public class GameManager : MonoBehaviour
             seagullSpawner.Activate(false);
             seagullSpawner.ClearTargets();
         }
+
+        CancelTutorialSpawn();
 
         if (tutorialSeagull)
         {

@@ -24,6 +24,8 @@ public class UIManager : MonoBehaviour
 
     [Header("Tutorial Sign")]
     [SerializeField] private SignSlideAnimation tutorialSign;
+    [SerializeField] private CountdownUI countdownUI;
+    [SerializeField, Min(0f)] private float countdownLingerSeconds = 0.75f;
 
     [Header("On Hit")]
     [SerializeField] private HitPointsPopup hitPointPopupPrefab;
@@ -42,6 +44,8 @@ public class UIManager : MonoBehaviour
     private bool wasPlaying;
 
     public bool IsPaused { get; private set; }
+
+    public bool TutorialSignInView => tutorialSign == null || (tutorialSign.IsShown && !tutorialSign.IsAnimating);
     
     // can only pause mid-round (not during countdown or while another menu is active) 
     private bool CanPause
@@ -99,6 +103,11 @@ public class UIManager : MonoBehaviour
         {
             // new round 
             seagullsHit = 0;
+
+            if (tutorialSign != null && tutorialSign.IsShown)
+            {
+                ShowSign(null, null, false, countdownLingerSeconds);
+            }
         }
 
         wasPlaying = playing;
@@ -130,6 +139,18 @@ public class UIManager : MonoBehaviour
         ShowSign(menuSign, endScreenPanel);
     }
 
+    public void ShowCountdown()
+    {
+        SetPaused(false);
+
+        if (countdownUI != null)
+        {
+            countdownUI.Play();
+        }
+
+        ShowSign(tutorialSign, null, true);
+    }
+
     public void HideSigns()
     {
         SetPaused(false);
@@ -150,17 +171,23 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void ShowSign(SignSlideAnimation next, GameObject panel = null)
+    private void ShowSign(SignSlideAnimation next, GameObject panel = null, bool flipped = false, float delay = 0f)
     {
         StopSwap();
-        swapRoutine = StartCoroutine(SwapTo(next, panel));
+        swapRoutine = StartCoroutine(SwapTo(next, panel, flipped, delay));
     }
 
-    private IEnumerator SwapTo(SignSlideAnimation next, GameObject panel)
+    private IEnumerator SwapTo(SignSlideAnimation next, GameObject panel, bool flipped, float delay)
     {
+        if (delay > 0f)
+        {
+            yield return new WaitForSecondsRealtime(delay);
+        }
+
         if (next != null && next.IsShown)
         {
             ShowPanel(panel);
+            next.Flip(flipped);
         }
 
         foreach (SignSlideAnimation sign in signs)
@@ -179,7 +206,7 @@ public class UIManager : MonoBehaviour
         if (next != null && !next.IsShown)
         {
             ShowPanel(panel);
-            next.Enter();
+            next.Enter(false, flipped);
         }
 
         swapRoutine = null;
@@ -310,7 +337,9 @@ public class UIManager : MonoBehaviour
         if (!CanPause)
             return;
 
-        signBeforePause = tutorialSign != null && tutorialSign.IsShown ? tutorialSign : null;
+        signBeforePause = GameManager.Instance.State == GameManager.GameState.Tutorial && tutorialSign != null && tutorialSign.IsShown 
+            ? tutorialSign 
+            : null;
 
         SetPaused(true);
         ShowSign(menuSign, pausePanel);
