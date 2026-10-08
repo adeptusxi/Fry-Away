@@ -6135,6 +6135,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1781886001}
     - target: {fileID: 255365800804490917, guid: 18a925dd55b4b4b40a2dd80fe254543e, type: 3}
+      propertyPath: maxTargets
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 255365800804490917, guid: 18a925dd55b4b4b40a2dd80fe254543e, type: 3}
       propertyPath: spawnYawOffset
       value: 45
       objectReference: {fileID: 0}
@@ -6431,6 +6435,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
     - targetCorrespondingSourceObject: {fileID: 2788664577341797288, guid: 18a925dd55b4b4b40a2dd80fe254543e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 5878933843166066945, guid: 18a925dd55b4b4b40a2dd80fe254543e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 18a925dd55b4b4b40a2dd80fe254543e, type: 3}
