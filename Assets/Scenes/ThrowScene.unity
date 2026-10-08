@@ -263,7 +263,15 @@ MonoBehaviour:
   hoveringPointsScalar: 0.25
   longShotDistance: 15
   longShotBonus: 50
+  onHitVFX: {fileID: 0}
   maxHoveringSeagulls: 5
+  crowdBgmSpeedCeiling: 1.25
+  crowdAudioTransitionSeconds: 0.5
+  crowdWarningBeep: {fileID: 0}
+  crowdWarningVolumeScale: 2
+  crowdBeepSlowInterval: 1.2
+  crowdBeepFastRate: 3
+  crowdWarningFastPitch: 2.2
   showDebugDisplays: 0
   spawnImmediately: 1
   verbose: 1
@@ -513,6 +521,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Half bag Spawner (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 5059517075490616252, guid: 33e497381ff042347948c32d14cdc421, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: attachPoint
       value: 
@@ -714,6 +726,14 @@ PrefabInstance:
       value: Bread Spawner (2)
       objectReference: {fileID: 0}
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
+      propertyPath: prefab
+      value: 
+      objectReference: {fileID: 6004347003856336069, guid: 4537d2c43ab6bf34f9cc14b2248221c1, type: 3}
+    - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
+      propertyPath: verbose
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: attachPoint
       value: 
       objectReference: {fileID: 0}
@@ -728,7 +748,7 @@ PrefabInstance:
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: 'prefabs.Array.data[0]'
       value: 
-      objectReference: {fileID: 5427119376664213527, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
+      objectReference: {fileID: 6004347003856336069, guid: 4537d2c43ab6bf34f9cc14b2248221c1, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -785,6 +805,10 @@ PrefabInstance:
     - target: {fileID: 5059517075490616252, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: m_Name
       value: CinnRoll Spawner (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5059517075490616252, guid: 33e497381ff042347948c32d14cdc421, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: attachPoint
@@ -1068,6 +1092,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bag Spawner
       objectReference: {fileID: 0}
+    - target: {fileID: 5059517075490616252, guid: 33e497381ff042347948c32d14cdc421, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: attachPoint
       value: 
@@ -1080,6 +1108,10 @@ PrefabInstance:
       propertyPath: prefabs.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
+      propertyPath: 'prefabs.Array.data[0]'
+      value: 
+      objectReference: {fileID: 5427119376664213527, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1172,6 +1204,7 @@ MonoBehaviour:
   minDistance: 50
   maxDistance: 60
   coneAngle: 30
+  spawnYawOffset: 0
   floor: {fileID: 295480125}
   floorClearance: 0.15
   maxSpawnHeightAboveOrigin: 15
@@ -1481,6 +1514,10 @@ PrefabInstance:
     - target: {fileID: 5059517075490616252, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: m_Name
       value: Croiss Spawner (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5059517075490616252, guid: 33e497381ff042347948c32d14cdc421, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: attachPoint
