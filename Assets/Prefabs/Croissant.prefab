@@ -90,6 +90,10 @@ PrefabInstance:
       propertyPath: h
       value: 0.05
       objectReference: {fileID: 0}
+    - target: {fileID: 2062619520835402553, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
+      propertyPath: modelRoot
+      value: 
+      objectReference: {fileID: 5114809990888002133}
     - target: {fileID: 3167337690135901690, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

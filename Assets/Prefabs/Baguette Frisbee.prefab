@@ -120,6 +120,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: baguette mesh
       objectReference: {fileID: 0}
+    - target: {fileID: 2062619520835402553, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
+      propertyPath: modelRoot
+      value: 
+      objectReference: {fileID: 6224033391568350203}
     - target: {fileID: 3167337690135901690, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
