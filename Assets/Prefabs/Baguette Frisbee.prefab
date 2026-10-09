@@ -250,27 +250,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5681566738335238396, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
       propertyPath: m_Size.x
-      value: 0.3560649
+      value: 0.07913832
       objectReference: {fileID: 0}
     - target: {fileID: 5681566738335238396, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
       propertyPath: m_Size.y
-      value: 0.07555703
+      value: 0.23544973
       objectReference: {fileID: 0}
     - target: {fileID: 5681566738335238396, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
       propertyPath: m_Size.z
-      value: 0.12839904
+      value: 0.046181187
       objectReference: {fileID: 0}
     - target: {fileID: 5681566738335238396, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
       propertyPath: m_Center.x
-      value: 0.03089784
+      value: 0.00031995028
       objectReference: {fileID: 0}
     - target: {fileID: 5681566738335238396, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
       propertyPath: m_Center.y
-      value: -0.008335561
+      value: 0.03921528
       objectReference: {fileID: 0}
     - target: {fileID: 5681566738335238396, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
       propertyPath: m_Center.z
-      value: -0.026633464
+      value: -0.0021138266
       objectReference: {fileID: 0}
     - target: {fileID: 6704275040147742926, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
       propertyPath: m_Materials.Array.size
