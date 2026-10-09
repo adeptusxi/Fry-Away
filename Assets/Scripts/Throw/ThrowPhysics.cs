@@ -51,6 +51,7 @@ public abstract class ThrowPhysics : MonoBehaviour
     private const float velocityEpsilon = 0.01f; // below this speed, the object counts as no longer moving
     private float startTime;
     private AudioSource pathLoopSource;
+    private bool missSoundPlayed;
     
     protected ThrowData Data { get; private set; } // everything about the release that produced this throw. see ThrowData and ThrowKinematics at the top of this file 
     protected Vector3 CurrentVelocity { get; set; }
@@ -88,6 +89,7 @@ public abstract class ThrowPhysics : MonoBehaviour
         Data = data;
         CurrentVelocity = data.heldObject.velocity;
         IsGrounded = false;
+        missSoundPlayed = false;
         Begin();
 
         FindAssistTarget();
@@ -219,6 +221,27 @@ public abstract class ThrowPhysics : MonoBehaviour
             Vector3 lowest = targetCollider.ClosestPoint(targetCollider.bounds.center - normal * 100f);
             targetTransform.position += normal * Vector3.Dot(hit.point - lowest, normal);
         }
+
+        PlayMissSound();
+    }
+
+    private void PlayMissSound()
+    {
+        if (missSoundPlayed || parentInteractable == null)
+        {
+            return;
+        }
+
+        missSoundPlayed = true;
+        GameManager game = GameManager.Instance;
+        if (game != null && game.State != GameManager.GameState.Playing &&
+            game.State != GameManager.GameState.Tutorial)
+        {
+            return;
+        }
+
+        // Land is reached only for scenery hits, not target hits or mid-air catches.
+        AudioManager.Instance?.PlayOneShot2D(SoundId.ObjectMiss);
     }
     
     private bool TryGetBlockingHit(Vector3 direction, float distance, out RaycastHit blockingHit)
