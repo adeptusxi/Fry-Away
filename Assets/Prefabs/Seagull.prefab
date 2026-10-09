@@ -83,7 +83,7 @@ MonoBehaviour:
   hitSoundFullVolumeDistance: 20
   minSpeed: 6
   maxSpeed: 10
-  animator: {fileID: 0}
+  animator: {fileID: 6409762541033648028}
   maxYawOffset: 10
   maxPitchOffset: 15
   weaveFrequency: 0.35
