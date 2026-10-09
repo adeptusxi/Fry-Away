@@ -12,6 +12,8 @@ public class FixedGripTransformer : MonoBehaviour, ITransformer
     [SerializeField] private Handedness fallbackHand = Handedness.Right;
 
     [SerializeField] private float h = 0.05f; // gizmo scale
+
+    [SerializeField] private bool debuggingPosition = false;
     
     // this should be set by ThrowInteractable during a throw
     // (so while the interactor takes a few frames to "notice" the object has been released, the grip does not bring the object back to the hand) 
@@ -23,21 +25,39 @@ public class FixedGripTransformer : MonoBehaviour, ITransformer
     private Vector3 baseLocalPosition;
     private Quaternion baseLocalRotation;
 
+    private Vector3 positionOffset;
+    private Quaternion rotationOffset;
+
     public void Initialize(IGrabbable grabbable)
     {
         this.grabbable = grabbable;
-        handedness = fallbackHand;
+        //handedness = fallbackHand;
 
         if (heldOffsetTransform)
         {
             baseLocalPosition = heldOffsetTransform.localPosition;
             baseLocalRotation = heldOffsetTransform.localRotation;
+        } else
+        {
+            baseLocalPosition = Vector3.zero;
+            baseLocalRotation = Quaternion.identity;
         }
+
+        SetHandedness(fallbackHand);
+
+        //positionOffset = baseLocalPosition;
+        //rotationOffset = baseLocalRotation;
     }
 
     public void SetHandedness(Handedness hand)
     {
         handedness = hand;
+        positionOffset = baseLocalPosition;
+        rotationOffset = baseLocalRotation;
+        if (handedness == Handedness.Left)
+        {
+            Mirror(ref positionOffset, ref rotationOffset);
+        }
     }
 
     public void BeginTransform()
@@ -52,13 +72,20 @@ public class FixedGripTransformer : MonoBehaviour, ITransformer
             return;
         }
 
-        Vector3 positionOffset = baseLocalPosition;
-        Quaternion rotationOffset = baseLocalRotation;
-
-        if (handedness == Handedness.Left)
+        if (debuggingPosition && heldOffsetTransform)
         {
-            Mirror(ref positionOffset, ref rotationOffset);
+            baseLocalPosition = heldOffsetTransform.localPosition;
+            baseLocalRotation = heldOffsetTransform.localRotation;
+            SetHandedness(handedness);
         }
+
+        //Vector3 positionOffset = baseLocalPosition;
+        //Quaternion rotationOffset = baseLocalRotation;
+
+        //if (handedness == Handedness.Left)
+        //{
+        //    Mirror(ref positionOffset, ref rotationOffset);
+        //}
 
         Pose grabPose = grabbable.GrabPoints[0];
         grabbable.Transform.SetPositionAndRotation(

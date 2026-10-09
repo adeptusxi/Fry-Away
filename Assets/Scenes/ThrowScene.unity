@@ -523,7 +523,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5059517075490616252, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: attachPoint
@@ -748,7 +748,7 @@ PrefabInstance:
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: 'prefabs.Array.data[0]'
       value: 
-      objectReference: {fileID: 6004347003856336069, guid: 4537d2c43ab6bf34f9cc14b2248221c1, type: 3}
+      objectReference: {fileID: 5427119376664213527, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -808,7 +808,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5059517075490616252, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: attachPoint
@@ -1111,7 +1111,7 @@ PrefabInstance:
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: 'prefabs.Array.data[0]'
       value: 
-      objectReference: {fileID: 5427119376664213527, guid: e8911cb1409a740dbacc9681d4a52cee, type: 3}
+      objectReference: {fileID: 2965154657244041388, guid: ac6ee3bbe50d72d4a92dda8d0b3c5ad4, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1517,7 +1517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5059517075490616252, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7662459530815304061, guid: 33e497381ff042347948c32d14cdc421, type: 3}
       propertyPath: attachPoint
